@@ -27,6 +27,5 @@ package-lock 2.json
 .vercel
 
 # local project structure ignores
-peer-conselour-be/
 wp_dzj2w(4).sql
 find_ticket.py
