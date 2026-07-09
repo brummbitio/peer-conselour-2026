@@ -1,0 +1,3696 @@
+.section.site-width.account-page {
+  padding-top: 14px;
+  width: calc(100% - 128px);
+  max-width: none;
+  margin-inline: auto;
+}
+
+.account-heading h1 {
+  margin: 0;
+  font-size: clamp(1.15rem, 1.6vw, 1.4rem);
+  line-height: 1.1;
+}
+
+.ticket-page-header h1 {
+  margin: 0;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  line-height: 1.08;
+}
+
+.account-heading p,
+.ticket-page-header p {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+}
+
+.page-shell-clean {
+  background: #ffffff;
+}
+
+.account-login-prompt {
+  display: grid;
+  gap: 14px;
+  max-width: 560px;
+  padding: 34px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 24px;
+  background: #ffffff;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.account-login-prompt .button {
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.account-login-prompt h1 {
+  margin: 0;
+  max-width: none;
+  font-size: 2rem;
+}
+
+.account-login-prompt p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.my-counseling-layout {
+  margin-top: 28px;
+  display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+.my-counseling-tabs {
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 20px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.06);
+}
+
+.my-counseling-tabs button {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-height: 68px;
+  border: 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.1);
+  background: transparent;
+  color: #4b5563;
+  font-size: clamp(1.05rem, 0.92vw, 1.22rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  text-align: left;
+  padding: 0 20px;
+  cursor: pointer;
+}
+
+.my-counseling-tabs button:last-child {
+  border-bottom: 0;
+}
+
+.my-counseling-tabs button.is-active {
+  background: rgba(84, 171, 199, 0.12);
+  color: var(--blue-dark);
+  box-shadow: inset 5px 0 0 var(--blue);
+}
+
+.my-counseling-list {
+  display: grid;
+  gap: 16px;
+}
+
+.my-counseling-card {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 20px;
+  background: #ffffff;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  align-items: center;
+  overflow: hidden;
+  transition: border-color 160ms ease;
+}
+
+.my-counseling-card-ticket {
+  align-items: stretch;
+}
+
+.my-counseling-card-top {
+  grid-column: 1 / 3;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.1);
+}
+
+.ticket-top-open {
+  background: rgba(251, 191, 36, 0.16);
+  color: #9a6700;
+}
+
+.ticket-top-in_progress {
+  background: rgba(84, 171, 199, 0.2);
+  color: var(--blue-dark);
+}
+
+.ticket-top-resolved {
+  background: rgba(34, 197, 94, 0.17);
+  color: #166534;
+}
+
+.my-counseling-card-top .ticket-status {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 0.94rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.my-counseling-content {
+  padding: 16px 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.my-counseling-content-ticket {
+  padding: 16px 18px 17px;
+  gap: 8px;
+}
+
+.my-counseling-ticket-head {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+}
+
+.my-counseling-kicker {
+  color: var(--blue-dark);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.my-counseling-content h2 {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.15vw, 1.18rem);
+  line-height: 1.3;
+  max-width: none;
+}
+
+.my-counseling-content p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  font-size: 0.94rem;
+}
+
+.my-counseling-arrow-link {
+  display: inline-flex;
+  align-items: stretch;
+  justify-content: center;
+  border-left: 1px solid rgba(17, 24, 39, 0.1);
+  text-decoration: none;
+}
+
+.my-counseling-arrow {
+  width: 100%;
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.my-counseling-arrow-link:hover .my-counseling-arrow,
+.my-counseling-arrow-link:focus-visible .my-counseling-arrow {
+  color: #4b5563;
+  background: rgba(17, 24, 39, 0.03);
+}
+
+.my-counseling-empty {
+  border: 1px dashed rgba(17, 24, 39, 0.24);
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 30px 24px;
+  display: grid;
+  gap: 10px;
+}
+
+.my-counseling-empty h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.my-counseling-empty p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.my-counseling-empty .button {
+  margin-top: 4px;
+  justify-self: start;
+}
+
+.admin-sidebar button {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+.admin-dashboard-main {
+  gap: 14px;
+}
+
+.admin-dashboard-main-schedule {
+  height: clamp(500px, calc(100dvh - 210px), 760px);
+  overflow: hidden;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.admin-schedule-toolbar {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.admin-schedule-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-schedule-toolbar-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-schedule-toolbar-copy h2 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.admin-schedule-toolbar-copy p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.admin-schedule-view-toggle {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 999px;
+  padding: 3px;
+  background: #f8fafc;
+  display: inline-grid;
+  grid-template-columns: repeat(2, 36px);
+  gap: 4px;
+}
+
+.admin-schedule-view-toggle button {
+  width: 36px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #51606f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.admin-schedule-view-toggle button.is-active {
+  background: #ffffff;
+  color: #1f3345;
+  box-shadow: 0 4px 10px rgba(17, 24, 39, 0.12);
+}
+
+.admin-schedule-view-toggle button svg {
+  flex-shrink: 0;
+}
+
+.admin-schedule-view-toggle button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.admin-schedule-add-button {
+  min-height: 42px;
+  padding-inline: 15px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.admin-schedule-board {
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.admin-schedule-board::-webkit-scrollbar {
+  height: 8px;
+}
+
+.admin-schedule-board::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(90, 105, 124, 0.38);
+}
+
+.admin-schedule-board::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-schedule-column {
+  flex: 0 0 350px;
+  width: 350px;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  background: #f8fbfd;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+              flex-basis 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+              padding 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+              background-color 0.3s ease;
+}
+
+.admin-schedule-column-body-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transform-origin: top left;
+  transition: opacity 0.25s ease,
+              transform 0.25s ease,
+              visibility 0.25s ease,
+              height 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.admin-schedule-column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-schedule-column-head h3 {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.32;
+}
+
+.admin-schedule-column-head span {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #325368;
+  background: rgba(50, 83, 104, 0.12);
+}
+
+.admin-schedule-column-head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-schedule-column-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.admin-schedule-column-toggle:hover {
+  background: rgba(17, 24, 39, 0.06);
+  color: #1e293b;
+}
+
+.admin-schedule-column.is-collapsed {
+  flex: 0 0 60px;
+  width: 60px;
+  min-width: 60px;
+  padding: 12px 10px;
+  gap: 0;
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-body-wrap {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+  transform: scale(0.95);
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-head {
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-head-title {
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-schedule-column.is-collapsed h3 {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: none;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-head span {
+  transform: none;
+  writing-mode: horizontal-tb;
+}
+
+.admin-schedule-column-body-wrap > p {
+  margin: 0;
+  color: #6f7f8e;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.admin-schedule-column-list {
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  overscroll-behavior: contain;
+}
+
+.admin-schedule-column-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.admin-schedule-column-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(90, 105, 124, 0.38);
+}
+
+.admin-schedule-column-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-schedule-card {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  cursor: grab;
+  transition: box-shadow 200ms ease, opacity 200ms ease, transform 200ms ease;
+}
+
+.admin-schedule-card:active {
+  cursor: grabbing;
+}
+
+.admin-schedule-card.is-dragging {
+  opacity: 0.4;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+}
+
+.admin-schedule-column-list.is-drag-over {
+  background: rgba(99, 102, 241, 0.04);
+  border: 2px dashed rgba(99, 102, 241, 0.3);
+  border-radius: 12px;
+}
+
+.admin-schedule-card h4 {
+  margin: 0;
+  max-width: none;
+  font-size: 0.95rem;
+  line-height: 1.32;
+}
+
+.admin-schedule-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.admin-schedule-pill {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 0 11px;
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 999px;
+  background: #f7fbff;
+  color: #355164;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.admin-schedule-pill:hover,
+.admin-schedule-pill:focus-visible,
+.admin-schedule-pill.is-active {
+  outline: none;
+  border-color: rgba(45, 127, 154, 0.48);
+  box-shadow: 0 0 0 3px rgba(84, 171, 199, 0.16);
+  transform: translateY(-1px);
+}
+
+.admin-schedule-pill svg {
+  flex-shrink: 0;
+  color: #5f7992;
+}
+
+.admin-schedule-pill-calendar {
+  border-color: rgba(84, 171, 199, 0.22);
+  background: #eff8ff;
+  color: #2D7F9A;
+}
+
+.admin-schedule-overlay-panel {
+  position: fixed;
+  z-index: 3210;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  box-shadow: 0 18px 38px rgba(17, 24, 39, 0.14);
+}
+
+.admin-schedule-overlay-panel-datetime {
+  width: min(480px, calc(100vw - 24px));
+  overflow: hidden;
+  overscroll-behavior: contain;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.admin-schedule-overlay-panel-handler {
+  width: min(300px, calc(100vw - 24px));
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 0;
+}
+
+.admin-schedule-overlay-panel-service {
+  width: min(260px, calc(100vw - 24px));
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 0;
+}
+
+.admin-calendar-header {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr) 30px;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.admin-calendar-heading {
+  margin: 0;
+  color: #1f2937;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.admin-calendar-nav {
+  justify-self: center;
+}
+
+/* ── DateTimePanel (dtp-*) ───────────────────────────── */
+
+.dtp-root {
+  display: flex;
+  flex-direction: column;
+}
+
+.dtp-body {
+  display: flex;
+}
+
+.dtp-calendar-wrap {
+  flex: 1 1 0%;
+  min-width: 0;
+  padding: 20px 24px;
+}
+
+/* Calendar grid inside the panel */
+
+.dtp-calendar-wrap table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 4px 3px;
+}
+
+.dtp-calendar-wrap th {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 4px;
+}
+
+.dtp-calendar-wrap td {
+  padding: 0;
+}
+
+.dtp-calendar-wrap td > div {
+  width: 100%;
+  min-height: 32px;
+  display: grid;
+  place-items: center;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  color: #334155;
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.dtp-calendar-wrap td > div:hover,
+.dtp-calendar-wrap td > div:focus-visible {
+  outline: none;
+  background: #f1f5f9;
+  border-color: #e2e8f0;
+}
+
+.dtp-calendar-wrap [data-selected] > div {
+  border-color: #6366f1;
+  background: #6366f1;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.3);
+}
+
+.dtp-calendar-wrap [data-selected] > div:hover {
+  background: #4f46e5;
+  border-color: #4f46e5;
+}
+
+.dtp-calendar-wrap [data-outside-month] > div,
+.dtp-calendar-wrap [data-disabled] > div {
+  color: #cbd5e1;
+}
+
+.dtp-calendar-wrap [data-outside-month] > div:hover {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* Nav buttons */
+
+.dtp-calendar-wrap button[slot="previous"],
+.dtp-calendar-wrap button[slot="next"] {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #64748b;
+  font: inherit;
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 140ms ease;
+}
+
+.dtp-calendar-wrap button[slot="previous"] svg,
+.dtp-calendar-wrap button[slot="next"] svg {
+  width: 14px;
+  height: 14px;
+}
+
+.dtp-calendar-wrap button[slot="previous"]:hover,
+.dtp-calendar-wrap button[slot="next"]:hover {
+  background: #f1f5f9;
+  border-color: rgba(17, 24, 39, 0.2);
+  color: #334155;
+}
+
+/* Month heading */
+
+.dtp-calendar-wrap h2 {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+}
+
+.dtp-time-wrap {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-left: 1px solid rgba(17, 24, 39, 0.1);
+}
+
+.dtp-time-title {
+  padding: 22px 20px 0;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.dtp-time-scroll-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  height: 260px;
+}
+
+.dtp-time-list {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0 20px 20px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+}
+
+.dtp-time-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dtp-time-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.14);
+}
+
+.dtp-time-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dtp-time-btn {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.dtp-time-btn:hover {
+  background: #f8fafc;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.dtp-time-btn.is-selected {
+  background: linear-gradient(135deg, #54abc7 0%, #74c4dc 100%);
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(84, 171, 199, 0.3);
+}
+
+.dtp-time-btn.is-in-range {
+  background: rgba(84, 171, 199, 0.1);
+  border-color: rgba(84, 171, 199, 0.25);
+  color: #3a8ba0;
+}
+
+.dtp-time-btn.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Footer ── */
+
+.dtp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(17, 24, 39, 0.1);
+}
+
+.dtp-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dtp-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dtp-date-display {
+  height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dtp-btn {
+  height: 36px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+  white-space: nowrap;
+}
+
+.dtp-btn-secondary {
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  background: #ffffff;
+  color: #334155;
+}
+
+.dtp-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.dtp-btn-primary {
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, #54abc7 0%, #74c4dc 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(84, 171, 199, 0.24);
+}
+
+.dtp-btn-primary:hover {
+  box-shadow: 0 6px 14px rgba(84, 171, 199, 0.3);
+}
+
+.admin-schedule-overlay-panel-handler,
+.admin-schedule-overlay-panel-service {
+  overflow-y: auto;
+}
+
+.admin-schedule-overlay-list-wrap {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-schedule-overlay-list-wrap h5 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.admin-schedule-overlay-list {
+  max-height: min(220px, calc(100vh - 320px));
+  overflow-y: auto;
+  display: grid;
+  gap: 6px;
+}
+
+.admin-schedule-overlay-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-schedule-overlay-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.14);
+}
+
+.admin-schedule-overlay-option {
+  min-height: 38px;
+  width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.admin-schedule-overlay-option span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-schedule-overlay-option:hover,
+.admin-schedule-overlay-option:focus-visible {
+  outline: none;
+  background: #f8fafc;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.admin-schedule-overlay-option.is-selected {
+  background: #f1f5f9;
+  border-color: rgba(17, 24, 39, 0.22);
+  font-weight: 700;
+}
+
+.admin-schedule-overlay-option-handler {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-schedule-overlay-option-handler.is-selected {
+  background: #f1f5f9;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.admin-schedule-overlay-option-service-online {
+  background: #ffffff;
+}
+
+.admin-schedule-overlay-option-service-online.is-selected {
+  background: #f0fdf4;
+  border-color: rgba(22, 163, 74, 0.4);
+  color: #166534;
+}
+
+.admin-schedule-overlay-option-service-tatap_muka {
+  background: #ffffff;
+}
+
+.admin-schedule-overlay-option-service-tatap_muka.is-selected {
+  background: #eff6ff;
+  border-color: rgba(37, 99, 235, 0.4);
+  color: #1e40af;
+}
+
+.admin-schedule-pill-service {
+  border-color: rgba(84, 171, 199, 0.34);
+  background: rgba(84, 171, 199, 0.12);
+  color: #235f76;
+}
+
+.admin-schedule-pill-service-online {
+  border-color: rgba(34, 197, 94, 0.34);
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+}
+
+.admin-schedule-pill-service-tatap_muka {
+  border-color: rgba(59, 130, 246, 0.34);
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e40af;
+}
+
+.admin-schedule-column-pending_confirmation {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.11) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-pending_confirmation .admin-schedule-column-head span {
+  color: #9a5d08;
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.admin-schedule-column-scheduled {
+  background: linear-gradient(180deg, rgba(45, 127, 154, 0.15) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-scheduled .admin-schedule-column-head span {
+  color: #23657c;
+  background: rgba(45, 127, 154, 0.2);
+}
+
+.admin-schedule-column-reschedule {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.11) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-reschedule .admin-schedule-column-head span {
+  color: #6d28d9;
+  background: rgba(139, 92, 246, 0.18);
+}
+
+.admin-schedule-column-cancelled {
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.1) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-cancelled .admin-schedule-column-head span {
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.15);
+}
+
+.admin-schedule-column-completed {
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-completed .admin-schedule-column-head span {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.admin-tab-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-search-input {
+  width: min(100%, 360px);
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.admin-search-input:focus {
+  outline: none;
+  border-color: rgba(84, 171, 199, 0.42);
+  box-shadow: 0 0 0 4px rgba(84, 171, 199, 0.12);
+}
+
+.admin-scroll-list {
+  display: grid;
+  gap: 12px;
+}
+
+.admin-scroll-list-active {
+  max-height: min(560px, calc(100vh - 320px));
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.admin-scroll-list-active::-webkit-scrollbar {
+  width: 8px;
+}
+
+.admin-scroll-list-active::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.35);
+  border-radius: 999px;
+}
+
+.admin-scroll-list-active::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-ticket-filter {
+  position: relative;
+}
+
+.admin-ticket-filter summary {
+  list-style: none;
+}
+
+.admin-ticket-filter summary::-webkit-details-marker {
+  display: none;
+}
+
+.admin-filter-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    color 180ms ease;
+}
+
+.admin-filter-trigger:hover,
+.admin-ticket-filter[open] .admin-filter-trigger {
+  color: var(--blue-dark);
+  border-color: rgba(84, 171, 199, 0.36);
+  box-shadow: 0 0 0 4px rgba(84, 171, 199, 0.1);
+}
+
+.admin-filter-dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue);
+}
+
+.admin-filter-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 20;
+  width: 220px;
+  padding: 10px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.12);
+}
+
+.admin-filter-option {
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-filter-option:hover,
+.admin-filter-option-active {
+  background: rgba(84, 171, 199, 0.1);
+  color: var(--blue-dark);
+}
+
+.admin-filter-current {
+  margin: -4px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.admin-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.admin-stat-card {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-stat-card p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-stat-card strong {
+  font-size: clamp(1.4rem, 2vw, 1.75rem);
+  line-height: 1;
+}
+
+.admin-stat-card-waiting {
+  border-color: rgba(245, 158, 11, 0.26);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.12) 0%, #ffffff 70%);
+}
+
+.admin-stat-card-waiting p,
+.admin-stat-card-waiting strong {
+  color: #b45309;
+}
+
+.admin-stat-card-replied {
+  border-color: rgba(84, 171, 199, 0.34);
+  background: linear-gradient(180deg, rgba(84, 171, 199, 0.14) 0%, #ffffff 70%);
+}
+
+.admin-stat-card-replied p,
+.admin-stat-card-replied strong {
+  color: #2d7f9a;
+}
+
+.admin-stat-card-done {
+  border-color: rgba(34, 197, 94, 0.26);
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.12) 0%, #ffffff 70%);
+}
+
+.admin-stat-card-done p,
+.admin-stat-card-done strong {
+  color: #15803d;
+}
+
+.admin-stat-card-total {
+  border-color: rgba(17, 24, 39, 0.18);
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.08) 0%, #ffffff 70%);
+}
+
+.admin-stat-card-total p,
+.admin-stat-card-total strong {
+  color: #374151;
+}
+
+.admin-topic-card {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 14px 16px;
+}
+
+.admin-topic-card h2,
+.admin-list-heading h2 {
+  margin: 0;
+  font-size: 1rem;
+  max-width: none;
+  white-space: nowrap;
+}
+
+.admin-topic-chart-wrap {
+  margin-top: 8px;
+}
+
+.admin-topic-chart-wrap .recharts-layer.recharts-cartesian-axis-tick text {
+  fill: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.admin-topic-chart-wrap .recharts-cartesian-grid-vertical line {
+  stroke: rgba(17, 24, 39, 0.08);
+}
+
+.admin-topic-chart-wrap .recharts-label-list text {
+  fill: #2d7f9a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-profile-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  gap: 12px;
+  align-items: center;
+}
+
+.admin-profile-identity h2 {
+  margin: 0;
+  max-width: none;
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+.admin-profile-identity-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-profile-identity-top h2 {
+  margin: 0;
+}
+
+.admin-admin-edit-trigger {
+  border: 0;
+  background: transparent;
+  color: var(--blue-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.admin-admin-edit-trigger:hover,
+.admin-admin-edit-trigger:focus-visible {
+  color: #1f5f76;
+}
+
+.admin-profile-identity p {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-admin-inline-meta {
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.admin-admin-inline-meta p {
+  margin: 0;
+}
+
+.admin-admin-inline-separator {
+  color: #9ca3af;
+  line-height: 1;
+}
+
+.admin-profile-summary {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.admin-profile-summary span {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.admin-profile-summary strong {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.admin-list-heading {
+  margin-top: 2px;
+}
+
+.admin-line-card {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 14px 16px 16px;
+}
+
+.admin-line-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-line-header h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.admin-line-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.admin-line-range button {
+  min-height: 32px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 999px;
+  background: #ffffff;
+  padding: 0 12px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-line-range button.is-active {
+  border-color: rgba(84, 171, 199, 0.35);
+  background: rgba(84, 171, 199, 0.14);
+  color: var(--blue-dark);
+}
+
+.admin-line-chart-wrap {
+  position: relative;
+  margin-top: 10px;
+  padding: 0;
+}
+
+.admin-line-chart-canvas {
+  width: 100%;
+  margin: 0;
+}
+
+.admin-line-chart-wrap .recharts-layer.recharts-cartesian-axis-tick text {
+  fill: #8b95a7;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-line-chart-wrap .recharts-cartesian-grid-horizontal line {
+  stroke: rgba(17, 24, 39, 0.08);
+}
+
+.admin-line-chart-wrap .recharts-line-curve {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-line-chart-wrap .recharts-label-list text {
+  fill: #2d7f9a;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.admin-student-card {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 18px;
+  background: #ffffff;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  overflow: hidden;
+}
+
+.admin-student-card-main {
+  padding: 14px 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.admin-student-card-main h2 {
+  margin: 0;
+  max-width: none;
+  font-size: 1.08rem;
+  line-height: 1.3;
+}
+
+.admin-student-meta {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.admin-tab-tools-admins {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-tab-tools-admins .admin-search-input {
+  width: 100%;
+  max-width: none;
+}
+
+.admin-tab-tools-admins .button {
+  min-height: 44px;
+  padding-inline: 16px;
+  border-radius: 12px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-form-error,
+.admin-form-success {
+  margin: 0;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.admin-form-error {
+  color: #b4232c;
+}
+
+.admin-form-success {
+  color: #2d7f9a;
+}
+
+.admin-admin-card {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 18px;
+  background: #ffffff;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 72px;
+  overflow: hidden;
+}
+
+.admin-admin-card-main {
+  padding: 14px 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.admin-admin-card-main h2 {
+  margin: 0;
+  max-width: none;
+  font-size: 1.05rem;
+  line-height: 1.3;
+}
+
+.admin-admin-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-admin-card-email {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.45;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-admin-card-role {
+  color: #5b6577;
+  font-size: 0.88rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-admin-arrow-link .my-counseling-arrow {
+  color: var(--blue-dark);
+}
+
+.admin-admin-arrow-link:hover .my-counseling-arrow,
+.admin-admin-arrow-link:focus-visible .my-counseling-arrow {
+  color: #1f5f76;
+  background: rgba(84, 171, 199, 0.12);
+}
+
+.admin-admin-detail-head {
+  margin-top: 10px;
+  margin-bottom: 8px;
+}
+
+.admin-add-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.admin-add-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.admin-add-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 480px);
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 20px 44px rgba(17, 24, 39, 0.14);
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-schedule-add-panel {
+  width: min(100%, 620px);
+  overflow: visible;
+}
+
+.admin-add-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-add-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.admin-add-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  background: #ffffff;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.admin-add-close:hover,
+.admin-add-close:focus-visible {
+  color: var(--blue-dark);
+  border-color: rgba(84, 171, 199, 0.4);
+  background: rgba(84, 171, 199, 0.08);
+}
+
+.admin-add-form {
+  display: grid;
+  gap: 12.5px;
+}
+
+.admin-schedule-add-datetime-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  z-index: 80;
+  width: min(560px, calc(100vw - 72px));
+  max-width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 20px 40px rgba(17, 24, 39, 0.18);
+  padding: 10px;
+}
+
+.admin-schedule-add-datetime-popover .admin-datetime-panel {
+  grid-template-columns: minmax(0, 1fr) 170px;
+}
+
+.admin-schedule-add-datetime-popover .admin-datetime-time ul {
+  max-height: 220px;
+}
+
+.student-profile-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12.5px;
+}
+
+.student-profile-dropdown {
+  position: relative;
+}
+
+.student-profile-dropdown-trigger {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.student-profile-dropdown-trigger:hover,
+.student-profile-dropdown-trigger:focus-visible,
+.student-profile-dropdown-trigger.is-open {
+  border-color: rgba(84, 171, 199, 0.38);
+  box-shadow: 0 0 0 4px rgba(84, 171, 199, 0.1);
+  outline: none;
+}
+
+.student-profile-dropdown-trigger .is-placeholder {
+  color: var(--text-secondary);
+}
+
+.student-profile-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 16px 32px rgba(17, 24, 39, 0.14);
+}
+
+.student-profile-dropdown-menu.dropdown-menu-searchable {
+  display: flex;
+  flex-direction: column;
+  max-height: 300px;
+  overflow: hidden;
+  padding: 0;
+}
+
+.dropdown-search-wrapper {
+  padding: 8px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.dropdown-search-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(17, 24, 39, 0.15);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  background: #f9fafb;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.dropdown-search-input:focus {
+  border-color: rgba(84, 171, 199, 0.6);
+  box-shadow: 0 0 0 3px rgba(84, 171, 199, 0.15);
+  background: #ffffff;
+}
+
+.dropdown-options-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px;
+}
+
+.dropdown-no-results {
+  padding: 16px;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+
+.student-profile-dropdown-option {
+  width: 100%;
+  min-height: 38px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-align: left;
+  padding: 0 10px;
+  cursor: pointer;
+}
+
+.student-profile-dropdown-option:hover,
+.student-profile-dropdown-option.is-active {
+  background: rgba(84, 171, 199, 0.14);
+  color: var(--blue-dark);
+}
+
+.student-profile-toast-stack {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 124px);
+  right: 22px;
+  z-index: 170;
+}
+
+.student-profile-toast {
+  min-width: min(92vw, 360px);
+  max-width: min(92vw, 420px);
+  border-radius: 14px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  background: #ffffff;
+  box-shadow: 0 20px 34px rgba(17, 24, 39, 0.16);
+  padding: 12px 12px 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.student-profile-toast p {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.student-profile-toast-success {
+  border-color: rgba(22, 163, 74, 0.3);
+  background: linear-gradient(180deg, rgba(22, 163, 74, 0.09), #ffffff 72%);
+}
+
+.student-profile-toast-success p {
+  color: #166534;
+}
+
+.student-profile-toast-error {
+  border-color: rgba(185, 28, 28, 0.3);
+  background: linear-gradient(180deg, rgba(185, 28, 28, 0.09), #ffffff 72%);
+}
+
+.student-profile-toast-error p {
+  color: #991b1b;
+}
+
+.student-profile-toast-close {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.student-profile-toast-close:hover,
+.student-profile-toast-close:focus-visible {
+  background: rgba(17, 24, 39, 0.08);
+  color: #374151;
+  outline: none;
+}
+
+.admin-add-field {
+  display: grid;
+  gap: 7.5px;
+}
+
+.admin-add-field span {
+  color: #5b6577;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.admin-add-form .admin-search-input {
+  width: 100%;
+  max-width: none;
+}
+
+.admin-add-form .button {
+  width: 100%;
+  justify-content: center;
+}
+
+.admin-admin-detail-side {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-add-form-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.admin-add-form-actions-inline {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-add-form-actions .button {
+  width: 100%;
+  justify-content: center;
+  gap: 8px;
+}
+
+.admin-reset-inline-message {
+  margin-top: 2px;
+}
+
+.admin-student-detail-card {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 22px;
+  background: #ffffff;
+  padding: 18px;
+}
+
+.admin-student-detail-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-student-detail-header .admin-profile-identity-top {
+  gap: 6px;
+}
+
+.admin-student-detail-header .admin-profile-identity-top h1 {
+  margin: 0;
+}
+
+.admin-student-detail-eyebrow {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.admin-student-detail-header h1 {
+  margin-top: 6px;
+  max-width: none;
+  font-size: clamp(1.25rem, 2vw, 1.7rem);
+  line-height: 1.2;
+}
+
+.admin-student-detail-nim {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(84, 171, 199, 0.3);
+  background: rgba(84, 171, 199, 0.12);
+  color: var(--blue-dark);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.admin-student-detail-grid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-student-detail-row {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.admin-student-detail-row span {
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.admin-student-detail-row strong {
+  font-size: 0.96rem;
+  line-height: 1.4;
+  font-weight: 700;
+}
+
+.admin-student-detail-row-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-line-path {
+  fill: none;
+  stroke: var(--blue-dark);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.admin-line-area {
+  fill: rgba(84, 171, 199, 0.14);
+  stroke: none;
+}
+
+.admin-line-axis {
+  stroke: rgba(17, 24, 39, 0.24);
+  stroke-width: 1.2;
+}
+
+.admin-line-grid {
+  stroke: rgba(17, 24, 39, 0.08);
+  stroke-width: 1;
+}
+
+.admin-line-point {
+  fill: #ffffff;
+  stroke: var(--blue-dark);
+  stroke-width: 3;
+}
+
+.admin-line-value {
+  fill: var(--blue-dark);
+  font-size: 12px;
+  font-weight: 700;
+  text-anchor: middle;
+}
+
+.admin-line-axis-title {
+  fill: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-line-y-label {
+  fill: var(--text-muted);
+  font-size: 11px;
+  text-anchor: end;
+}
+
+.admin-line-x-label {
+  fill: var(--text-muted);
+  font-size: 11px;
+  text-anchor: middle;
+}
+
+.admin-line-labels {
+  margin-top: 6px;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 8px;
+}
+
+.admin-line-labels span {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 1220px) {
+  .section.site-width.account-page {
+    width: calc(100% - 96px);
+  }
+
+  .my-counseling-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-schedule-board {
+    overflow-x: auto;
+    overflow-y: hidden;
+    grid-template-columns: none;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(250px, 1fr);
+  }
+}
+
+.ticket-page-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.ticket-new-button {
+  gap: 8px;
+}
+
+.ticket-list {
+  margin-top: 24px;
+  display: grid;
+  gap: 12px;
+}
+
+.ticket-list-card {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 16px 18px;
+  transition:
+    transform 180ms ease,
+    border-color 180ms ease;
+}
+
+.ticket-list-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(84, 171, 199, 0.35);
+}
+
+.ticket-list-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ticket-code {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(84, 171, 199, 0.34);
+  background: rgba(84, 171, 199, 0.08);
+  color: var(--blue-dark);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.ticket-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.ticket-status-open {
+  border: 1px solid rgba(217, 119, 6, 0.26);
+  background: rgba(251, 191, 36, 0.12);
+  color: #b45309;
+}
+
+.ticket-status-in_progress {
+  border: 1px solid rgba(84, 171, 199, 0.28);
+  background: rgba(84, 171, 199, 0.14);
+  color: var(--blue-dark);
+}
+
+.ticket-status-resolved {
+  border: 1px solid rgba(34, 197, 94, 0.26);
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+}
+
+.ticket-list-card h2 {
+  margin: 12px 0 0;
+  font-size: 1.2rem;
+  line-height: 1.25;
+}
+
+.ticket-list-card p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+}
+
+.ticket-list-meta {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+.ticket-chat-layout {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+}
+
+.ticket-chat-main {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+  overflow: hidden;
+  height: 640px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+.ticket-detail-top {
+  margin-bottom: 10px;
+}
+
+.ticket-back-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--blue-dark);
+  font-weight: 600;
+}
+
+.ticket-back-link svg {
+  /* Diubah menjadi inline-flex normal agar sejajar dengan tepi card */
+}
+
+
+.ticket-chat-header {
+  padding: 10px 0 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  display: grid;
+  gap: 0;
+}
+
+.ticket-chat-id {
+  margin: 0;
+  padding: 0 20px 10px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ticket-status-banner {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ticket-status-banner-label {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.ticket-status-banner-value {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.ticket-status-banner-open {
+  background: rgba(251, 191, 36, 0.16);
+  color: #9a6700;
+}
+
+.ticket-status-banner-in_progress {
+  background: rgba(84, 171, 199, 0.2);
+  color: var(--blue-dark);
+}
+
+.ticket-status-banner-resolved {
+  background: rgba(34, 197, 94, 0.16);
+  color: #166534;
+}
+
+.ticket-chat-subject {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ticket-chat-subject h1 {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(1.04rem, 1.2vw, 1.2rem);
+  line-height: 1.28;
+}
+
+.ticket-chat-subject p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.ticket-message-list {
+  max-height: none;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f9fafb;
+}
+
+.ticket-message-list::before {
+  content: "";
+  margin-top: auto;
+}
+
+.ticket-message-bubble {
+  max-width: min(85%, 620px);
+  height: fit-content;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.ticket-message-admin {
+  align-self: flex-start;
+}
+
+.ticket-message-mahasiswa {
+  align-self: flex-end;
+}
+
+.ticket-message-self {
+  align-self: flex-end;
+  background: rgba(84, 171, 199, 0.12);
+  border-color: rgba(84, 171, 199, 0.24);
+}
+
+.ticket-message-other {
+  align-self: flex-start;
+  background: #ffffff;
+}
+
+.ticket-message-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ticket-message-head strong {
+  font-size: 0.82rem;
+}
+
+.ticket-message-head span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.ticket-message-bubble p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.ticket-message-html p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.ticket-message-html p:last-child {
+  margin-bottom: 0;
+}
+
+.ticket-message-link {
+  color: var(--blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ticket-message-attachments {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.ticket-message-attachment-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(84, 171, 199, 0.26);
+  background: rgba(84, 171, 199, 0.1);
+  color: var(--blue-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-composer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+}
+
+.ticket-composer-main {
+  display: grid;
+  gap: 8px;
+}
+
+.ticket-composer textarea {
+  width: 100%;
+  min-height: 46px;
+  max-height: none;
+  resize: none;
+  padding: 10px 14px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 12px;
+  line-height: 1.5;
+  overflow-y: hidden;
+}
+
+.ticket-composer textarea:focus {
+  outline: none;
+  border-color: rgba(84, 171, 199, 0.38);
+  box-shadow: 0 0 0 4px rgba(84, 171, 199, 0.1);
+}
+
+.ticket-composer-actions {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.ticket-attach-input {
+  display: none;
+}
+
+.ticket-attach-button {
+  min-height: 46px;
+  min-width: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  background: #ffffff;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.ticket-attach-button:hover,
+.ticket-attach-button:focus-visible {
+  border-color: rgba(84, 171, 199, 0.36);
+  color: var(--blue-dark);
+  background: rgba(84, 171, 199, 0.1);
+}
+
+.ticket-composer-actions .button {
+  min-height: 46px;
+  gap: 8px;
+}
+
+.ticket-pending-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ticket-pending-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  max-width: 100%;
+  padding: 0 8px 0 10px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.ticket-pending-attachment-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-pending-attachment-chip button {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ticket-pending-attachment-chip button:hover,
+.ticket-pending-attachment-chip button:focus-visible {
+  background: rgba(17, 24, 39, 0.08);
+}
+
+.ticket-chat-side {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 16px 16px 12px;
+  align-self: start;
+}
+
+.ticket-chat-side h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.ticket-side-info {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.ticket-side-divider {
+  height: 1px;
+  margin: 2px 2px 0;
+  background: rgba(17, 24, 39, 0.1);
+}
+
+.ticket-side-subtitle {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ticket-side-student-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(84, 171, 199, 0.28);
+  border-radius: 10px;
+  background: rgba(84, 171, 199, 0.08);
+  color: var(--blue-dark);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ticket-side-student-link:hover,
+.ticket-side-student-link:focus-visible {
+  background: rgba(84, 171, 199, 0.14);
+}
+
+.ticket-side-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ticket-side-row span {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ticket-side-row strong {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.ticket-side-action {
+  margin-top: 2px;
+  padding: 14px 12px 2px;
+  border-top: 1px solid rgba(17, 24, 39, 0.1);
+  display: grid;
+  gap: 10px;
+}
+
+.ticket-side-action p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.ticket-finish-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.ticket-finish-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+.ticket-confirm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.ticket-confirm-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.ticket-confirm-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 430px);
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: 0 20px 44px rgba(17, 24, 39, 0.14);
+  padding: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.ticket-confirm-panel h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.28;
+}
+
+.ticket-confirm-panel p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.ticket-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 760px) {
+  .ticket-chat-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .section.site-width.account-page {
+    width: calc(100% - 32px);
+  }
+
+  .my-counseling-tabs button {
+    min-height: 62px;
+    font-size: 0.95rem;
+    padding: 0 14px;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-line-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-dashboard-main-schedule {
+    height: calc(100dvh - 170px);
+    min-height: 430px;
+  }
+
+  .admin-schedule-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-schedule-toolbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .admin-schedule-view-toggle {
+    flex-shrink: 0;
+  }
+
+  .admin-schedule-add-button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .admin-schedule-overlay-panel-datetime {
+    width: min(460px, calc(100vw - 20px));
+    border-radius: 16px;
+  }
+
+  .admin-search-input {
+    width: 100%;
+  }
+
+  .admin-tab-tools-admins {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .admin-tab-tools-admins .button {
+    width: 100%;
+  }
+
+  .admin-admin-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .admin-admin-inline-meta {
+    gap: 6px;
+  }
+
+  .admin-add-modal {
+    padding: 12px;
+  }
+
+  .admin-add-panel {
+    padding: 14px;
+  }
+
+  .admin-scroll-list-active {
+    max-height: min(480px, calc(100vh - 280px));
+  }
+
+  .admin-student-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-student-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-profile-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .student-profile-toast-stack {
+    top: calc(env(safe-area-inset-top, 0px) + 88px);
+    right: 12px;
+    left: 12px;
+  }
+
+  .student-profile-toast {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  .admin-line-labels span {
+    font-size: 0.7rem;
+  }
+
+  .my-counseling-card {
+    grid-template-columns: 1fr;
+  }
+
+  .my-counseling-card-top {
+    grid-column: 1;
+  }
+
+  .admin-profile-card {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-chat-main {
+    height: 560px;
+  }
+
+  .my-counseling-arrow-link {
+    border-left: 0;
+    border-top: 1px solid rgba(17, 24, 39, 0.1);
+  }
+
+  .my-counseling-arrow {
+    min-height: 52px;
+  }
+
+  .ticket-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .ticket-composer {
+    grid-template-columns: 1fr;
+  }
+
+  .ticket-composer-actions {
+    justify-content: flex-end;
+  }
+}
+/* ── Calendar View ────────────────────────────── */
+
+.admin-calendar-view {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  overflow: hidden;
+  height: 100%;
+}
+
+.admin-calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.admin-calendar-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-calendar-toolbar-left h2 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.admin-calendar-week-badge {
+  font-size: 0.75rem;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-calendar-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-calendar-nav-group {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-calendar-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.admin-calendar-nav-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.admin-calendar-today-btn {
+  height: 36px;
+  padding: 0 16px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.admin-calendar-today-btn:hover {
+  background: #f8fafc;
+}
+
+.admin-calendar-view-select {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 0.85rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.admin-calendar-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Month View */
+.admin-calendar-month {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-calendar-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-calendar-month-header-cell {
+  padding: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.admin-calendar-month-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(140px, auto);
+  background: #e2e8f0;
+  gap: 1px;
+  overflow-y: auto;
+}
+
+.admin-calendar-month-cell {
+  background: #ffffff;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.admin-calendar-month-cell.is-outside {
+  background: #f8fafc;
+}
+
+.admin-calendar-month-cell.is-outside .admin-calendar-date-number {
+  color: #cbd5e1;
+}
+
+.admin-calendar-date-number {
+  font-size: 0.85rem;
+  color: #334155;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.admin-calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.admin-calendar-event {
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.admin-calendar-event-title {
+  font-weight: 600;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.admin-calendar-event-time {
+  opacity: 0.8;
+  font-size: 0.7rem;
+}
+
+/* Time Grid (Week / Day) */
+.admin-calendar-timegrid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-calendar-timegrid-header {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-header-corner {
+  width: 60px;
+  flex-shrink: 0;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-header-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  border-right: 1px solid #e2e8f0;
+  gap: 4px;
+}
+
+.admin-calendar-timegrid-day-name {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.admin-calendar-timegrid-day-num {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.admin-calendar-timegrid-body {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-calendar-timegrid-times {
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-time-label {
+  height: 60px; /* matching the JS line height */
+  position: relative;
+  flex-shrink: 0;
+}
+
+.admin-calendar-timegrid-time-label span {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.admin-calendar-timegrid-columns {
+  flex: 1;
+  display: grid;
+  position: relative;
+}
+
+.admin-calendar-timegrid-col {
+  position: relative;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-line {
+  height: 60px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.admin-calendar-timegrid-event {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: 6px;
+  padding: 6px 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-calendar-timegrid-event-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.admin-calendar-timegrid-event-time {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* Event Types Colors based on Kanban Status */
+.admin-calendar-event-pending_confirmation {
+  background: rgba(234, 179, 8, 0.15); /* Yellow */
+  color: #a16207;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.admin-calendar-event-scheduled {
+  background: rgba(59, 130, 246, 0.15); /* Blue */
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.admin-calendar-event-reschedule {
+  background: rgba(168, 85, 247, 0.15); /* Purple */
+  color: #7e22ce;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.admin-calendar-event-completed {
+  background: rgba(34, 197, 94, 0.15); /* Green */
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.admin-calendar-event-cancelled {
+  background: rgba(239, 68, 68, 0.15); /* Red */
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.admin-calendar-event {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.admin-calendar-event:hover {
+  opacity: 0.8;
+}
+
+.admin-calendar-event-more {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+/* Event Popup Modal */
+.admin-calendar-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 150ms ease-out;
+}
+
+.admin-calendar-popup {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideUpFade 200ms ease-out;
+}
+
+.admin-calendar-popup-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-calendar-popup-title-input {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  border: none;
+  border-bottom: 2px solid transparent;
+  width: 100%;
+  margin-right: 16px;
+  padding: 4px 0;
+  background: transparent;
+}
+
+.admin-calendar-popup-title-input:focus {
+  outline: none;
+  border-bottom-color: #3b82f6;
+}
+
+.admin-calendar-popup-close {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.admin-calendar-popup-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-calendar-popup-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.admin-calendar-popup-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.admin-calendar-popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.admin-calendar-popup-info strong {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.admin-calendar-popup-info div {
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.admin-calendar-popup-select {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #334155;
+  background: #f8fafc;
+  outline: none;
+}
+
+.admin-calendar-popup-select:focus {
+  border-color: #3b82f6;
+}
+
+.admin-calendar-popup-footer {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ==========================================================================
+   WHATSAPP-STYLE GALLERY GRID & DYNAMIC LIGHTBOX
+   ========================================================================== */
+
+.ticket-message-gallery {
+  display: grid;
+  gap: 4px;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 8px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ticket-message-gallery-item {
+  position: relative;
+  overflow: hidden;
+  background: #111;
+}
+
+.ticket-message-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ticket-message-gallery-item:hover .ticket-message-gallery-img {
+  transform: scale(1.06);
+}
+
+/* 1 Gambar */
+.ticket-message-gallery-1 {
+  grid-template-columns: 1fr;
+}
+.ticket-message-gallery-1 .ticket-message-gallery-item {
+  height: 220px;
+}
+
+/* 2 Gambar */
+.ticket-message-gallery-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.ticket-message-gallery-2 .ticket-message-gallery-item {
+  height: 150px;
+}
+
+/* 3 Gambar */
+.ticket-message-gallery-3 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.ticket-message-gallery-3 .ticket-message-gallery-item {
+  height: 110px;
+}
+.ticket-message-gallery-3 .ticket-message-gallery-item:first-child {
+  grid-row: span 2;
+  height: 224px;
+}
+
+/* 4 Gambar atau lebih */
+.ticket-message-gallery-4 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.ticket-message-gallery-4 .ticket-message-gallery-item {
+  height: 110px;
+}
+
+/* Overlay sisa gambar */
+.ticket-message-gallery-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  backdrop-filter: blur(2px);
+}
+
+/* Tampilan list dokumen */
+.ticket-message-document-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.03);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  text-decoration: none;
+  color: var(--text-primary) !important;
+  transition: all 0.2s ease;
+  max-width: 320px;
+}
+
+.ticket-message-document-row:hover {
+  background: rgba(17, 24, 39, 0.07);
+  border-color: rgba(17, 24, 39, 0.15);
+  transform: translateY(-1px);
+}
+
+.ticket-message-document-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.ticket-message-document-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.ticket-message-document-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Lightbox Modal */
+.ticket-lightbox-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: ticketLightboxFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ticket-lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-lightbox-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-download {
+  position: absolute;
+  top: -50px;
+  right: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-close:hover,
+.ticket-lightbox-download:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.ticket-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.ticket-lightbox-nav-prev {
+  left: -80px;
+}
+
+.ticket-lightbox-nav-next {
+  right: -80px;
+}
+
+.ticket-lightbox-image-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ticket-lightbox-image {
+  max-width: 80vw;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticket-lightbox-caption {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-top: 16px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  text-align: center;
+  max-width: 600px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes ticketLightboxFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .ticket-lightbox-nav-prev {
+    left: 10px;
+    z-index: 10001;
+  }
+  .ticket-lightbox-nav-next {
+    right: 10px;
+    z-index: 10001;
+  }
+}
+
+/* ==========================================================================
+   SEPARATED CHAT BUBBLES LOGIC
+   ========================================================================== */
+
+.ticket-message-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ticket-message-group-self {
+  align-items: flex-end;
+}
+
+.ticket-message-group-other {
+  align-items: flex-start;
+}
+
+.ticket-message-group-self .ticket-message-bubble {
+  align-self: flex-end;
+}
+
+.ticket-message-group-other .ticket-message-bubble {
+  align-self: flex-start;
+}
+
+.ticket-message-attachments-bubble {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ticket-message-group-self .ticket-message-attachments-bubble {
+  background: rgba(84, 171, 199, 0.12);
+  border-color: rgba(84, 171, 199, 0.24);
+}

@@ -1,0 +1,1327 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Layanan Konseling Mahasiswa UB",
+    "description": "Dokumentasi API resmi untuk backend Go (Golang) website Konseling Mahasiswa Universitas Brawijaya. File ini siap di-import langsung ke APIDOG.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Server Staging Lokal (Localhost)"
+    },
+    {
+      "url": "https://dev-konseling.ub.ac.id",
+      "description": "Server Development UB"
+    }
+  ],
+  "security": [
+    {
+      "BearerAuth": []
+    }
+  ],
+  "paths": {
+    "/api/auth/sso": {
+      "get": {
+        "tags": [
+          "Autentikasi"
+        ],
+        "summary": "SSO Login Redirect",
+        "description": "Mengalihkan browser pengguna ke portal login resmi IAM UB (OIDC Keycloak).",
+        "security": [],
+        "responses": {
+          "302": {
+            "description": "Redirect ke login.iam.ub.ac.id"
+          }
+        }
+      }
+    },
+    "/api/auth/callback": {
+      "get": {
+        "tags": [
+          "Autentikasi"
+        ],
+        "summary": "SSO Callback Endpoint",
+        "description": "Endpoint callback yang dipanggil oleh IAM UB secara otomatis setelah pengguna berhasil login. Menukarkan authorization code dengan profil pengguna, melakukan pendaftaran otomatis jika pengguna belum ada di database, lalu mengembalikan token JWT internal dan mengarahkan kembali ke frontend.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "code",
+            "in": "query",
+            "required": true,
+            "description": "Authorization code dari IAM UB",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "description": "State identifier untuk CSRF protection",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect kembali ke frontend Next.js (/login?token=jwt_token)"
+          },
+          "400": {
+            "description": "Authorization code tidak valid/ditemukan"
+          },
+          "500": {
+            "description": "Gagal menukar token atau mendaftarkan pengguna baru"
+          }
+        }
+      }
+    },
+    "/api/auth/dev-login": {
+      "get": {
+        "tags": [
+          "Autentikasi"
+        ],
+        "summary": "Development Bypass Login",
+        "description": "Endpoint bypass SSO untuk pengujian lokal (development). Menghasilkan token JWT langsung untuk ID user tertentu dari database. Rute ini tidak aktif di lingkungan production.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "description": "ID user (misal 30 untuk Admin Maurits, atau ID mahasiswa lain)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Bypass login sukses, mengembalikan token JWT",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "example": "eyJhbGciOi..."
+                    },
+                    "user": {
+                      "$ref": "#/components/schemas/User"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "ID tidak valid"
+          },
+          "403": {
+            "description": "Bypass ditolak (non-development environment)"
+          },
+          "404": {
+            "description": "User tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/auth/me": {
+      "get": {
+        "tags": [
+          "Autentikasi"
+        ],
+        "summary": "Get Profile Pengguna Login",
+        "description": "Mengambil informasi profil lengkap milik pengguna yang saat ini sedang masuk/login berdasarkan token JWT.",
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat profil",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Sesi kedaluwarsa atau token tidak valid"
+          },
+          "404": {
+            "description": "User tidak ditemukan di database"
+          }
+        }
+      }
+    },
+    "/api/auth/profile": {
+      "put": {
+        "tags": [
+          "Autentikasi"
+        ],
+        "summary": "Update Profile Klien/Admin",
+        "description": "Mengupdate profil pengguna yang sedang login (Nama, Jenis Kelamin, Fakultas, Jurusan, Nomor HP).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_name": {
+                    "type": "string",
+                    "example": "Maurits Sitinjak"
+                  },
+                  "gender": {
+                    "type": "string",
+                    "example": "Laki-laki"
+                  },
+                  "faculty": {
+                    "type": "string",
+                    "example": "Fakultas Ilmu Komputer"
+                  },
+                  "department": {
+                    "type": "string",
+                    "example": "Teknik Informatika"
+                  },
+                  "phone": {
+                    "type": "string",
+                    "example": "081289972856"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profil berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/tickets": {
+      "get": {
+        "tags": [
+          "Layanan Tiket Klien"
+        ],
+        "summary": "Daftar Tiket Mahasiswa",
+        "description": "Mengambil daftar seluruh tiket/riwayat konseling milik mahasiswa yang sedang login.",
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat daftar tiket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ticket"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Tidak diizinkan"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Layanan Tiket Klien"
+        ],
+        "summary": "Buat Tiket Konseling Baru",
+        "description": "Membuat tiket konseling (pemesanan sesi konseling baru) oleh mahasiswa. Kode tiket unik (UB-CS-YYMMDD-XXX) akan digenerate otomatis oleh backend.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "title",
+                  "category",
+                  "tahap_konseling"
+                ],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "example": "Saya merasa cemas menjelang ujian akhir"
+                  },
+                  "category": {
+                    "type": "string",
+                    "example": "Akademik"
+                  },
+                  "tahap_konseling": {
+                    "type": "string",
+                    "enum": [
+                      "Pertama",
+                      "Lanjutan"
+                    ],
+                    "example": "Pertama"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Tiket berhasil dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ticket"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Format request tidak valid"
+          }
+        }
+      }
+    },
+    "/api/tickets/{id}": {
+      "get": {
+        "tags": [
+          "Layanan Tiket Klien"
+        ],
+        "summary": "Detail Tiket & Chat",
+        "description": "Mengambil detail tiket tertentu lengkap dengan seluruh pesan chat percakapan di dalamnya. Mahasiswa hanya bisa melihat tiket miliknya sendiri, sementara Admin bisa melihat tiket siapa saja.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID tiket (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat detail tiket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ticket": {
+                      "$ref": "#/components/schemas/Ticket"
+                    },
+                    "messages": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TicketMessage"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Akses ditolak (mahasiswa melihat tiket milik orang lain)"
+          },
+          "404": {
+            "description": "Tiket tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/tickets/{id}/messages": {
+      "post": {
+        "tags": [
+          "Layanan Tiket Klien"
+        ],
+        "summary": "Kirim Chat Balasan",
+        "description": "Mengirimkan pesan chat balasan baru ke dalam tiket. Jika dikirim oleh admin, status tiket akan otomatis berubah menjadi 'in_progress'.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID tiket (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "body"
+                ],
+                "properties": {
+                  "body": {
+                    "type": "string",
+                    "example": "Terima kasih sudah bercerita. Mari kita atur waktu untuk konseling."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pesan berhasil dikirim",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TicketMessage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Format request tidak valid / pesan kosong"
+          }
+        }
+      }
+    },
+    "/api/tickets/{id}/resolve": {
+      "put": {
+        "tags": [
+          "Layanan Tiket Klien"
+        ],
+        "summary": "Selesaikan Sesi Konseling (Klien)",
+        "description": "Mahasiswa menyelesaikan/menutup tiket konseling milik mereka sendiri.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID tiket (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tiket berhasil diselesaikan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ticket"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Akses ditolak (Bukan pemilik tiket)"
+          },
+          "404": {
+            "description": "Tiket tidak ditemukan"
+          }
+        }
+      }
+    },
+    "/api/admin/stats": {
+      "get": {
+        "tags": [
+          "Dashboard Admin"
+        ],
+        "summary": "Statistik Dashboard Admin",
+        "description": "Mengambil hitungan statistik live untuk dashboard admin (total tiket, jumlah status open/in_progress/resolved, serta pengelompokan kategori masalah).",
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat statistik",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_tickets": {
+                      "type": "integer",
+                      "example": 4438
+                    },
+                    "status_counts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "status": {
+                            "type": "string",
+                            "example": "open"
+                          },
+                          "count": {
+                            "type": "integer",
+                            "example": 500
+                          }
+                        }
+                      }
+                    },
+                    "category_counts": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "category": {
+                            "type": "string",
+                            "example": "Konseling Masalah Pribadi"
+                          },
+                          "count": {
+                            "type": "integer",
+                            "example": 1250
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/tickets": {
+      "get": {
+        "tags": [
+          "Dashboard Admin"
+        ],
+        "summary": "Daftar Semua Tiket (Admin)",
+        "description": "Mengambil seluruh data tiket konseling yang masuk untuk operasional dashboard admin. Mendukung penyaringan filter dinamis.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter status tiket (open, in_progress, resolved)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Kata kunci pencarian (judul tiket, kategori, atau nomor tiket)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "counselor_id",
+            "in": "query",
+            "required": false,
+            "description": "Filter tiket yang ditugaskan ke konselor tertentu",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "student_id",
+            "in": "query",
+            "required": false,
+            "description": "Filter tiket yang dibuat oleh mahasiswa tertentu",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat tiket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Ticket"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/tickets/{id}": {
+      "put": {
+        "tags": [
+          "Dashboard Admin"
+        ],
+        "summary": "Update Status & Assignment Tiket",
+        "description": "Digunakan oleh admin untuk merubah status tiket, menugaskan konselor penanggung jawab (assignment), dan menyimpan kesimpulan ringkasan kasus.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID tiket (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "open",
+                      "in_progress",
+                      "resolved"
+                    ],
+                    "example": "resolved"
+                  },
+                  "counselor_id": {
+                    "type": "integer",
+                    "example": 32
+                  },
+                  "summary": {
+                    "type": "string",
+                    "example": "Mahasiswa telah diberikan teknik regulasi emosi dasar, sesi lanjutan dijadwalkan minggu depan."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tiket berhasil diperbarui",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Ticket"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/schedules": {
+      "get": {
+        "tags": [
+          "Dashboard Admin"
+        ],
+        "summary": "Daftar Jadwal Konseling",
+        "description": "Mengambil seluruh jadwal aktif untuk di-render ke kalender admin atau papan Kanban board.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter status jadwal (pending_confirmation, scheduled, reschedule, cancelled, completed)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "handler_id",
+            "in": "query",
+            "required": false,
+            "description": "Filter jadwal milik konselor tertentu",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat daftar jadwal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Schedule"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Dashboard Admin"
+        ],
+        "summary": "Buat Slot Jadwal Konseling",
+        "description": "Membuat jadwal baru untuk klien dan menetapkan konselor penanggung jawab.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "client_name",
+                  "date_value",
+                  "time_value",
+                  "handler_id",
+                  "service_type"
+                ],
+                "properties": {
+                  "ticket_id": {
+                    "type": "integer",
+                    "example": 4576
+                  },
+                  "client_name": {
+                    "type": "string",
+                    "example": "Adinda Rizki"
+                  },
+                  "date_value": {
+                    "type": "string",
+                    "description": "Format: YYYY-MM-DD",
+                    "example": "2026-07-08"
+                  },
+                  "time_value": {
+                    "type": "string",
+                    "example": "11:00"
+                  },
+                  "handler_id": {
+                    "type": "integer",
+                    "example": 32
+                  },
+                  "service_type": {
+                    "type": "string",
+                    "enum": [
+                      "tatap_muka",
+                      "online"
+                    ],
+                    "example": "online"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Jadwal berhasil dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/schedules/{id}": {
+      "put": {
+        "tags": [
+          "Dashboard Admin"
+        ],
+        "summary": "Update Jadwal & Kanban Drag-and-Drop",
+        "description": "Mengupdate data jadwal, melakukan reschedule, ganti konselor, atau merubah status kolom (untuk fitur drag-and-drop kanban board).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID jadwal (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": [
+                      "pending_confirmation",
+                      "scheduled",
+                      "reschedule",
+                      "cancelled",
+                      "completed"
+                    ],
+                    "example": "scheduled"
+                  },
+                  "date_value": {
+                    "type": "string",
+                    "example": "2026-07-09"
+                  },
+                  "time_value": {
+                    "type": "string",
+                    "example": "13:00"
+                  },
+                  "handler_id": {
+                    "type": "integer",
+                    "example": 30
+                  },
+                  "service_type": {
+                    "type": "string",
+                    "example": "tatap_muka"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Jadwal berhasil diubah",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Schedule"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students": {
+      "get": {
+        "tags": [
+          "Kemahasiswaan (Klien)"
+        ],
+        "summary": "Daftar Profil Mahasiswa",
+        "description": "Mengambil seluruh data mahasiswa (klien) terdaftar di sistem. Mendukung fitur cari.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Mencari mahasiswa berdasarkan nama, email, atau NIM",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat daftar mahasiswa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/students/{id}": {
+      "get": {
+        "tags": [
+          "Kemahasiswaan (Klien)"
+        ],
+        "summary": "Detail Profil & History Mahasiswa",
+        "description": "Mengambil profil detail mahasiswa tertentu berserta daftar seluruh riwayat tiket sesi konseling yang pernah ia buat.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID user mahasiswa (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat detail mahasiswa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "profile": {
+                      "$ref": "#/components/schemas/User"
+                    },
+                    "tickets": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Ticket"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/admins": {
+      "get": {
+        "tags": [
+          "Manajemen Staff (Admin)"
+        ],
+        "summary": "Daftar Staff & Admin",
+        "description": "Mengambil daftar seluruh akun konselor, peer counselor, maupun administrator sistem.",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "description": "Mencari staff berdasarkan nama atau email",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Berhasil memuat daftar staff",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Manajemen Staff (Admin)"
+        ],
+        "summary": "Tambah Akun Staff / Admin",
+        "description": "Membuat akun lokal admin baru dengan password lokal (khusus untuk counselor pendatang/peer counselor).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "email",
+                  "full_name",
+                  "password"
+                ],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "konselor.baru@ub.ac.id"
+                  },
+                  "full_name": {
+                    "type": "string",
+                    "example": "Konselor Baru, M.Psi"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "passwordAman123"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "admin",
+                      "superadmin"
+                    ],
+                    "example": "admin"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Akun admin berhasil dibuat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/admins/{id}": {
+      "put": {
+        "tags": [
+          "Manajemen Staff (Admin)"
+        ],
+        "summary": "Update Profil Staff",
+        "description": "Mengubah data profil admin/staff tertentu (Nama, Email, maupun Role).",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID admin (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "full_name": {
+                    "type": "string",
+                    "example": "Dr. Maya Hartono, M.Psi"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "mayahartono@ub.ac.id"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "superadmin"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Profil admin berhasil diubah",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/admins/{id}/reset-password": {
+      "post": {
+        "tags": [
+          "Manajemen Staff (Admin)"
+        ],
+        "summary": "Reset Password Lokal Staff",
+        "description": "Mereset password lokal untuk akun admin/staff tertentu.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID admin (Integer)",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "password"
+                ],
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "example": "passwordBaruSuperAman123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Password berhasil direset",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Password berhasil direset"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 3856
+          },
+          "nim": {
+            "type": "string",
+            "nullable": true,
+            "example": "235090507111058"
+          },
+          "email": {
+            "type": "string",
+            "example": "adindanurrizki@student.ub.ac.id"
+          },
+          "full_name": {
+            "type": "string",
+            "example": "Adinda Nur Rizki H."
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "student",
+              "admin",
+              "superadmin"
+            ],
+            "example": "student"
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true,
+            "example": "Perempuan"
+          },
+          "faculty": {
+            "type": "string",
+            "nullable": true,
+            "example": "Fakultas Matematika dan IPA"
+          },
+          "department": {
+            "type": "string",
+            "nullable": true,
+            "example": "Statistika"
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true,
+            "example": "081231577441"
+          },
+          "origin_region": {
+            "type": "string",
+            "nullable": true,
+            "example": "Bogor"
+          },
+          "malang_address": {
+            "type": "string",
+            "nullable": true,
+            "example": "Jl. Sigura-gura No. 10, Malang"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T09:30:12Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T15:06:19Z"
+          }
+        }
+      },
+      "Ticket": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 4576
+          },
+          "code": {
+            "type": "string",
+            "example": "004575"
+          },
+          "student_id": {
+            "type": "integer",
+            "example": 3856
+          },
+          "counselor_id": {
+            "type": "integer",
+            "nullable": true,
+            "example": 32
+          },
+          "title": {
+            "type": "string",
+            "example": "Perasaan cemas dan ketakutan selama PKL"
+          },
+          "category": {
+            "type": "string",
+            "example": "Konseling Masalah Pribadi"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "open",
+              "in_progress",
+              "resolved"
+            ],
+            "example": "open"
+          },
+          "tahap_konseling": {
+            "type": "string",
+            "nullable": true,
+            "example": "Pertama"
+          },
+          "summary": {
+            "type": "string",
+            "nullable": true,
+            "example": null
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T09:30:12Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T13:06:19Z"
+          },
+          "closed_at": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true,
+            "example": null
+          }
+        }
+      },
+      "TicketMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 19062
+          },
+          "ticket_id": {
+            "type": "integer",
+            "example": 4576
+          },
+          "sender_id": {
+            "type": "integer",
+            "example": 3856
+          },
+          "sender_role": {
+            "type": "string",
+            "enum": [
+              "mahasiswa",
+              "admin"
+            ],
+            "example": "mahasiswa"
+          },
+          "sender_name": {
+            "type": "string",
+            "example": "Adinda Rizki"
+          },
+          "body": {
+            "type": "string",
+            "example": "<p>Saat ini saya sedang menjalani PKL di BPS Kabupaten Bogor...</p>"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T09:30:12Z"
+          }
+        }
+      },
+      "Schedule": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "ticket_id": {
+            "type": "integer",
+            "nullable": true,
+            "example": 4576
+          },
+          "client_name": {
+            "type": "string",
+            "example": "Adinda Rizki"
+          },
+          "date_value": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-07-08"
+          },
+          "time_value": {
+            "type": "string",
+            "example": "11:00"
+          },
+          "handler_id": {
+            "type": "integer",
+            "nullable": true,
+            "example": 32
+          },
+          "service_type": {
+            "type": "string",
+            "enum": [
+              "tatap_muka",
+              "online"
+            ],
+            "example": "online"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending_confirmation",
+              "scheduled",
+              "reschedule",
+              "cancelled",
+              "completed"
+            ],
+            "example": "pending_confirmation"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T15:23:40Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2026-07-06T15:23:40Z"
+          }
+        }
+      }
+    }
+  }
+}
