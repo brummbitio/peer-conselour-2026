@@ -69,10 +69,28 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
+	// Set session cookie
+	cookieDomain := ""
+	if config.AppConfig.Env == "production" {
+		cookieDomain = ".ub.ac.id"
+	}
+	c.SetCookie("token", token, 3600*config.AppConfig.JWTExpHours, "/", cookieDomain, true, true)
+
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
 		"user":  user,
 	})
+}
+
+// Logout menghapus session cookie dari browser client
+func (h *AuthHandler) Logout(c *gin.Context) {
+	cookieDomain := ""
+	if config.AppConfig.Env == "production" {
+		cookieDomain = ".ub.ac.id"
+	}
+	// Set MaxAge ke -1 untuk menghapus cookie
+	c.SetCookie("token", "", -1, "/", cookieDomain, true, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Logout berhasil"})
 }
 
 // SSOLogin mengarahkan browser ke halaman login SSO IAM UB
@@ -274,9 +292,15 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 		return
 	}
 
-	// 6. Redirect kembali ke Frontend (Next.js) dengan menyertakan token di URL
-	// Next.js akan membaca token dari query parameter ini lalu menyimpannya
-	frontendRedirectURL := fmt.Sprintf("%s/?token=%s", config.AppConfig.FrontendURL, token)
+	// Set session cookie
+	cookieDomain := ""
+	if config.AppConfig.Env == "production" {
+		cookieDomain = ".ub.ac.id"
+	}
+	c.SetCookie("token", token, 3600*config.AppConfig.JWTExpHours, "/", cookieDomain, true, true)
+
+	// 6. Redirect kembali ke Frontend (Next.js) tanpa memaparkan token di URL
+	frontendRedirectURL := fmt.Sprintf("%s/?sso=success", config.AppConfig.FrontendURL)
 	c.Redirect(http.StatusFound, frontendRedirectURL)
 }
 

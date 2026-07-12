@@ -11,21 +11,29 @@ import (
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		authHeader := c.GetHeader("Authorization")
-		if authHeader == "" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization header diperlukan"})
+		var tokenString string
+
+		// 1. Coba ambil token dari secure httpOnly cookie
+		cookieToken, err := c.Cookie("token")
+		if err == nil && cookieToken != "" {
+			tokenString = cookieToken
+		} else {
+			// 2. Fallback ke Authorization header jika cookie tidak ada
+			authHeader := c.GetHeader("Authorization")
+			if authHeader != "" {
+				parts := strings.Split(authHeader, " ")
+				if len(parts) == 2 && parts[0] == "Bearer" {
+					tokenString = parts[1]
+				}
+			}
+		}
+
+		if tokenString == "" {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Autentikasi diperlukan: Token tidak ditemukan"})
 			c.Abort()
 			return
 		}
 
-		parts := strings.Split(authHeader, " ")
-		if len(parts) != 2 || parts[0] != "Bearer" {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Format Authorization header harus Bearer <token>"})
-			c.Abort()
-			return
-		}
-
-		tokenString := parts[1]
 		claims, err := jwt.ValidateToken(tokenString)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token tidak valid atau kedaluwarsa"})

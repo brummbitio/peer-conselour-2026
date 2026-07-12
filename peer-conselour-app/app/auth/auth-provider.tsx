@@ -100,14 +100,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [activeRoleOverride, setActiveRoleOverride] = useState<AuthRole | null>(null);
   const router = useRouter();
 
-  // Initialize auth state: Check for token in URL (OIDC redirect) or local storage
+  // Initialize auth state: Check for OIDC redirect query params, local storage, or httpOnly cookie session
   useEffect(() => {
     async function initAuth() {
       try {
         if (typeof window !== "undefined") {
           const params = new URLSearchParams(window.location.search);
           const tokenParam = params.get("token");
-          let justLoggedIn = false;
+          const ssoSuccess = params.get("sso") === "success";
+          let justLoggedIn = ssoSuccess;
+
           if (tokenParam) {
             localStorage.setItem(JWT_KEY, tokenParam);
             justLoggedIn = true;
@@ -116,8 +118,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             window.history.replaceState({}, document.title, cleanUrl === "?" ? window.location.pathname : cleanUrl);
           }
 
-          const token = localStorage.getItem(JWT_KEY);
-          if (token) {
+          if (ssoSuccess) {
+            // Clean up sso query param
+            const cleanUrl = window.location.pathname + window.location.search.replace(/[?&]sso=[^&]+/, "").replace(/^[?&]/, "?");
+            window.history.replaceState({}, document.title, cleanUrl === "?" ? window.location.pathname : cleanUrl);
+          }
+
+          // Coba panggil /api/auth/me. Jika httpOnly cookie ada, backend akan memvalidasinya secara otomatis.
+          try {
             const me = await api.get("/api/auth/me");
             setActualRole(me.role);
             const savedOverride = localStorage.getItem("ub_counseling_role_override") as AuthRole | null;
@@ -143,11 +151,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 router.replace("/my-counseling");
               }
             }
-          } else {
+          } catch (err) {
+            // Jika request /me gagal (belum login atau cookie kedaluwarsa)
             setUser(null);
             setActualRole(null);
             setActiveRoleOverride(null);
             localStorage.removeItem("ub_counseling_role_override");
+            localStorage.removeItem(JWT_KEY);
           }
         }
       } catch (err) {
@@ -288,7 +298,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try {
+      await api.post("/api/auth/logout", {});
+    } catch (err) {
+      console.error("Gagal melakukan API logout:", err);
+    }
     if (typeof window !== "undefined") {
       localStorage.removeItem(JWT_KEY);
       localStorage.removeItem("ub_counseling_role_override");

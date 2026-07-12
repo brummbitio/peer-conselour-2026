@@ -89,12 +89,21 @@ func (h *UploadHandler) UploadFile(c *gin.Context) {
 		return
 	}
 
+	// Extract uploader ID from context
+	userIDVal, exists := c.Get("userID")
+	var uploaderID *uint
+	if exists {
+		uid := userIDVal.(uint)
+		uploaderID = &uid
+	}
+
 	// 6. Save metadata to Database
 	attachment := &model.Attachment{
 		FileName:    finalFileName,
 		MinioObject: objectName,
 		MimeType:    finalMimeType,
 		FileSize:    int64(len(finalData)),
+		UploaderID:  uploaderID,
 		CreatedAt:   time.Now(),
 	}
 

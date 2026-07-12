@@ -8,6 +8,7 @@ type Attachment struct {
 	ID          uint      `gorm:"primaryKey;autoIncrement" json:"id"`
 	MessageID   *uint     `gorm:"default:null" json:"message_id,omitempty"`
 	TicketID    *uint     `gorm:"default:null" json:"ticket_id,omitempty"`
+	UploaderID  *uint     `gorm:"default:null" json:"uploader_id,omitempty"`
 	FileName    string    `gorm:"size:255;not null" json:"file_name"`
 	MinioObject string    `gorm:"size:255;not null" json:"-"` // Hidden in JSON for security
 	MimeType    string    `gorm:"size:100;not null" json:"mime_type"`

@@ -72,6 +72,9 @@ func main() {
 	// Terapkan CORS middleware ke semua route
 	router.Use(middleware.CORSMiddleware())
 
+	// Terapkan Rate Limiting middleware (20 request/detik, burst 40)
+	router.Use(middleware.RateLimitMiddleware(20, 40))
+
 	// Route uploads (dilindungi Auth token)
 	router.POST("/api/uploads", middleware.AuthMiddleware(), uploadHandler.UploadFile)
 
@@ -93,6 +96,7 @@ func main() {
 		if config.AppConfig.Env == "development" {
 			authRoutes.GET("/dev-login", authHandler.DevLogin)
 		}
+		authRoutes.POST("/logout", authHandler.Logout)
 
 		// Endpoint yang dilindungi JWT
 		protectedAuth := authRoutes.Group("")

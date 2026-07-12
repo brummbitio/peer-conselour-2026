@@ -112,6 +112,15 @@ func (h *TicketHandler) CreateTicket(c *gin.Context) {
 
 	// Hubungkan berkas lampiran dengan pesan pertama & tiket
 	if len(req.AttachmentIDs) > 0 {
+		var count int64
+		config.DB.Model(&model.Attachment{}).
+			Where("id IN ? AND uploader_id = ?", req.AttachmentIDs, studentID).
+			Count(&count)
+		if count != int64(len(req.AttachmentIDs)) {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Akses ditolak: Anda tidak memiliki hak akses atas file lampiran yang dikirim"})
+			return
+		}
+
 		config.DB.Model(&model.Attachment{}).
 			Where("id IN ?", req.AttachmentIDs).
 			Updates(map[string]interface{}{
@@ -265,6 +274,17 @@ func (h *TicketHandler) ReplyTicket(c *gin.Context) {
 
 	// Hubungkan berkas lampiran dengan pesan balasan & tiket
 	if len(req.AttachmentIDs) > 0 {
+		if role == "student" {
+			var count int64
+			config.DB.Model(&model.Attachment{}).
+				Where("id IN ? AND uploader_id = ?", req.AttachmentIDs, userID).
+				Count(&count)
+			if count != int64(len(req.AttachmentIDs)) {
+				c.JSON(http.StatusForbidden, gin.H{"error": "Akses ditolak: Anda tidak memiliki hak akses atas file lampiran yang dikirim"})
+				return
+			}
+		}
+
 		config.DB.Model(&model.Attachment{}).
 			Where("id IN ?", req.AttachmentIDs).
 			Updates(map[string]interface{}{
