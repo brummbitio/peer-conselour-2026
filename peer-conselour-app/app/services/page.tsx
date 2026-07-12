@@ -1,4 +1,6 @@
 import { CTASection, PageIntro, ServicesSection, SiteChrome } from "../components";
+import "../styles/content-pages.css";
+
 
 export default function ServicesPage() {
   return (

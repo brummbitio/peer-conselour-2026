@@ -2,6 +2,8 @@ import Link from "next/link";
 import { SiteChrome } from "../components";
 import { newsItems } from "../data";
 import NewsGrid from "./NewsGrid";
+import "../styles/content-pages.css";
+
 
 export default function NewsPage() {
   const featured = newsItems[0];

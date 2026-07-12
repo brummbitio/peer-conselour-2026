@@ -84,7 +84,8 @@ func (h *UploadHandler) UploadFile(c *gin.Context) {
 	reader := bytes.NewReader(finalData)
 	err = storage.UploadFile(ctx, objectName, reader, int64(len(finalData)), finalMimeType)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengunggah file ke storage: " + err.Error()})
+		log.Printf("Gagal mengunggah file ke storage: %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengunggah file ke storage"})
 		return
 	}
 

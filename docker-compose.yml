@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./peer-conselour-be
+      dockerfile: Dockerfile
+    container_name: peer_backend
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080" # Bind port 8080 ke localhost agar tidak terbuka ke internet publik secara langsung
+    env_file:
+      - ./peer-conselour-be/.env
+
+  frontend:
+    build:
+      context: ./peer-conselour-app
+      dockerfile: Dockerfile
+    container_name: peer_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./peer-conselour-app/.env.production
+    depends_on:
+      - backend

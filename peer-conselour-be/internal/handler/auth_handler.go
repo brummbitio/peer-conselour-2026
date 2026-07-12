@@ -1,9 +1,12 @@
 package handler
 
 import (
+	cryptoRand "crypto/rand"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -74,12 +77,23 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 // SSOLogin mengarahkan browser ke halaman login SSO IAM UB
 func (h *AuthHandler) SSOLogin(c *gin.Context) {
-	// Di web asli, kita redirect ke Keycloak IAM UB
+	// Generate random state untuk mencegah CSRF
+	stateBytes := make([]byte, 16)
+	if _, err := cryptoRand.Read(stateBytes); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal memulai SSO login"})
+		return
+	}
+	state := hex.EncodeToString(stateBytes)
+
+	// Simpan state di secure cookie (berlaku 5 menit)
+	c.SetCookie("oauth_state", state, 300, "/api/auth", "", true, true)
+
 	authURL := fmt.Sprintf(
-		"%s?client_id=%s&redirect_uri=%s&response_type=code&scope=openid+profile+email&state=ub-peer-counseling-state",
+		"%s?client_id=%s&redirect_uri=%s&response_type=code&scope=openid+profile+email&state=%s",
 		config.AppConfig.IAMURLAuthorize,
 		url.QueryEscape(config.AppConfig.IAMClientID),
 		url.QueryEscape(config.AppConfig.IAMRedirectURI),
+		state,
 	)
 
 	c.Redirect(http.StatusFound, authURL)
@@ -94,12 +108,30 @@ type IAMTokenResponse struct {
 type IAMUserInfo struct {
 	PreferredUsername string `json:"preferred_username"` // NIM mahasiswa / NIP staff
 	Name              string `json:"name"`
+	GivenName         string `json:"given_name"`
+	FamilyName        string `json:"family_name"`
 	Email             string `json:"email"`
 	Sub               string `json:"sub"`
+	NoHP              string `json:"no_hp"`
+	Alamat            string `json:"alamat"`
+	Kelamin           string `json:"kelamin"`
+	Fakultas          string `json:"fakultas"`
+	Prodi             string `json:"prodi"`
 }
 
 // SSOCallback memproses data setelah login sukses dari IAM UB
 func (h *AuthHandler) SSOCallback(c *gin.Context) {
+	// Validasi state parameter untuk mencegah CSRF
+	state := c.Query("state")
+	cookieState, err := c.Cookie("oauth_state")
+	if err != nil || state == "" || state != cookieState {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "State OAuth tidak valid atau telah kedaluwarsa"})
+		return
+	}
+
+	// Bersihkan cookie state setelah digunakan
+	c.SetCookie("oauth_state", "", -1, "/api/auth", "", true, true)
+
 	code := c.Query("code")
 	if code == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Authorization code tidak ditemukan"})
@@ -109,15 +141,26 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 	// 1. Tukar Authorization Code dengan Access Token
 	tokenData, err := h.exchangeCodeForToken(code)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Gagal menukar token IAM UB: %v", err)})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menukar token IAM UB"})
 		return
 	}
 
 	// 2. Ambil profil user dari UserInfo IAM UB
 	userInfo, err := h.getUserInfo(tokenData.AccessToken)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": fmt.Sprintf("Gagal mengambil profil IAM UB: %v", err)})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil profil IAM UB"})
 		return
+	}
+
+	// Resolve FullName dari given_name + family_name jika name kosong
+	resolvedName := userInfo.Name
+	if resolvedName == "" {
+		if userInfo.GivenName != "" || userInfo.FamilyName != "" {
+			resolvedName = strings.TrimSpace(userInfo.GivenName + " " + userInfo.FamilyName)
+		}
+	}
+	if resolvedName == "" {
+		resolvedName = "User SSO UB"
 	}
 
 	// 3. Pencocokan Ganda (Dual-Lookup): NIM -> Email
@@ -136,13 +179,30 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 
 	// 4. Proses Pendaftaran Otomatis (Auto-Provisioning) jika user tidak ditemukan
 	if user == nil {
+		var gender string
+		if userInfo.Kelamin == "L" {
+			gender = "Laki-laki"
+		} else if userInfo.Kelamin == "P" {
+			gender = "Perempuan"
+		}
+
+		var address string
+		if userInfo.Alamat != "-" {
+			address = userInfo.Alamat
+		}
+
 		newUser := &model.User{
-			NIM:       &nim,
-			Email:     userInfo.Email,
-			FullName:  userInfo.Name,
-			Role:      model.RoleStudent, // Default role pendaftar SSO baru
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
+			NIM:        &nim,
+			Email:      userInfo.Email,
+			FullName:   resolvedName,
+			Role:       model.RoleStudent, // Default role pendaftar SSO baru
+			Gender:     &gender,
+			Faculty:    &userInfo.Fakultas,
+			Department: &userInfo.Prodi,
+			Phone:      &userInfo.NoHP,
+			Address:    &address,
+			CreatedAt:  time.Now(),
+			UpdatedAt:  time.Now(),
 		}
 		// Buatkan password random agar akun lokal tidak bisa diakses sembarangan
 		randomPass, _ := bcrypt.GenerateFromPassword([]byte(time.Now().String()), bcrypt.DefaultCost)
@@ -156,10 +216,54 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 		}
 		user = newUser
 	} else {
-		// Update NIM jika sebelumnya kosong (User lama hasil migrasi)
-		if user.NIM == nil && nim != "" && !strings.Contains(nim, "@") {
+		// Update details secara paksa agar selalu sinkron dengan data resmi IAM UB (Source of Truth)
+		updated := false
+		if (user.NIM == nil || *user.NIM != nim) && nim != "" && !strings.Contains(nim, "@") {
 			user.NIM = &nim
-			_ = h.userRepo.Update(user)
+			updated = true
+		}
+		if user.FullName != resolvedName && resolvedName != "" {
+			user.FullName = resolvedName
+			updated = true
+		}
+		if user.Email != userInfo.Email && userInfo.Email != "" {
+			user.Email = userInfo.Email
+			updated = true
+		}
+		if userInfo.Kelamin != "" {
+			var gender string
+			if userInfo.Kelamin == "L" {
+				gender = "Laki-laki"
+			} else if userInfo.Kelamin == "P" {
+				gender = "Perempuan"
+			}
+			if gender != "" && (user.Gender == nil || *user.Gender != gender) {
+				user.Gender = &gender
+				updated = true
+			}
+		}
+		if userInfo.Fakultas != "" && (user.Faculty == nil || *user.Faculty != userInfo.Fakultas) {
+			user.Faculty = &userInfo.Fakultas
+			updated = true
+		}
+		if userInfo.Prodi != "" && (user.Department == nil || *user.Department != userInfo.Prodi) {
+			user.Department = &userInfo.Prodi
+			updated = true
+		}
+		if userInfo.NoHP != "" && (user.Phone == nil || *user.Phone != userInfo.NoHP) {
+			user.Phone = &userInfo.NoHP
+			updated = true
+		}
+		if userInfo.Alamat != "" && userInfo.Alamat != "-" && (user.Address == nil || *user.Address != userInfo.Alamat) {
+			user.Address = &userInfo.Alamat
+			updated = true
+		}
+		if updated {
+			errUpdate := h.userRepo.Update(user)
+			if errUpdate != nil {
+				// Don't print private DB error details to standard output, log generic sync failure
+				log.Println("Sinkronisasi data user gagal")
+			}
 		}
 	}
 
@@ -172,7 +276,7 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 
 	// 6. Redirect kembali ke Frontend (Next.js) dengan menyertakan token di URL
 	// Next.js akan membaca token dari query parameter ini lalu menyimpannya
-	frontendRedirectURL := fmt.Sprintf("http://localhost:3000/login?token=%s", token)
+	frontendRedirectURL := fmt.Sprintf("%s/?token=%s", config.AppConfig.FrontendURL, token)
 	c.Redirect(http.StatusFound, frontendRedirectURL)
 }
 
@@ -199,7 +303,7 @@ func (h *AuthHandler) exchangeCodeForToken(code string) (*IAMTokenResponse, erro
 
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("server IAM UB merespons status %d: %s", resp.StatusCode, string(bodyBytes))
+		return nil, fmt.Errorf("server IAM UB merespons status %d", resp.StatusCode)
 	}
 
 	var tokenResponse IAMTokenResponse
@@ -226,7 +330,7 @@ func (h *AuthHandler) getUserInfo(accessToken string) (*IAMUserInfo, error) {
 
 	bodyBytes, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("server IAM UB merespons status %d: %s", resp.StatusCode, string(bodyBytes))
+		return nil, fmt.Errorf("server IAM UB merespons status %d", resp.StatusCode)
 	}
 
 	var userInfo IAMUserInfo
@@ -344,6 +448,6 @@ func (h *AuthHandler) DevLogin(c *gin.Context) {
 		return
 	}
 
-	frontendRedirectURL := fmt.Sprintf("http://localhost:3000/login?token=%s", token)
+	frontendRedirectURL := fmt.Sprintf("%s/?token=%s", config.AppConfig.FrontendURL, token)
 	c.Redirect(http.StatusFound, frontendRedirectURL)
 }

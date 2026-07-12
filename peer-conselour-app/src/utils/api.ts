@@ -1,5 +1,17 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-const JWT_KEY = "ub_counseling_jwt";
+// =======================================================
+// ENVIRONMENT CONFIGURATION - SINGLE SOURCE OF TRUTH
+// Toggle comments to switch environments:
+// =======================================================
+
+// ✅ DEVELOPMENT (local)
+export const BASE_URL = "http://localhost:8080";
+
+// 🚀 PRODUCTION (host server)
+// export const BASE_URL = "https://api-konseling.ub.ac.id";
+
+// =======================================================
+
+export const JWT_KEY = "_secure_session_token_ub_counseling_state_v1_";
 
 export class ApiError extends Error {
   status: number;
@@ -71,4 +83,8 @@ export const api = {
 
   delete: (path: string, options?: RequestInit) =>
     request(path, { ...options, method: "DELETE" }),
+
+  // Upload multipart/form-data (do NOT set Content-Type — browser sets it with boundary)
+  upload: (path: string, formData: FormData) =>
+    request(path, { method: "POST", body: formData as any }),
 };

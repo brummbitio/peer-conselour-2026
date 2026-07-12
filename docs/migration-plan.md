@@ -453,7 +453,7 @@ Untuk memfasilitasi autentikasi pengguna secara aman dan terintegrasi dengan Uni
 Sistem login resmi terintegrasi dengan repositori data mahasiswa aktif dan staff UB menggunakan OAuth2/OIDC.
 
 * **Client ID**: `konseling`
-* **Client Secret**: `miYcc3322qb8qRAFW5YLgGg1x3yZEgxv`
+* **Client Secret**: `[CLIENT_SECRET_TERSEDIA_DI_ENV]`
 * **Realms URL**: `https://iam.ub.ac.id/auth/realms/ub`
 
 **Endpoints OIDC:**
@@ -501,9 +501,9 @@ Konfigurasi lingkungan server untuk development dan production:
 - **Environment**: A Panel (aaPanel) UB
 - **Akses Panel**:
   - **URL Host**: `https://panel-konseling.ub.ac.id/2kv8tq2z`
-  - **Username**: `be6h5uk6`
-  - **Password**: `3vh7bl3v`
-- **Catatan**: Data autentikasi panel backend ini dilarang diubah.
+  - **Username**: `[TERSEDIA_DI_PASSWORD_MANAGER]`
+  - **Password**: `[TERSEDIA_DI_PASSWORD_MANAGER]`
+- **Catatan**: Data autentikasi panel backend ini dilarang diubah dan hanya disimpan di password manager aman milik universitas.
 
 ---
 

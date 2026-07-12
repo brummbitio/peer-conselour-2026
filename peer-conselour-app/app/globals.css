@@ -1,8 +1,3 @@
-@import "../src/componentcomponents/ui/DomeGallery.css";
-@import "../src/componentcomponents/ui/Stepper.css";
-@import "./styles/account-ticket.css";
-@import "./styles/auth.css";
-@import "./styles/content-pages.css";
 
 :root {
   --background: #ffffff;
@@ -39,7 +34,7 @@ body {
   margin: 0;
   color: var(--text-primary);
   background: #ffffff;
-  font-family: var(--font-inter), sans-serif;
+
 }
 
 a {
@@ -134,7 +129,7 @@ select {
   align-items: center;
   justify-content: space-between;
   padding: 24px 64px;
-  transition: all 500ms ease;
+  transition: transform 500ms ease, padding 500ms ease, opacity 150ms ease, filter 150ms ease;
 }
 
 .nav-desktop-side {
@@ -571,7 +566,7 @@ body[style*="overflow: hidden"] .nav-mobile-bar {
 }
 
 .hero-copy-centered h1 {
-  max-width: 24ch;
+  max-width: 36ch;
   margin: 0 auto;
   font-size: clamp(2.15rem, 3.8vw, 3.2rem);
   color: var(--blue);
@@ -2567,7 +2562,7 @@ button.psiko-card {
     align-items: center;
     justify-content: space-between;
     padding: 16px 20px;
-    transition: all 500ms ease;
+    transition: transform 500ms ease, padding 500ms ease, opacity 150ms ease, filter 150ms ease;
   }
 
   .nav-mobile-brand-wrap {

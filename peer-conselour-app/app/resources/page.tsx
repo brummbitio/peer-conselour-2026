@@ -6,6 +6,8 @@ import { SiteChrome } from "../components";
 import { psikoedulasiItems } from "../data";
 import type { PsikoedulasiItem } from "../data";
 import PsikoedulasiGrid from "./PsikoedulasiGrid";
+import "../styles/content-pages.css";
+
 
 const TYPE_LABELS = {
   presentasi: "Presentasi",

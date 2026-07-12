@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SiteChrome } from "../../components";
 import { getResourceBySlug, resources } from "../../data";
+import "../../styles/content-pages.css";
+
 
 export function generateStaticParams() {
   return resources.map((resource) => ({

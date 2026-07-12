@@ -8,6 +8,8 @@ import { useRouter } from "next/navigation";
 import { useAuth, AuthRole } from "../../../auth/auth-provider";
 import { ticketStatusLabel } from "../../../tickets/mock-data";
 import { api } from "@/utils/api";
+import "../../../styles/account-ticket.css";
+
 
 export default function AdminDetailClient({ adminNim }: { adminNim: string }) {
   const { user, adminAccounts, updateAdmin } = useAuth();
@@ -247,7 +249,7 @@ export default function AdminDetailClient({ adminNim }: { adminNim: string }) {
               <div className={`my-counseling-card-top ticket-top-${ticket.status}`}>
                 <div className="my-counseling-ticket-head">
                   <span className={`ticket-status ticket-status-${ticket.status}`}>
-                    {ticketStatusLabel[ticket.status]}
+                    {ticketStatusLabel[ticket.status as import("../../../tickets/mock-data").TicketStatus] ?? ticket.status}
                   </span>
                 </div>
               </div>

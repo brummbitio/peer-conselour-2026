@@ -24,7 +24,23 @@ func main() {
 	// 2.3. Inisialisasi MinIO Object Storage
 	storage.InitMinio()
 
-	// 2.5. Auto Migrasi Database
+	// 2.5. Buat PostgreSQL ENUM types sebelum AutoMigrate
+	// GORM tidak otomatis membuat ENUM type, jadi harus dibuat manual
+	log.Println("Membuat ENUM types PostgreSQL...")
+	enumStatements := []string{
+		"DO $$ BEGIN CREATE TYPE user_role AS ENUM ('student', 'admin', 'superadmin'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
+		"DO $$ BEGIN CREATE TYPE ticket_status AS ENUM ('open', 'in_progress', 'resolved'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
+		"DO $$ BEGIN CREATE TYPE schedule_status AS ENUM ('pending_confirmation', 'scheduled', 'reschedule', 'cancelled', 'completed'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
+		"DO $$ BEGIN CREATE TYPE service_type AS ENUM ('tatap_muka', 'online'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
+	}
+	for _, stmt := range enumStatements {
+		if result := config.DB.Exec(stmt); result.Error != nil {
+			log.Printf("Peringatan saat membuat ENUM: %v", result.Error)
+		}
+	}
+	log.Println("ENUM types siap.")
+
+	// 2.6. Auto Migrasi Database
 	log.Println("Menjalankan migrasi database...")
 	err := config.DB.AutoMigrate(
 		&model.User{},
@@ -72,7 +88,11 @@ func main() {
 	{
 		authRoutes.GET("/sso", authHandler.SSOLogin)
 		authRoutes.GET("/callback", authHandler.SSOCallback)
-		authRoutes.GET("/dev-login", authHandler.DevLogin)
+		
+		// Hanya daftarkan dev-login di lingkungan development
+		if config.AppConfig.Env == "development" {
+			authRoutes.GET("/dev-login", authHandler.DevLogin)
+		}
 
 		// Endpoint yang dilindungi JWT
 		protectedAuth := authRoutes.Group("")
@@ -118,9 +138,15 @@ func main() {
 
 		// Manajemen Akun Admin / Peer Counselor
 		adminRoutes.GET("/admins", userHandler.AdminGetAllAdmins)
-		adminRoutes.POST("/admins", userHandler.AdminCreateAdmin)
-		adminRoutes.PUT("/admins/:id", userHandler.AdminUpdateAdmin)
-		adminRoutes.POST("/admins/:id/reset-password", userHandler.AdminResetPassword)
+		
+		// Khusus Superadmin (Pembuatan, Edit, & Reset Password Admin)
+		superAdminRoutes := adminRoutes.Group("")
+		superAdminRoutes.Use(middleware.SuperAdminOnly())
+		{
+			superAdminRoutes.POST("/admins", userHandler.AdminCreateAdmin)
+			superAdminRoutes.PUT("/admins/:id", userHandler.AdminUpdateAdmin)
+			superAdminRoutes.POST("/admins/:id/reset-password", userHandler.AdminResetPassword)
+		}
 	}
 
 	// 8. Jalankan server

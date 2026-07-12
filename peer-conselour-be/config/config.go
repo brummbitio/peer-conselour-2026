@@ -30,6 +30,7 @@ type Config struct {
 	MinioSecretKey  string
 	MinioBucketName string
 	MinioUseSSL     bool
+	FrontendURL     string
 }
 
 var AppConfig *Config
@@ -52,19 +53,20 @@ func LoadConfig() {
 		DBName:         getEnv("DB_NAME", "peer_counseling"),
 		DBSSLMode:      getEnv("DB_SSLMODE", "disable"),
 		IAMClientID:     getEnv("IAM_CLIENT_ID", "konseling"),
-		IAMClientSecret: getEnv("IAM_CLIENT_SECRET", "miYcc3322qb8qRAFW5YLgGg1x3yZEgxv"),
+		IAMClientSecret: getRequiredEnv("IAM_CLIENT_SECRET"),
 		IAMRedirectURI:  getEnv("IAM_REDIRECT_URI", "http://localhost:8080/api/auth/callback"),
 		IAMURLAuthorize: getEnv("IAM_URL_AUTHORIZE", "https://iam.ub.ac.id/auth/realms/ub/protocol/openid-connect/auth"),
 		IAMURLToken:     getEnv("IAM_URL_ACCESS_TOKEN", "https://iam.ub.ac.id/auth/realms/ub/protocol/openid-connect/token"),
 		IAMURLUserInfo:  getEnv("IAM_URL_USERINFO", "https://iam.ub.ac.id/auth/realms/ub/protocol/openid-connect/userinfo"),
-		JWTSecret:       getEnv("JWT_SECRET", "default_secret_key_konseling_ub_2026"),
+		JWTSecret:       getRequiredEnv("JWT_SECRET"),
 		JWTExpHours:     jwtExpHours,
-		Env:             getEnv("APP_ENV", "development"),
+		Env:             getEnv("APP_ENV", "production"), // Default to production for safety
 		MinioEndpoint:   getEnv("MINIO_ENDPOINT", "localhost:9000"),
 		MinioAccessKey:  getEnv("MINIO_ACCESS_KEY", "minioadmin"),
 		MinioSecretKey:  getEnv("MINIO_SECRET_KEY", "minioadmin"),
 		MinioBucketName: getEnv("MINIO_BUCKET_NAME", "counseling-attachments"),
 		MinioUseSSL:     getEnv("MINIO_USE_SSL", "false") == "true",
+		FrontendURL:     getEnv("FRONTEND_URL", "http://localhost:3000"),
 	}
 }
 
@@ -73,4 +75,12 @@ func getEnv(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
+}
+
+func getRequiredEnv(key string) string {
+	value, exists := os.LookupEnv(key)
+	if !exists || value == "" {
+		log.Fatalf("FATAL CONFIG ERROR: Environment variable '%s' is required but not set.", key)
+	}
+	return value
 }

@@ -53,3 +53,16 @@ func AdminOnly() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// SuperAdminOnly membatasi endpoint hanya untuk role superadmin
+func SuperAdminOnly() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		role, exists := c.Get("role")
+		if !exists || role != "superadmin" {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Akses ditolak: Hanya untuk superadmin"})
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}

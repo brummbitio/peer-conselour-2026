@@ -9,6 +9,9 @@ import StartCounselingModal from "../StartCounselingModal";
 import { isAdminRole, useAuth } from "../auth/auth-provider";
 import { ticketStatusLabel } from "../tickets/mock-data";
 import { api } from "@/utils/api";
+import "../styles/account-ticket.css";
+import "../styles/admin-dashboard.css";
+
 
 type TabMode = "active" | "history" | "profile";
 type ProfileDropdown = "gender" | "faculty" | null;
@@ -34,6 +37,12 @@ const FACULTY_OPTIONS = [
   "Fakultas Ilmu Budaya",
   "Fakultas Vokasi",
 ];
+
+const normalizeFaculty = (fac: string | undefined): string => {
+  if (!fac) return "";
+  if (fac.startsWith("Fakultas ") || fac === "Program Pascasarjana") return fac;
+  return "Fakultas " + fac;
+};
 
 export default function MyCounselingClient() {
   const { user, isReady, updateStudentProfile } = useAuth();
@@ -85,10 +94,16 @@ export default function MyCounselingClient() {
   }, [router, user?.role]);
 
   useEffect(() => {
+    if (isReady && !user) {
+      router.replace("/?login=true");
+    }
+  }, [isReady, user, router]);
+
+  useEffect(() => {
     if (!user) return;
     setProfileName(user.fullName);
     setProfileGender(user.gender ?? "");
-    setProfileFaculty(user.faculty ?? "");
+    setProfileFaculty(normalizeFaculty(user.faculty));
     setProfileDepartment(user.department ?? "");
     setProfileEmail(user.email ?? "");
     setProfilePhone(user.phone ?? "");
@@ -172,7 +187,7 @@ export default function MyCounselingClient() {
     if (!user) return;
     setProfileName(user.fullName);
     setProfileGender(user.gender ?? "");
-    setProfileFaculty(user.faculty ?? "");
+    setProfileFaculty(normalizeFaculty(user.faculty));
     setProfileDepartment(user.department ?? "");
     setProfileEmail(user.email ?? "");
     setProfilePhone(user.phone ?? "");
@@ -227,17 +242,13 @@ export default function MyCounselingClient() {
 
   if (!user) {
     return (
-      <section className="section site-width account-page">
-        <div className="account-login-prompt">
-          <h1>Konseling Saya</h1>
-          <p>
-            Kamu perlu login dulu untuk melihat tiket aktif dan riwayat
-            pendampingan.
-          </p>
-          <Link href="/" className="button button-primary">
-            Kembali ke Beranda
-          </Link>
+      <section className="section site-width account-page" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "450px", gap: "20px" }}>
+        <div className="loader-progress-bar" style={{ width: "140px" }}>
+          <div className="loader-progress-fill" />
         </div>
+        <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.7 }}>
+          Mengalihkan ke Beranda...
+        </span>
       </section>
     );
   }
@@ -558,7 +569,7 @@ export default function MyCounselingClient() {
       {isMounted && isProfileIncomplete ? createPortal(
         <div className="admin-add-modal" role="dialog" aria-modal="true" aria-label="Lengkapi profil Anda">
           <div className="admin-add-backdrop" style={{ background: "rgba(255, 255, 255, 0.4)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }} />
-          <article className="admin-add-panel" style={{ width: "min(100%, 500px)", padding: "24px", boxDamage: "none" }}>
+          <article className="admin-add-panel" style={{ width: "min(100%, 500px)", padding: "24px" }}>
             <header className="admin-add-header" style={{ marginBottom: "12px" }}>
               <h3 style={{ fontSize: "1.2rem", fontWeight: 700 }}>Lengkapi Profil Anda</h3>
             </header>

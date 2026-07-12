@@ -12,12 +12,10 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
-# local env
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+# local env - recursive matching for all directories
+**/.env
+**/.env.*
+!**/.env.example.template
 
 # typescript
 *.tsbuildinfo
@@ -29,3 +27,9 @@ package-lock 2.json
 # local project structure ignores
 wp_dzj2w(4).sql
 find_ticket.py
+
+# security & deployment exclusions
+*.zip
+*.sql
+.agents/AGENTS.md
+docs/migration-plan.md

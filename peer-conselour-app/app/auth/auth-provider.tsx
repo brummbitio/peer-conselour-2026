@@ -8,7 +8,8 @@ import {
   useMemo,
   useState,
 } from "react";
-import { api } from "@/utils/api";
+import { api, JWT_KEY } from "@/utils/api";
+import { useRouter } from "next/navigation";
 
 export type AuthUser = {
   role: AuthRole;
@@ -74,8 +75,7 @@ type AuthContextValue = {
   user: AuthUser | null;
   isReady: boolean;
   adminAccounts: AuthUser[];
-  login: (identifier: string, password: string) => Promise<AuthResult>;
-  register: (payload: RegisterPayload) => Promise<AuthResult>;
+
   createAdmin: (payload: CreateAdminPayload) => Promise<AuthResult>;
   updateAdmin: (payload: UpdateAdminPayload) => Promise<AuthResult>;
   resetAdminPassword: (payload: ResetAdminPasswordPayload) => Promise<AuthResult>;
@@ -85,7 +85,7 @@ type AuthContextValue = {
   switchRole: (role: AuthRole) => void;
 };
 
-const JWT_KEY = "ub_counseling_jwt";
+
 const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function isAdminRole(role?: AuthRole | null): role is "admin" | "superadmin" {
@@ -98,6 +98,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isReady, setIsReady] = useState(false);
   const [actualRole, setActualRole] = useState<AuthRole | null>(null);
   const [activeRoleOverride, setActiveRoleOverride] = useState<AuthRole | null>(null);
+  const router = useRouter();
 
   // Initialize auth state: Check for token in URL (OIDC redirect) or local storage
   useEffect(() => {
@@ -106,9 +107,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (typeof window !== "undefined") {
           const params = new URLSearchParams(window.location.search);
           const tokenParam = params.get("token");
-          
+          let justLoggedIn = false;
           if (tokenParam) {
             localStorage.setItem(JWT_KEY, tokenParam);
+            justLoggedIn = true;
             // Clean up token query param from browser address bar
             const cleanUrl = window.location.pathname + window.location.search.replace(/[?&]token=[^&]+/, "").replace(/^[?&]/, "?");
             window.history.replaceState({}, document.title, cleanUrl === "?" ? window.location.pathname : cleanUrl);
@@ -133,6 +135,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               phone: me.phone || undefined,
               address: me.address || undefined,
             });
+
+            if (justLoggedIn) {
+              if (me.role === "admin" || me.role === "superadmin") {
+                router.replace("/admin/dashboard");
+              } else {
+                router.replace("/my-counseling");
+              }
+            }
           } else {
             setUser(null);
             setActualRole(null);
@@ -185,15 +195,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     fetchAdmins();
   }, [user]);
 
-  // Stub function (SSO OIDC is initiated by redirecting to /api/auth/sso)
-  const login = useCallback(async (): Promise<AuthResult> => {
-    return { ok: false, message: "Login lokal dinonaktifkan. Silakan login menggunakan SSO UB." };
-  }, []);
 
-  // Stub function (SSO OIDC handles student auto-registration)
-  const register = useCallback(async (): Promise<AuthResult> => {
-    return { ok: false, message: "Pendaftaran mahasiswa otomatis dilakukan saat login SSO UB." };
-  }, []);
 
   const createAdmin = useCallback(async (payload: CreateAdminPayload): Promise<AuthResult> => {
     try {
@@ -317,8 +319,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user: contextUser,
       isReady,
       adminAccounts,
-      login,
-      register,
+
       createAdmin,
       updateAdmin,
       resetAdminPassword,
@@ -331,8 +332,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       contextUser,
       isReady,
       adminAccounts,
-      login,
-      register,
+
       createAdmin,
       updateAdmin,
       resetAdminPassword,

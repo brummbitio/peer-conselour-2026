@@ -27,8 +27,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} ${plusJakartaSans.variable}`}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} ${plusJakartaSans.variable}`}>
         <AuthProvider>
           {children}
           <Suspense fallback={null}>

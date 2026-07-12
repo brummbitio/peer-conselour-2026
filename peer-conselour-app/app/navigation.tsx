@@ -7,14 +7,16 @@ import { CircleUserRound, LayoutDashboard, LogOut, UserRound, ArrowLeftRight } f
 import { useEffect, useRef, useState } from "react";
 import { isAdminRole, useAuth } from "./auth/auth-provider";
 import { navItems } from "./data";
-import AuthModal from "./login/AuthModal";
+import StartCounselingModal from "./StartCounselingModal";
+
 
 export default function Navigation() {
   const pathname = usePathname();
   const { user, logout, actualRole, switchRole } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
   const firstName = user?.fullName.trim().split(" ")[0] || "Mahasiswa";
@@ -37,6 +39,17 @@ export default function Navigation() {
   }, [pathname]);
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("login") === "true" && !user) {
+        setIsLoginModalOpen(true);
+        const cleanUrl = window.location.pathname + window.location.search.replace(/[?&]login=[^&]+/, "").replace(/^[?&]/, "?");
+        window.history.replaceState({}, document.title, cleanUrl === "?" ? window.location.pathname : cleanUrl);
+      }
+    }
+  }, [user, pathname]);
+
+  useEffect(() => {
     if (!isAccountMenuOpen) return;
 
     const handleOutsideClick = (event: MouseEvent) => {
@@ -57,14 +70,7 @@ export default function Navigation() {
 
   return (
     <>
-      <AuthModal
-        open={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
-        onAuthenticated={() => {
-          setIsAuthOpen(false);
-          setIsAccountMenuOpen(false);
-        }}
-      />
+
 
       <nav className="nav-desktop">
         <div
@@ -182,7 +188,8 @@ export default function Navigation() {
             <button
               type="button"
               className="nav-desktop-cta"
-              onClick={() => setIsAuthOpen(true)}
+              onClick={() => setIsLoginModalOpen(true)}
+              style={{ cursor: 'pointer', border: 'none' }}
             >
               Login
             </button>
@@ -305,15 +312,21 @@ export default function Navigation() {
           <button
             type="button"
             className="button button-primary mobile-menu-cta"
+            style={{ textAlign: 'center', cursor: 'pointer' }}
             onClick={() => {
               setIsMobileMenuOpen(false);
-              setIsAuthOpen(true);
+              setIsLoginModalOpen(true);
             }}
           >
             Login
           </button>
         )}
       </div>
+
+      <StartCounselingModal
+        open={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+      />
     </>
   );
 }

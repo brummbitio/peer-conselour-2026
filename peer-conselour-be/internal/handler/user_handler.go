@@ -104,8 +104,12 @@ func (h *UserHandler) AdminCreateAdmin(c *gin.Context) {
 	passStr := string(hashedPassword)
 
 	role := model.RoleAdmin
-	if req.Role == string(model.RoleSuperAdmin) {
-		role = model.RoleSuperAdmin
+	if req.Role != "" {
+		if req.Role != string(model.RoleAdmin) && req.Role != string(model.RoleSuperAdmin) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Role tidak valid. Harus admin atau superadmin"})
+			return
+		}
+		role = model.UserRole(req.Role)
 	}
 
 	newAdmin := &model.User{
@@ -161,6 +165,10 @@ func (h *UserHandler) AdminUpdateAdmin(c *gin.Context) {
 		admin.Email = req.Email
 	}
 	if req.Role != "" {
+		if req.Role != string(model.RoleAdmin) && req.Role != string(model.RoleSuperAdmin) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Role tidak valid. Harus admin atau superadmin"})
+			return
+		}
 		admin.Role = model.UserRole(req.Role)
 	}
 

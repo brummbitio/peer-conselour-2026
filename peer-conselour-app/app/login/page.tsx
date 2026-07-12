@@ -1,10 +1,5 @@
-import { SiteChrome } from "../components";
-import AuthStepper from "./AuthStepper";
+import { redirect } from "next/navigation";
 
 export default function LoginPage() {
-  return (
-    <SiteChrome>
-      <AuthStepper />
-    </SiteChrome>
-  );
+  redirect("/?login=true");
 }

@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { isAdminRole, useAuth } from "../../../auth/auth-provider";
 import { api } from "@/utils/api";
+import "../../../styles/account-ticket.css";
+
 
 export default function StudentDetailClient({ studentId }: { studentId: string }) {
   const { user } = useAuth();

@@ -30,7 +30,7 @@
 
 ## Autentikasi & IAM UB
 - Sistem login menggunakan **Pure SSO UB** via IAM (OAuth2/OpenID Connect) untuk Mahasiswa & Staff aktif. Login lokal ditiadakan.
-- Konfigurasi Client ID: `konseling` / Client Secret: `miYcc3322qb8qRAFW5YLgGg1x3yZEgxv`.
+- Konfigurasi Client ID: `konseling` / Client Secret: `[DILINDUNGI_DI_ENV]`.
 - **Dev Bypass Login**: Rute `/api/auth/dev-login` dibuat untuk keperluan pengujian lokal (development). **WAJIB dipastikan dinonaktifkan/dihapus di lingkungan production/aaPanel** agar tidak memicu celah keamanan bypass login.
 
 ## Server & Deployment
@@ -38,8 +38,8 @@
 - Frontend: Plesk Hosting UB
 - Backend (Go): A Panel (aaPanel) UB
   - Host: `https://panel-konseling.ub.ac.id/2kv8tq2z`
-  - Username: `be6h5uk6` (jangan diubah)
-  - Password: `3vh7bl3v` (jangan diubah)
+  - Username: `[TERSEDIA_DI_PASSWORD_MANAGER]` (jangan diubah)
+  - Password: `[TERSEDIA_DI_PASSWORD_MANAGER]` (jangan diubah)
 
 
 
@@ -82,3 +82,27 @@ Untuk implementasi upload lampiran/file chat nantinya, ikuti panduan berikut dem
    - Kompres dan konversi semua gambar menjadi format **WebP** dengan kualitas **82%** sebelum dikirim ke MinIO.
 4. **Pencegahan Directory Traversal**:
    - Selalu ganti nama file asli menjadi **UUID v4** acak sebelum diunggah ke MinIO. Nama asli file hanya disimpan di database untuk kebutuhan tampilan.
+
+## Cara Pindah Environment (Dev / Prod)
+### 1. Frontend Configuration
+Konfigurasi API URL dan JWT Key di frontend terpusat pada satu file saja: **`src/utils/api.ts`**. Berkas `.env` di frontend tidak digunakan lagi untuk mempermudah peralihan.
+- **Untuk Development (Lokal)**: Aktifkan `export const BASE_URL = "http://localhost:8080"` di `src/utils/api.ts` dan komentari baris URL production.
+- **Untuk Production**: Komentari baris lokal dev, lalu uncomment `export const BASE_URL = "https://api-konseling.ub.ac.id"`.
+- Agen dilarang keras memecah konfigurasi URL ini kembali ke berkas `.env` eksternal lain di frontend agar tetap memiliki *single source of truth*.
+
+### 2. Backend Configuration (Golang BE)
+Konfigurasi environment backend berada di berkas **`peer-conselour-be/.env`**. Berkas ini memiliki dua blok konfigurasi utama (Dev dan Prod) yang dipisahkan dengan jelas:
+- **Untuk Development (Lokal)**: Aktifkan/uncomment semua baris di bawah blok `✅ DEVELOPMENT (Local Config)` dan berikan tanda komentar (`#`) pada baris di bawah blok `🚀 PRODUCTION (Server Config)`.
+- **Untuk Production**: Berikan tanda komentar (`#`) pada baris di bawah blok `✅ DEVELOPMENT` dan aktifkan/uncomment baris di bawah blok `🚀 PRODUCTION`.
+- Pengaturan IAM UB yang bersifat umum didefinisikan di bagian bawah berkas sebagai nilai bersama (shared configs).
+
+## Aturan Desain & Animasi Pop-up Modal
+1. **Penyelarasan Desain Modal**:
+   - Setiap modal baru atau yang dimodifikasi wajib mengikuti bahasa visual modal login/SSO (sudut membulat `border-radius: 22px` atau `24px`, bayangan lembut `box-shadow`, padding nyaman, dan struktur header yang bersih).
+   - Tajuk modal (*Header*) wajib menyertakan identitas branding resmi (Logo UB + nama unit *"Layanan Konseling - Universitas Brawijaya"*) dan tombol silang penutup bulat (`X` bulat) jika penutupan manual diizinkan.
+2. **Efek Animasi Pembukaan (Transition & Keyframes)**:
+   - **Backdrop (Overlay)**: Wajib dianimasikan memudar masuk (*fade-in*) menggunakan `authBackdropFade` atau `ticketBackdropFade` (transisi opacity dari `0` ke `1` selama `0.25s` dengan bezier `cubic-bezier(0.16, 1, 0.3, 1)`).
+   - **Panel Modal**: Wajib dianimasikan dengan efek melompat membesar halus (*scale zoom-in*) menggunakan `authPanelZoom` atau `ticketPanelZoom` (transisi scale dari `0.92` ke `1` dan opacity `0` ke `1` selama `0.32s` dengan bezier elastic `cubic-bezier(0.34, 1.56, 0.64, 1)`).
+   - Semua modal baru harus mengimplementasikan atau mewarisi kelas animasi ini agar transisi tampil seragam di seluruh aplikasi.
+
+

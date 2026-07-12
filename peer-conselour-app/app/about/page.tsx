@@ -1,6 +1,8 @@
 import { SiteChrome } from "../components";
 import DomeGallery from "../../src/componentcomponents/ui/DomeGallery.jsx";
 import TeamGrid from "./TeamGrid";
+import "../styles/content-pages.css";
+
 
 const aboutGalleryImages = [
   { src: "/hero/hero-photo.webp", alt: "Ruang dukungan yang tenang" },
