@@ -4,10 +4,10 @@
 // =======================================================
 
 // ✅ DEVELOPMENT (local)
-export const BASE_URL = "http://localhost:8080";
+// export const BASE_URL = "http://localhost:8080";
 
 // 🚀 PRODUCTION (host server)
-// export const BASE_URL = "https://api-konseling.ub.ac.id";
+export const BASE_URL = "https://api-konseling.ub.ac.id";
 
 // =======================================================
 
@@ -37,8 +37,8 @@ async function request(path: string, options: RequestInit = {}) {
     }
   }
 
-  // Set Content-Type to JSON if not already set and body is present
-  if (options.body && !headers.has("Content-Type")) {
+  // Set Content-Type to JSON if not already set, body is present, and body is not FormData
+  if (options.body && !(typeof FormData !== "undefined" && options.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
 

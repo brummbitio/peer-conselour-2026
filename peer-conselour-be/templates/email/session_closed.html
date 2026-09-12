@@ -1,0 +1,10 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s," .StudentName)}}
+<p style="margin:0 0 16px;">Sesi konseling Anda untuk tiket <strong>#{{.TicketCode}}</strong> ({{.Topic}}) telah resmi diselesaikan dan ditutup.</p>
+<p style="margin:0 0 16px;">Terima kasih banyak telah meluangkan waktu dan berproses bersama Layanan Konseling Universitas Brawijaya. Menyadari kebutuhan diri dan berani mencari bantuan adalah langkah yang sangat berharga.</p>
+<p style="margin:0 0 16px;">Catatan riwayat percakapan sesi ini tetap dapat Anda baca sewaktu-waktu pada akun Anda.</p>
+<p style="margin:0;">Jika di kemudian hari Anda menghadapi tantangan baru atau sekadar membutuhkan ruang aman untuk berdiskusi kembali, jangan ragu untuk membuka tiket baru bersama kami:</p>
+{{template "button" (button "Buka Tiket Layanan Konseling" .HomeURL)}}
+<p style="margin:0 0 16px;">Semoga hari Anda senantiasa diberi kelancaran dan kebahagiaan :)</p>
+{{template "signoff"}}
+{{end}}

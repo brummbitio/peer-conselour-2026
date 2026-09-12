@@ -1,0 +1,784 @@
+/* =============================================
+   PsychoeducationBento.css
+   Isolated from MagicBento.css entirely so
+   GlobalSpotlight cannot attach to .bento-section
+   and iframe pointer-events are never blocked.
+   ============================================= */
+
+/* CSS Variables (copy from MagicBento so cards still work) */
+.psycho-section {
+  --bento-white: #ffffff;
+  --bento-border-light: rgba(226, 232, 240, 0.8);
+  --bento-glow-blue: rgba(37, 99, 235, 0.25);
+
+  /* NOTE: NO overflow:hidden, NO isolation:isolate here
+     so iframe inside can receive pointer events */
+  position: relative;
+  max-width: 1040px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ---- Grid ---- */
+.card-grid.psycho-bento-grid {
+  display: grid;
+  gap: 0.9rem;
+  padding: 0.25rem 0;
+  width: 100%;
+}
+
+/* ---- Grid Layout ---- */
+@media (min-width: 1024px) {
+  .card-grid.psycho-bento-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .psycho-bento-card--video {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .psycho-bento-card--article-1 {
+    grid-column: span 1;
+    grid-row: span 1;
+    min-height: 220px;
+  }
+
+  .psycho-bento-card--article-2 {
+    grid-column: span 1;
+    grid-row: span 1;
+    min-height: 220px;
+  }
+
+  .psycho-bento-card--banner {
+    grid-column: span 3;
+    align-self: end;
+    min-height: auto;
+    height: auto;
+  }
+}
+
+/* ---- Hero modifier for /psikoedukasi page ---- */
+.psycho-section--hero {
+  max-width: 100% !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+@media (min-width: 1024px) {
+  .psycho-section--hero .card-grid.psycho-bento-grid {
+    grid-template-rows: repeat(2, 1fr);
+  }
+
+  .psycho-section--hero .psycho-bento-card--article-1,
+  .psycho-section--hero .psycho-bento-card--article-2 {
+    height: 100%;
+  }
+}
+
+/* Card in Archive Grid */
+.magic-bento-card.psycho-bento-grid-card {
+  min-height: 240px;
+  height: 100%;
+}
+
+/* ---- Safe Video Card ---- */
+/* NO overflow:hidden, NO isolation — both block iframe clicks */
+.psycho-video-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.75rem;
+  padding: 1.15rem;
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #ffffff;
+  position: relative;
+  /* Explicitly no overflow:hidden and no isolation */
+  transition: border-color 0.35s ease;
+}
+
+.psycho-video-card:hover {
+  border-color: rgba(45, 127, 154, 0.4);
+}
+
+/* Video wrapper: aspect ratio container, NO overflow:hidden */
+.psycho-bento-video__wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 14px;
+  background: #0f172a;
+  flex-shrink: 0;
+  /* NO overflow:hidden — it clips iframe and blocks clicks */
+}
+
+.psycho-bento-video__iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  border-radius: 14px;
+}
+
+.psycho-bento-video__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* ---- Article Cards (re-declare needed MagicBento styles) ---- */
+.magic-bento-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  min-height: 220px;
+  width: 100%;
+  border-radius: 20px;
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  background: #ffffff;
+  overflow: hidden;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+  box-shadow: none;
+  isolation: isolate;
+  transform-style: flat;
+  --glow-x: 50%;
+  --glow-y: 50%;
+  --glow-intensity: 0;
+  --glow-radius: 300px;
+}
+
+.magic-bento-card:hover {
+  border-color: rgba(45, 127, 154, 0.4);
+  box-shadow: none;
+}
+
+.magic-bento-card__link {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+  padding: 1.15rem;
+  text-decoration: none;
+  color: #ffffff;
+  position: relative;
+  z-index: 10;
+}
+
+.magic-bento-card__bg-wrap {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.magic-bento-card__bg-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.magic-bento-card__overlay {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 75%;
+  background: linear-gradient(
+    to top,
+    #ffffff 0%,
+    #ffffff 35%,
+    rgba(255, 255, 255, 0.85) 60%,
+    rgba(255, 255, 255, 0.35) 82%,
+    transparent 100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.magic-bento-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  position: relative;
+  z-index: 10;
+}
+
+.magic-bento-card__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: 9999px;
+  background: #2d7f9a;
+  border: none;
+  color: #ffffff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+
+.magic-bento-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 10;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.magic-bento-card__title {
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.35;
+  color: #0f172a;
+  margin: 0;
+  text-shadow: none;
+  transition: color 0.2s ease;
+}
+
+.magic-bento-card:hover .magic-bento-card__title {
+  color: #2d7f9a;
+}
+
+.magic-bento-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 0.35rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid rgba(15, 23, 42, 0.1);
+  font-size: 0.75rem;
+}
+
+.magic-bento-card__author {
+  color: #64748b;
+  font-weight: 500;
+}
+
+.magic-bento-card__readmore {
+  color: #2d7f9a;
+  font-weight: 700;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.magic-bento-card:hover .magic-bento-card__readmore {
+  color: #1f5f74;
+  transform: translateX(4px);
+}
+
+/* Banner Card */
+.magic-bento-card--banner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 0.85rem 1.5rem;
+  background: #2d7f9a;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  box-shadow: none;
+  text-decoration: none;
+  transition: none;
+  min-height: auto;
+  align-self: end;
+}
+
+.magic-bento-card--banner:hover {
+  background: #2d7f9a;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.magic-bento-banner__content {
+  display: flex;
+  align-items: center;
+}
+
+.magic-bento-banner__title {
+  font-size: 1.02rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.magic-bento-banner__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #2d7f9a;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+/* Stars Particle on article cards */
+.particle-container {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Border glow effect */
+.magic-bento-card--border-glow::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  background: radial-gradient(
+    var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(37, 99, 235, calc(var(--glow-intensity) * 0.9)) 0%,
+    rgba(59, 130, 246, calc(var(--glow-intensity) * 0.5)) 30%,
+    transparent 70%
+  );
+  border-radius: inherit;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 1;
+  z-index: 15;
+}
+
+/* ============================================================
+   Article Pop-up Modal (Dynamic Fit-Content 2-Column Layout)
+   ============================================================ */
+
+.article-pop-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(15, 23, 42, 0.72);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem;
+}
+
+.article-pop-modal-panel {
+  background: #ffffff;
+  border-radius: 24px;
+  width: fit-content;
+  max-width: min(94vw, 1060px);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* ---- Left Column: Media Container ---- */
+.article-modal-media-col {
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #f8fafc;
+}
+
+.article-modal-media-col--video {
+  background: #0f172a;
+}
+
+/* Slide & Book image */
+.article-modal-media-img {
+  height: min(72vh, 560px);
+  width: auto;
+  max-width: 100%;
+  display: block;
+  object-fit: contain;
+}
+
+/* Video Player Wrapper */
+.article-modal-video-wrap {
+  width: min(580px, 56vw);
+  aspect-ratio: 16 / 9;
+  min-height: 320px;
+  position: relative;
+  background: #0f172a;
+}
+
+.article-modal-video-iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* Navigation Chevrons */
+.article-modal-nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.14);
+  color: #0f172a;
+  z-index: 10;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.article-modal-nav-btn:hover {
+  transform: translateY(-50%) scale(1.08);
+  background: #ffffff;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.article-modal-nav-btn--prev {
+  left: 1rem;
+}
+
+.article-modal-nav-btn--next {
+  right: 1rem;
+}
+
+/* Slide Counter Badge */
+.article-modal-counter {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.65);
+  color: #ffffff;
+  padding: 0.35rem 0.85rem;
+  border-radius: 99px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* ---- Right Column: Info & Action ---- */
+.article-modal-info-col {
+  width: 350px;
+  flex: 0 0 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.85rem 1.75rem 1.5rem;
+  background: #ffffff;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.article-modal-info-main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 0.85rem;
+}
+
+.article-modal-title {
+  font-size: 1.16rem;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.42;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.article-modal-desc {
+  font-size: 0.88rem;
+  color: #64748b;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.article-modal-meta {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.article-modal-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #f1f5f9;
+  width: 100%;
+}
+
+.article-modal-close-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border: 1.5px solid #0f172a;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.article-modal-close-btn:hover {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+/* ============================================================
+   Mobile Responsive (< 768px)
+   ============================================================ */
+@media (max-width: 767px) {
+  .article-pop-modal-panel {
+    flex-direction: column;
+    width: 92vw;
+    max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .article-modal-media-col {
+    width: 100%;
+    height: auto;
+  }
+
+  .article-modal-media-img {
+    width: 100%;
+    height: auto;
+    max-height: 50vh;
+  }
+
+  .article-modal-video-wrap {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .article-modal-info-col {
+    width: 100%;
+    flex: 1 1 auto;
+    padding: 1.35rem 1.25rem 1.25rem;
+  }
+
+  .article-modal-footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+  }
+}
+
+/* =====================================================================
+   RESPONSIVE OPTIMIZATION — TABLET (<= 1023px) & MOBILE (<= 767px)
+   Blok @media (min-width: 1024px) di atas tetap menjadi satu-satunya
+   sumber layout desktop dan tidak disentuh sama sekali.
+   ===================================================================== */
+
+/* ── Bento grid: 2 kolom rapi di tablet ── */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .card-grid.psycho-bento-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  /* Video jadi kartu lebar penuh di atas, dua artikel berdampingan */
+  .psycho-bento-card--video {
+    grid-column: span 2;
+  }
+
+  .psycho-bento-card--article-1,
+  .psycho-bento-card--article-2 {
+    grid-column: span 1;
+    min-height: 240px;
+  }
+
+  .psycho-bento-card--banner {
+    grid-column: span 2;
+  }
+}
+
+/* ── Bento grid: 1 kolom di HP ── */
+@media (max-width: 639px) {
+  .card-grid.psycho-bento-grid {
+    grid-template-columns: 1fr;
+    gap: 0.85rem;
+  }
+
+  .psycho-bento-grid .magic-bento-card,
+  .magic-bento-card.psycho-bento-grid-card {
+    min-height: 230px;
+  }
+
+  .psycho-video-card {
+    padding: 0.9rem;
+    gap: 0.6rem;
+  }
+}
+
+/* ── Keterbacaan isi kartu bento ── */
+/* Selector sengaja di-compound (0,2,0) supaya menang terhadap deklarasi
+   dasar di MagicBento.css apa pun urutan bundling CSS-nya. */
+@media (max-width: 1023px) {
+
+  /* Rasio gambar & gradasi overlay dijaga agar judul tetap kontras */
+  .magic-bento-card .magic-bento-card__overlay {
+    height: 82%;
+  }
+
+  .magic-bento-card .magic-bento-card__content {
+    padding-top: 1.35rem;
+  }
+
+  .magic-bento-card .magic-bento-card__title,
+  .psycho-bento-video__info .magic-bento-card__title {
+    font-size: clamp(0.94rem, 2.4vw, 1.05rem);
+  }
+
+  .magic-bento-card .magic-bento-card__footer {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 0.72rem;
+  }
+
+  .magic-bento-card .magic-bento-card__link {
+    padding: 1rem;
+  }
+
+  /* Banner "Lihat selengkapnya": target sentuh nyaman */
+  .magic-bento-card.magic-bento-card--banner {
+    gap: 1rem;
+    padding: 0.75rem 1.1rem;
+    min-height: 60px;
+  }
+
+  .magic-bento-card--banner .magic-bento-banner__title {
+    font-size: clamp(0.9rem, 3vw, 1.02rem);
+  }
+
+  .magic-bento-card--banner .magic-bento-banner__btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ── Modal materi psikoedukasi ── */
+/* Layout 2 kolom hanya cukup ruang di desktop; di bawah 1024px
+   ditumpuk vertikal supaya tidak pernah terpotong horizontal. */
+@media (max-width: 1023px) {
+  .article-pop-modal-backdrop {
+    padding: 0.85rem;
+    align-items: flex-start;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .article-pop-modal-panel {
+    flex-direction: column;
+    width: min(94vw, 560px);
+    max-width: min(94vw, 560px);
+    max-height: min(92svh, calc(100svh - 1.7rem));
+    margin: auto;
+    border-radius: 20px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .article-modal-media-col {
+    width: 100%;
+    flex: 0 0 auto;
+    height: auto;
+  }
+
+  .article-modal-media-img {
+    width: 100%;
+    height: auto;
+    max-height: 54svh;
+    object-fit: contain;
+  }
+
+  .article-modal-video-wrap {
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+  }
+
+  .article-modal-info-col {
+    width: 100%;
+    flex: 1 1 auto;
+    padding: 1.25rem 1.15rem 1.15rem;
+    overflow-y: visible;
+  }
+
+  .article-modal-nav-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .article-modal-nav-btn--prev {
+    left: 0.6rem;
+  }
+
+  .article-modal-nav-btn--next {
+    right: 0.6rem;
+  }
+
+  .article-modal-title {
+    font-size: 1.08rem;
+  }
+
+  .article-modal-close-btn {
+    min-height: 48px;
+  }
+
+  .article-modal-footer {
+    margin-top: 1rem;
+    padding-top: 0.85rem;
+  }
+}
+
+@media (max-width: 479px) {
+  .article-pop-modal-panel {
+    width: 95vw;
+    max-width: 95vw;
+  }
+
+  .article-modal-media-img {
+    max-height: 46svh;
+  }
+
+  .article-modal-counter {
+    bottom: 0.6rem;
+    font-size: 0.74rem;
+  }
+}

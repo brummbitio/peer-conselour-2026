@@ -1,0 +1,8 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s," .StudentName)}}
+<p style="margin:0 0 16px;">Karena belum ada tanggapan selama 7 hari pada tiket konseling <strong>#{{.TicketCode}}</strong>, kami menginformasikan bahwa sesi konseling ini akan segera ditutup agar antrean layanan dapat dialihkan kepada rekan mahasiswa lainnya yang membutuhkan.</p>
+<p style="margin:0;">Jika Anda masih membutuhkan pendampingan konseling ini, silakan segera mengirimkan balasan sebelum tiket ditutup:</p>
+{{template "button" (button "Balas Sebelum Tiket Ditutup" .TicketURL)}}
+<p style="margin:0 0 16px;">Apabila tiket ini nantinya telah ditutup, Anda tidak perlu khawatir. Pintu kami selalu terbuka dan Anda selalu dipersilakan mengajukan tiket baru kapan saja Anda membutuhkan teman bercerita kembali.</p>
+{{template "signoff"}}
+{{end}}

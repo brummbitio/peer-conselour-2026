@@ -11,6 +11,11 @@ services:
       - "127.0.0.1:8080:8080" # Bind port 8080 ke localhost agar tidak terbuka ke internet publik secara langsung
     env_file:
       - ./peer-conselour-be/.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "s3-konseling.ub.ac.id:host-gateway"
+    depends_on:
+      - minio
 
   frontend:
     build:
@@ -24,3 +29,20 @@ services:
       - ./peer-conselour-app/.env.production
     depends_on:
       - backend
+
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - /www/wwwroot/minio_data:/data
+    environment:
+      # Credentials are injected from the host environment (.env / shell).
+      # The defaults below are placeholders only - never use them in production.
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-counseling_admin}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-minio_change_this_password}
+      MINIO_SERVER_URL: ${MINIO_SERVER_URL:-http://localhost:9000}
+    command: server /data --console-address ":9001"

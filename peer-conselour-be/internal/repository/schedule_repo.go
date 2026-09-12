@@ -50,3 +50,7 @@ func (r *ScheduleRepository) Create(schedule *model.CounselingSchedule) error {
 func (r *ScheduleRepository) Update(schedule *model.CounselingSchedule) error {
 	return r.db.Save(schedule).Error
 }
+
+func (r *ScheduleRepository) Delete(id uint) error {
+	return r.db.Delete(&model.CounselingSchedule{}, id).Error
+}

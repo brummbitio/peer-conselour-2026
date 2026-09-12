@@ -1,75 +1,64 @@
-import { SiteChrome } from "../components";
-import DomeGallery from "../../src/componentcomponents/ui/DomeGallery.jsx";
+import { SiteChrome, LandingCTASection } from "../components";
+import AboutHero from "./AboutHero";
 import TeamGrid from "./TeamGrid";
 import "../styles/content-pages.css";
 
-
-const aboutGalleryImages = [
-  { src: "/hero/hero-photo.webp", alt: "Ruang dukungan yang tenang" },
-  { src: "/articles/gentle-reset.svg", alt: "Materi pemulihan diri" },
-  { src: "/articles/ask-for-help.svg", alt: "Ajakan mencari bantuan" },
-  { src: "/articles/exam-anxiety.svg", alt: "Psikoedukasi kecemasan ujian" },
-  { src: "/posters/poster-1.png", alt: "Poster strategi belajar efektif" },
-  { src: "/branding/logo-konseling.png", alt: "Logo layanan konseling" },
-];
-
 const FAQ_ITEMS = [
   {
-    question: "Apa itu layanan psikoedukasi?",
+    question: "Siapa saja yang dapat menggunakan layanan ini?",
     answer:
-      "Psikoedukasi adalah materi edukatif yang membantu mahasiswa memahami kesehatan mental, strategi coping, relasi yang sehat, dan langkah mencari bantuan secara lebih dini.",
+      "Layanan ini dapat diakses oleh seluruh mahasiswa UB, baik jenjang S1, S2, maupun S3.",
   },
   {
-    question: "Apakah saya harus mengikuti konseling dulu untuk mengakses materi ini?",
-    answer:
-      "Tidak. Seluruh materi psikoedukasi dapat diakses secara mandiri sebagai sumber belajar awal, baik sebelum, selama, maupun tanpa sesi konseling.",
+    question: "Apakah layanan ini berbayar?",
+    answer: "Layanan ini bersifat gratis.",
   },
   {
-    question: "Apa bedanya materi video, presentasi, poster, dan Instagram?",
+    question: "Berapa kali saya dapat menggunakan layanan ini?",
     answer:
-      "Video cocok untuk penjelasan yang lebih naratif, presentasi berisi materi terstruktur, poster merangkum poin cepat, dan konten Instagram dirancang untuk edukasi singkat yang mudah dibagikan.",
+      "Pada umumnya tidak ada batasan dalam mengakses layanan ini. Pertemuan biasanya akan dilaksanakan satu minggu sekali dan pada beberapa kasus tertentu konselor akan merekomendasikan beberapa pertemuan untuk satu kasus. Untuk kasus yang membutuhkan lebih dari satu pertemuan, konselor dan mahasiswa akan menyepakati jadwal untuk pertemuan berikutnya. Jika pertemuan telah selesai, namun Anda merasa masih membutuhkan konseling, baik untuk kasus yang sama atau kasus yang berbeda, maka Anda dipersilakan untuk memesan jadwal konseling kembali.",
   },
   {
-    question: "Kapan saya sebaiknya lanjut menghubungi layanan konseling?",
+    question: "Apakah saya perlu mendapatkan pengantar dari dosen penasihat akademik?",
     answer:
-      "Jika kamu merasa kewalahan berkepanjangan, sulit fokus, cemas berlebihan, atau membutuhkan pendampingan yang lebih personal, kamu bisa lanjut menghubungi layanan konseling kampus.",
+      "Dosen penasihat akademik bisa merekomendasikan mahasiswanya untuk mendapatkan layanan ini, akan tetapi Anda tidak memerlukan surat pengantar dari dosen atau program studi untuk mengakses layanan ini.",
+  },
+  {
+    question: "Apa saja kasus yang dapat ditangani?",
+    answer:
+      "Kasus yang dapat ditangani adalah masalah pribadi sehari-hari, misalnya hubungan interpersonal dengan orang tua, teman, dosen, atau pasangan, masalah akademis, dan lainnya. Jika Anda terindikasi mengalami masalah klinis yang lebih berat, maka konselor dapat memberikan rujukan ke pihak yang dibutuhkan (misalnya rumah sakit, klinik, dsb.).",
+  },
+  {
+    question: "Siapa saja yang bisa mengakses data saya?",
+    answer:
+      "Seluruh data Anda bersifat rahasia dan hanya dapat diakses oleh konselor yang menangani Anda. Pada kasus tertentu (misalnya melibatkan bahaya pada diri sendiri dan orang lain secara fisik atau melanggar ketentuan hukum di Indonesia) maka konselor berhak untuk mengambil tindakan yang dirasa perlu. Apabila Anda dirujuk oleh pihak tertentu (misalnya dosen penasihat akademik), maka pihak tersebut memiliki hak untuk mengakses data Anda dalam batasan tertentu.",
+  },
+  {
+    question: "Apakah ada kemungkinan orang tua atau pihak lain yang berkaitan dengan saya dipanggil?",
+    answer: "Sesuai kebutuhan dan kesepakatan antara Anda dan konselor.",
+  },
+  {
+    question: "Apakah saya boleh mengganti konselor jika saya merasa tidak nyaman?",
+    answer: "Anda memiliki hak untuk mengganti konselor.",
+  },
+  {
+    question: "Apakah saya boleh berhenti melakukan konseling?",
+    answer:
+      "Konseling bersifat sukarela. Anda dipersilakan untuk berhenti atau menyudahi sesi konseling tanpa perlu memberikan alasan.",
+  },
+  {
+    question: "Apakah saya bisa membatalkan pertemuan konseling yang telah dijadwalkan?",
+    answer:
+      "Anda dipersilakan untuk membatalkan pertemuan yang telah dijadwalkan dengan memberitahukan maksimal 1 hari sebelumnya melalui e-mail. Jika Anda membatalkan tanpa pemberitahuan maka Anda tidak berhak mengakses layanan selama 1 (satu) bulan.",
   },
 ];
 
 export default function AboutPage() {
   return (
-    <SiteChrome>
-      <section className="section about-hero-shell about-hero-full">
-        <div className="about-hero-card about-hero-card-full">
-          <div className="about-hero-visual">
-            <div className="about-hero-title">
-              <p>Tentang Kami</p>
-            </div>
-            <div className="about-hero-blocker" aria-hidden="true" />
-            <div className="about-dome">
-              <DomeGallery
-                images={aboutGalleryImages}
-                fit={0.8}
-                minRadius={600}
-                maxVerticalRotationDeg={0}
-                segments={34}
-                dragDampening={2}
-                interactive={false}
-                grayscale
-                imageBorderRadius="26px"
-                overlayBlurColor="rgba(255,255,255,0.98)"
-                overlayBlurStrength={0}
-                autoRotateSpeed={0.08}
-              />
-            </div>
-          </div>
-        </div>
-      </section>
+    <SiteChrome cleanBackground={true}>
+      <AboutHero />
 
       <section className="section about-team-section">
-        <div className="about-team-header site-width">
-          <h2>Orang-orang di balik layanan konseling UB</h2>
-        </div>
         <TeamGrid />
       </section>
 
@@ -92,6 +81,8 @@ export default function AboutPage() {
           ))}
         </div>
       </section>
+
+      <LandingCTASection />
     </SiteChrome>
   );
 }

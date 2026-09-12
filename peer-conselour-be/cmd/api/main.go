@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
@@ -8,6 +9,9 @@ import (
 	"peer-conselour-be/internal/handler"
 	"peer-conselour-be/internal/repository"
 	"peer-conselour-be/internal/model"
+	"peer-conselour-be/internal/notification"
+	"peer-conselour-be/internal/worker"
+	"peer-conselour-be/pkg/email"
 	"peer-conselour-be/pkg/storage"
 	"peer-conselour-be/middleware"
 
@@ -30,6 +34,7 @@ func main() {
 	enumStatements := []string{
 		"DO $$ BEGIN CREATE TYPE user_role AS ENUM ('student', 'admin', 'superadmin'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
 		"DO $$ BEGIN CREATE TYPE ticket_status AS ENUM ('open', 'in_progress', 'resolved'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
+		"DO $$ BEGIN CREATE TYPE message_sender AS ENUM ('mahasiswa', 'admin'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
 		"DO $$ BEGIN CREATE TYPE schedule_status AS ENUM ('pending_confirmation', 'scheduled', 'reschedule', 'cancelled', 'completed'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
 		"DO $$ BEGIN CREATE TYPE service_type AS ENUM ('tatap_muka', 'online'); EXCEPTION WHEN duplicate_object THEN null; END $$;",
 	}
@@ -54,6 +59,32 @@ func main() {
 	}
 	log.Println("Migrasi database berhasil.")
 
+	// 2.7. Inisialisasi email notifikasi tiket
+	mailer, err := email.NewMailer(email.Settings{
+		Enabled:       config.AppConfig.EmailEnabled,
+		Host:          config.AppConfig.SMTPHost,
+		Port:          config.AppConfig.SMTPPort,
+		Secure:        config.AppConfig.SMTPSecure,
+		User:          config.AppConfig.SMTPUser,
+		Password:      config.AppConfig.SMTPPassword,
+		FromName:      config.AppConfig.SMTPFromName,
+		FromEmail:     config.AppConfig.SMTPFromEmail,
+		DevMode:       config.AppConfig.EmailDevMode,
+		DevOverrideTo: config.AppConfig.EmailDevOverrideTo,
+	})
+	if err != nil {
+		log.Fatalf("Konfigurasi email tidak valid: %v", err)
+	}
+	switch {
+	case !mailer.Enabled():
+		log.Println("Email notifikasi nonaktif (EMAIL_ENABLED=false).")
+	case mailer.DevMode():
+		log.Printf("Email notifikasi aktif (DEV MODE): semua email dialihkan ke %s.", mailer.DevOverrideTo())
+	default:
+		log.Println("PERHATIAN: Email notifikasi aktif (PRODUCTION): email dikirim ke mahasiswa asli.")
+	}
+	ticketNotifier := notification.NewTicketNotifier(mailer, config.AppConfig.EmailLinkBaseURL)
+
 	// 3. Inisialisasi Repository & Handler
 	userRepo := repository.NewUserRepository(config.DB)
 	ticketRepo := repository.NewTicketRepository(config.DB)
@@ -61,10 +92,13 @@ func main() {
 	scheduleRepo := repository.NewScheduleRepository(config.DB)
 
 	authHandler := handler.NewAuthHandler(userRepo)
-	ticketHandler := handler.NewTicketHandler(ticketRepo, messageRepo, userRepo)
+	ticketHandler := handler.NewTicketHandler(ticketRepo, messageRepo, userRepo, ticketNotifier)
 	scheduleHandler := handler.NewScheduleHandler(scheduleRepo)
 	userHandler := handler.NewUserHandler(userRepo, ticketRepo)
 	uploadHandler := handler.NewUploadHandler()
+
+	// 3.5. Background worker reminder email berjenjang (H+1, H+3, H+5, H+7)
+	go worker.NewReminderWorker(ticketRepo, ticketNotifier).Start(context.Background())
 
 	// 4. Setup router Gin
 	router := gin.Default()
@@ -115,6 +149,8 @@ func main() {
 		ticketRoutes.POST("", ticketHandler.CreateTicket)
 		ticketRoutes.GET("/:id", ticketHandler.GetTicketDetail)
 		ticketRoutes.POST("/:id/messages", ticketHandler.ReplyTicket)
+		ticketRoutes.PUT("/:id/messages/:messageId", ticketHandler.UpdateMessage)
+		ticketRoutes.DELETE("/:id/messages/:messageId", ticketHandler.DeleteMessage)
 		ticketRoutes.PUT("/:id/resolve", ticketHandler.StudentResolveTicket)
 	}
 
@@ -130,11 +166,14 @@ func main() {
 		adminRoutes.PUT("/tickets/:id", ticketHandler.AdminUpdateTicket)
 		adminRoutes.GET("/tickets/:id", ticketHandler.GetTicketDetail)
 		adminRoutes.POST("/tickets/:id/messages", ticketHandler.ReplyTicket)
+		adminRoutes.PUT("/tickets/:id/messages/:messageId", ticketHandler.UpdateMessage)
+		adminRoutes.DELETE("/tickets/:id/messages/:messageId", ticketHandler.DeleteMessage)
 
 		// Penjadwalan (Kanban / Kalender) Admin
 		adminRoutes.GET("/schedules", scheduleHandler.GetAllSchedules)
 		adminRoutes.POST("/schedules", scheduleHandler.CreateSchedule)
 		adminRoutes.PUT("/schedules/:id", scheduleHandler.UpdateSchedule)
+		adminRoutes.DELETE("/schedules/:id", scheduleHandler.DeleteSchedule)
 
 		// Manajemen Klien (Mahasiswa)
 		adminRoutes.GET("/students", userHandler.AdminGetAllStudents)

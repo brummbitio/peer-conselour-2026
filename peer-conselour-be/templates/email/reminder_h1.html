@@ -1,0 +1,8 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s," .StudentName)}}
+<p style="margin:0 0 16px;">Semoga hari Anda berjalan dengan baik :)</p>
+<p style="margin:0 0 16px;">Kami ingin mengingatkan bahwa kami telah mengirimkan respon pada tiket konseling <strong>#{{.TicketCode}}</strong> dan sedang menantikan kabar Anda.</p>
+<p style="margin:0;">Apabila ada hal yang ingin Anda ceritakan lebih lanjut atau tanggapi, ruang obrolan kami selalu terbuka untuk Anda:</p>
+{{template "button" (button "Buka Tiket Konseling" .TicketURL)}}
+{{template "signoff"}}
+{{end}}

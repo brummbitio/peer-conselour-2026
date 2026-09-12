@@ -1,0 +1,7 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s," .StudentName)}}
+<p style="margin:0 0 16px;">Kami memahami bahwa aktivitas perkuliahan atau urusan harian Anda mungkin sedang cukup padat, atau Anda mungkin sedang memerlukan waktu sejenak untuk diri sendiri.</p>
+<p style="margin:0;">Melalui pesan ini, kami hanya ingin memastikan kabar Anda dan mengingatkan bahwa sesi konseling <strong>#{{.TicketCode}}</strong> masih aktif menunggu respon Anda. Tidak perlu terburu-buru, balaslah saat Anda sudah merasa siap dan nyaman:</p>
+{{template "button" (button "Lanjutkan Sesi Konseling" .TicketURL)}}
+{{template "signoff"}}
+{{end}}

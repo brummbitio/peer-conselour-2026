@@ -10,6 +10,7 @@ import {
 } from "react";
 import { api, JWT_KEY } from "@/utils/api";
 import { useRouter } from "next/navigation";
+import { clearPortalCaches } from "../_portal/dataCache";
 
 export type AuthUser = {
   role: AuthRole;
@@ -153,6 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
           } catch (err) {
             // Jika request /me gagal (belum login atau cookie kedaluwarsa)
+            clearPortalCaches();
             setUser(null);
             setActualRole(null);
             setActiveRoleOverride(null);
@@ -308,6 +310,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.removeItem(JWT_KEY);
       localStorage.removeItem("ub_counseling_role_override");
     }
+    // Data tiket & mahasiswa yang di-cache di memori tidak boleh tertinggal setelah logout
+    clearPortalCaches();
     setUser(null);
     setActualRole(null);
     setActiveRoleOverride(null);

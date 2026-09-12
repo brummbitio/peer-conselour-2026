@@ -1,35 +1,53 @@
-# dependencies
+# ==========================================================
+# DEPENDENCIES & BUILD ARTIFACTS
+# ==========================================================
 node_modules/
-
-# next.js build
 .next/
 out/
+*.tsbuildinfo
 
-# misc
+# Go build output
+server-binaries/
+peer-conselour-be/server
+peer-conselour-be/tmp/
+
+# ==========================================================
+# MISC / OS
+# ==========================================================
 .DS_Store
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
-
-# local env - recursive matching for all directories
-**/.env
-**/.env.*
-!**/.env.example.template
-
-# typescript
-*.tsbuildinfo
-
-# accidental local files
 package-lock 2.json
 .vercel
 
-# local project structure ignores
-wp_dzj2w(4).sql
-find_ticket.py
+# ==========================================================
+# SECRETS & ENVIRONMENT (recursive, semua direktori)
+# ==========================================================
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.example.template
 
-# security & deployment exclusions
+# ==========================================================
+# DATA SENSITIF MAHASISWA & ARSIP DEPLOYMENT
+# osTicket dumps, SQL import/backup, dan paket deploy berisi
+# data pribadi maupun kredensial. Dilarang masuk git.
+# ==========================================================
 *.zip
 *.sql
-.agents/AGENTS.md
-docs/migration-plan.md
+new-db/
+find_ticket.py
+
+# Arsip aset besar yang tidak dirujuk kode (dipindahkan dari public/).
+# Disimpan lokal sebagai cadangan, tidak boleh ikut ke git maupun deploy.
+_asset-archive/
+graphify-out/
+
+# ==========================================================
+# DOKUMENTASI & AUDIT INTERNAL (lokal saja)
+# Berisi rencana migrasi, skema DB, dan temuan celah keamanan.
+# ==========================================================
+docs/
+security_audit_report.md

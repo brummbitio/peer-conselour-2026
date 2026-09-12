@@ -82,7 +82,7 @@ export const CalendarCell = ({ date, isHighlighted, showOutOfRangeDates = false,
                             // Disabled state.
                             isDisabled && "text-secondary/50",
                             // Focus ring, visible while the cell has keyboard focus.
-                            isFocusVisible ? "outline-2 outline-offset-2 outline-focus-ring" : "",
+                            isFocusVisible ? "ring-2 ring-offset-2 ring-focus-ring" : "",
                             // Hover state for cells in the middle of the range.
                             isSelected && !isDisabled && isRangeCalendar ? "font-medium" : "",
                             markedAsSelected && "bg-brand-solid font-medium text-white hover:bg-brand-solid_hover hover:text-white",

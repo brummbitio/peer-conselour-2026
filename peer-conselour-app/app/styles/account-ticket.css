@@ -1,3 +1,4 @@
+/* Desktop (> 1024px): tampilan asli dipertahankan. */
 .section.site-width.account-page {
   padding-top: 14px;
   width: calc(100% - 128px);
@@ -344,3 +345,106 @@
   font-size: 0.88rem;
 }
 
+/* ==========================================================================
+   RESPONSIVE CONTAINER HALAMAN AKUN & DETAIL TIKET
+   File ini di-import PALING AKHIR (setelah ticket-chat.css) pada
+   TicketDetailClient, jadi aturan lebar di sinilah yang menang. Sebelumnya
+   `width: calc(100% - 128px)` tanpa media query memangkas container jadi
+   ~180px di layar 360px sehingga bubble chat tercekik.
+   ========================================================================== */
+
+/* Tablet: 768px - 1024px */
+@media (max-width: 1024px) {
+  .section.site-width.account-page {
+    width: calc(100% - 48px);
+    padding-top: 10px;
+  }
+}
+
+/* Mobile: < 768px — lebar penuh. Padding tepi sudah disediakan .page-shell
+   (16px kiri-kanan), jadi container tidak menambah gutter lagi. */
+@media (max-width: 767px) {
+  .section.site-width.account-page {
+    width: 100%;
+    padding-top: 6px;
+    padding-inline: 0;
+  }
+
+  .ticket-page-header h1 {
+    font-size: clamp(1.4rem, 6vw, 1.9rem);
+  }
+
+  .account-heading h1 {
+    font-size: clamp(1.05rem, 4.6vw, 1.3rem);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE LAYOUT DASHBOARD ADMIN
+   Desktop (> 1024px) tetap sidebar vertikal 320px. Di bawahnya layout menjadi
+   satu kolom dan sidebar berubah menjadi tab bar horizontal yang bisa digeser.
+   Selector sengaja memakai dua class (.admin-layout / .admin-sidebar):
+   admin-dashboard.css (@media 1220px) dan ticket-chat.css (@media 760px) juga
+   menata .my-counseling-*, dan urutan muat CSS berbeda antarhalaman, jadi
+   specificity yang menjamin aturan ini menang. Halaman "Konseling Saya" milik
+   mahasiswa tidak ikut terpengaruh.
+   ========================================================================== */
+
+/* Tablet: 768px - 1024px */
+@media (max-width: 1024px) {
+  .my-counseling-layout.admin-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .my-counseling-tabs.admin-sidebar {
+    display: flex;
+    flex-direction: row;
+    gap: 6px;
+    padding: 6px;
+    border-radius: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .my-counseling-tabs.admin-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .my-counseling-tabs.admin-sidebar button {
+    flex: 0 0 auto;
+    width: auto;
+    min-height: 44px;
+    padding: 0 16px;
+    border-bottom: 0;
+    border-radius: 10px;
+    font-size: 0.92rem;
+  }
+
+  .my-counseling-tabs.admin-sidebar button.is-active {
+    background: rgba(84, 171, 199, 0.15);
+    box-shadow: none;
+  }
+}
+
+/* Mobile: < 768px */
+@media (max-width: 767px) {
+  .my-counseling-layout.admin-layout {
+    gap: 14px;
+    margin-top: 10px;
+  }
+
+  .my-counseling-tabs.admin-sidebar {
+    border-radius: 14px;
+  }
+
+  .my-counseling-tabs.admin-sidebar button {
+    min-height: 40px;
+    padding: 0 14px;
+    font-size: 0.85rem;
+  }
+}

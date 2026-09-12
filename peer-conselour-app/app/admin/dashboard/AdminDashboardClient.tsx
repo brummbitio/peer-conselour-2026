@@ -1,25 +1,17 @@
 "use client";
 
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { isAdminRole, useAuth } from "../../auth/auth-provider";
+import { PortalLoader } from "../../_portal/PortalLoader";
 import { useAdminDashboardData } from "./hooks/useAdminDashboardData";
 import type { AdminTab } from "./types";
 import "../../styles/admin-dashboard.css";
 import "../../styles/account-ticket.css";
 
 // Tab loader component
-const TabLoader = () => (
-  <div style={{ padding: "80px 0", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "16px" }}>
-    <div className="loader-progress-bar" style={{ width: "120px" }}>
-      <div className="loader-progress-fill" />
-    </div>
-    <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.7 }}>
-      Memuat Konten...
-    </span>
-  </div>
-);
+const TabLoader = () => <PortalLoader variant="inline" label="Memuat Konten..." />;
 
 // Lazy load tab components
 const AdminDashboardTab = dynamic(() => import("./components/AdminDashboardTab").then(mod => mod.AdminDashboardTab), {
@@ -47,8 +39,21 @@ const AdminProfileTab = dynamic(() => import("./components/AdminProfileTab").the
   ssr: false,
 });
 
+// Chunk semua tab dipanaskan saat browser idle, jadi perpindahan tab pertama
+// kali pun tidak menunggu unduhan JavaScript.
+function preloadTabChunks(includeAdminsTab: boolean) {
+  void import("./components/AdminDashboardTab");
+  void import("./components/AdminSchedulesTab");
+  void import("./components/AdminTicketsTab");
+  void import("./components/AdminStudentsTab");
+  void import("./components/AdminProfileTab");
+  if (includeAdminsTab) void import("./components/AdminAdminsTab");
+}
 
+const ADMIN_TABS: readonly AdminTab[] = ["dashboard", "schedules", "tickets", "students", "admins", "profile"];
 
+const isAdminTab = (value: string | null): value is AdminTab =>
+  value !== null && (ADMIN_TABS as readonly string[]).includes(value);
 
 export default function AdminDashboardClient() {
   const { user, isReady, adminAccounts, createAdmin } = useAuth();
@@ -56,15 +61,29 @@ export default function AdminDashboardClient() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const tab = (searchParams.get("tab") as AdminTab) || "dashboard";
+  const tabParam = searchParams.get("tab");
+  const urlTab: AdminTab = isAdminTab(tabParam) ? tabParam : "dashboard";
+  // Tab yang baru diklik ditampilkan seketika, tanpa menunggu URL tersinkron.
+  const [pendingTab, setPendingTab] = useState<AdminTab | null>(null);
+  const tab = pendingTab ?? urlTab;
+  // Sidebar langsung berpindah, sedangkan konten tab dirender dengan prioritas
+  // rendah: tab lama tetap tampil sampai tab baru siap (tanpa kedip loader).
+  const contentTab = useDeferredValue(tab);
+
+  useEffect(() => {
+    if (pendingTab !== null && urlTab === pendingTab) setPendingTab(null);
+  }, [urlTab, pendingTab]);
 
   const setTab = useCallback(
     (nextTab: AdminTab) => {
-      const params = new URLSearchParams(searchParams.toString());
+      setPendingTab(nextTab);
+      const params = new URLSearchParams(window.location.search);
       params.set("tab", nextTab);
-      router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      // history.replaceState tersinkron dengan useSearchParams (Next.js >= 14.1)
+      // tanpa round-trip RSC ke server seperti router.replace, jadi tidak ada jeda jaringan.
+      window.history.replaceState(null, "", `${pathname}?${params.toString()}`);
     },
-    [pathname, searchParams, router]
+    [pathname]
   );
 
   const [isMounted, setIsMounted] = useState(false);
@@ -79,10 +98,43 @@ export default function AdminDashboardClient() {
     adminStudents,
     liveSchedules,
     isLoading,
+    isRefreshing,
     refetch,
   } = useAdminDashboardData(user);
 
   const isSuperadmin = user?.role === "superadmin";
+
+  useEffect(() => {
+    if (!isMounted || isLoading) return;
+    if (typeof window.requestIdleCallback === "function") {
+      const idleId = window.requestIdleCallback(() => preloadTabChunks(isSuperadmin), { timeout: 2000 });
+      return () => window.cancelIdleCallback(idleId);
+    }
+    const timer = window.setTimeout(() => preloadTabChunks(isSuperadmin), 600);
+    return () => window.clearTimeout(timer);
+  }, [isMounted, isLoading, isSuperadmin]);
+
+  // Di tablet/mobile sidebar berubah jadi tab bar horizontal yang bisa digeser.
+  // Geser tab aktif ke tengah supaya tidak tersembunyi di luar layar (mis. saat
+  // dibuka lewat ?tab=profile). Di desktop sidebar vertikal tidak pernah
+  // overflow ke samping, jadi efek ini langsung berhenti.
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const sidebar = sidebarRef.current;
+    if (!sidebar || sidebar.scrollWidth <= sidebar.clientWidth) return;
+    const activeTab = sidebar.querySelector<HTMLElement>("button.is-active");
+    if (!activeTab) return;
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const tabRect = activeTab.getBoundingClientRect();
+    sidebar.scrollTo({
+      left:
+        sidebar.scrollLeft +
+        tabRect.left -
+        sidebarRect.left -
+        (sidebarRect.width - tabRect.width) / 2,
+      behavior: "smooth",
+    });
+  }, [tab, isMounted, isReady, isLoading]);
 
   useEffect(() => {
     if (isReady && (!user || !isAdminRole(user.role))) {
@@ -91,101 +143,67 @@ export default function AdminDashboardClient() {
   }, [isReady, user, router]);
 
   if (!isMounted || !isReady || !user || !isAdminRole(user.role)) {
-    return (
-      <section className="section site-width account-page" style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "450px", gap: "20px" }}>
-        <div className="loader-progress-bar" style={{ width: "140px" }}>
-          <div className="loader-progress-fill" />
-        </div>
-        <span style={{ fontSize: "11px", fontWeight: 700, color: "var(--text-secondary)", letterSpacing: "0.1em", textTransform: "uppercase", opacity: 0.7 }}>
-          Memverifikasi Sesi...
-        </span>
-      </section>
-    );
+    return <PortalLoader label="Memverifikasi Sesi..." />;
   }
 
+  // Hanya pemuatan PERTAMA yang boleh menutup layar. Sinkronisasi latar
+  // (mis. setelah drag & drop kanban) tidak boleh me-unmount pohon ini —
+  // unmount di tengah interaksi itulah penyebab layar berkedip sekaligus
+  // matinya event drag & drop.
   if (isLoading) {
-    return (
-      <section className="section site-width account-page">
-        <div style={{ textAlign: "center", padding: "120px 0", color: "#fff" }}>
-          <p style={{ fontSize: "1.1rem", marginBottom: "8px" }}>Memuat dashboard admin...</p>
-          <span style={{ fontSize: "0.9rem", opacity: 0.6 }}>Menghubungkan ke server lokal...</span>
-        </div>
-      </section>
-    );
+    return <PortalLoader label="Memuat dashboard admin..." />;
   }
+
+  const sidebarTabs: { id: AdminTab; label: string; visible: boolean }[] = [
+    { id: "dashboard", label: "Dashboard", visible: true },
+    { id: "schedules", label: "Jadwal Konseling", visible: true },
+    { id: "tickets", label: "Daftar Tiket", visible: true },
+    { id: "students", label: "Daftar Mahasiswa", visible: true },
+    { id: "admins", label: "Daftar Admin", visible: isSuperadmin },
+    { id: "profile", label: "Profil Saya", visible: true },
+  ];
 
   return (
-    <section className="section site-width account-page">
-      <div className="my-counseling-layout">
-        <aside className="my-counseling-tabs admin-sidebar">
-          <button
-            type="button"
-            className={tab === "dashboard" ? "is-active" : ""}
-            onClick={() => setTab("dashboard")}
-          >
-            Dashboard
-          </button>
-          <button
-            type="button"
-            className={tab === "schedules" ? "is-active" : ""}
-            onClick={() => setTab("schedules")}
-          >
-            Jadwal Konseling
-          </button>
-          <button
-            type="button"
-            className={tab === "tickets" ? "is-active" : ""}
-            onClick={() => setTab("tickets")}
-          >
-            Daftar Tiket
-          </button>
-          <button
-            type="button"
-            className={tab === "students" ? "is-active" : ""}
-            onClick={() => setTab("students")}
-          >
-            Daftar Mahasiswa
-          </button>
-          {isSuperadmin ? (
-            <button
-              type="button"
-              className={tab === "admins" ? "is-active" : ""}
-              onClick={() => setTab("admins")}
-            >
-              Daftar Admin
-            </button>
-          ) : null}
-          <button
-            type="button"
-            className={tab === "profile" ? "is-active" : ""}
-            onClick={() => setTab("profile")}
-          >
-            Profil Saya
-          </button>
+    <section className="section site-width account-page" data-refreshing={isRefreshing ? "true" : undefined}>
+      <div className="my-counseling-layout admin-layout">
+        <aside ref={sidebarRef} className="my-counseling-tabs admin-sidebar" aria-label="Menu dashboard admin">
+          {sidebarTabs
+            .filter((item) => item.visible)
+            .map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className={tab === item.id ? "is-active" : ""}
+                aria-current={tab === item.id ? "page" : undefined}
+                onClick={() => setTab(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
         </aside>
 
         <div
           className={`my-counseling-list admin-dashboard-main ${
-            tab === "schedules" ? "admin-dashboard-main-schedule" : ""
+            contentTab === "schedules" ? "admin-dashboard-main-schedule" : ""
           }`}
         >
-          {tab === "dashboard" ? (
+          {contentTab === "dashboard" ? (
             <AdminDashboardTab adminStats={adminStats} />
-          ) : tab === "schedules" ? (
+          ) : contentTab === "schedules" ? (
             <AdminSchedulesTab
               liveSchedules={liveSchedules}
               adminAccounts={adminAccounts}
               adminStudents={adminStudents}
               refetchSchedules={refetch}
             />
-          ) : tab === "tickets" ? (
+          ) : contentTab === "tickets" ? (
             <AdminTicketsTab
               adminTickets={adminTickets}
               adminStudents={adminStudents}
             />
-          ) : tab === "students" ? (
+          ) : contentTab === "students" ? (
             <AdminStudentsTab adminStudents={adminStudents} />
-          ) : tab === "admins" && isSuperadmin ? (
+          ) : contentTab === "admins" && isSuperadmin ? (
             <AdminAdminsTab
               adminAccounts={adminAccounts}
               isSuperadmin={isSuperadmin}

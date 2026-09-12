@@ -1,18 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ChevronRight, KeyRound, PencilLine, X } from "lucide-react";
+import { History, KeyRound, PencilLine } from "lucide-react";
 import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import type { FormEvent } from "react";
 import { isAdminRole, useAuth } from "../../../auth/auth-provider";
 import { api } from "@/utils/api";
+import { BackLink } from "../../../_portal/BackLink";
+import { CardScrollList } from "../../../_portal/CardScrollList";
+import { EmptyState } from "../../../_portal/EmptyState";
+import { Pagination } from "../../../_portal/Pagination";
+import { PortalLoader } from "../../../_portal/PortalLoader";
+import { PortalModal } from "../../../_portal/PortalModal";
+import { TicketListCard } from "../../../_portal/TicketListCard";
+import { formatShortDate } from "../../../_portal/format";
+import { PORTAL_BACK_TARGETS } from "../../../_portal/routes";
+import { getTicketCreatedAt, getUserDisplayName } from "../../../_portal/types";
+import type { ApiTicket, ApiUserSummary } from "../../../_portal/types";
+import { usePagination } from "../../../_portal/usePagination";
 import "../../../styles/account-ticket.css";
+import "../../../styles/admin-dashboard.css";
 
+type StudentDetailResponse = {
+  profile?: ApiUserSummary | null;
+  tickets?: ApiTicket[] | null;
+};
 
 export default function StudentDetailClient({ studentId }: { studentId: string }) {
-  const { user } = useAuth();
-  const [student, setStudent] = useState<any | null>(null);
-  const [studentTickets, setStudentTickets] = useState<any[]>([]);
+  const { user, isReady } = useAuth();
+  const isAdmin = !!user && isAdminRole(user.role);
+  const [student, setStudent] = useState<ApiUserSummary | null>(null);
+  const [studentTickets, setStudentTickets] = useState<ApiTicket[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [studentName, setStudentName] = useState("");
@@ -20,40 +38,41 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
   const [studentPassword, setStudentPassword] = useState("");
   const [formSuccess, setFormSuccess] = useState("");
   const [resetInfoMessage, setResetInfoMessage] = useState("");
-  const [isMounted, setIsMounted] = useState(false);
+
+  const { page, totalPages, totalItems, pageSize, pageItems, setPage } = usePagination(studentTickets);
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    // Data hanya diambil setelah sesi admin terverifikasi (hindari request 401/403).
+    if (!isAdmin) return;
+    const controller = new AbortController();
+    setIsLoading(true);
 
-  useEffect(() => {
-    async function loadStudent() {
-      try {
-        setIsLoading(true);
-        const data = await api.get(`/api/admin/students/${studentId}`);
-        setStudent(data.profile);
-        setStudentTickets(data.tickets || []);
-        if (data.profile) {
-          setStudentName(data.profile.full_name || data.profile.fullName);
-          setStudentEmail(data.profile.email);
+    api
+      .get(`/api/admin/students/${studentId}`, { signal: controller.signal })
+      .then((data: StudentDetailResponse) => {
+        const profile = data?.profile ?? null;
+        const tickets = data?.tickets;
+        setStudent(profile);
+        setStudentTickets(Array.isArray(tickets) ? tickets : []);
+        if (profile) {
+          setStudentName(getUserDisplayName(profile));
+          setStudentEmail(profile.email ?? "");
         }
-      } catch (err) {
+      })
+      .catch((err: unknown) => {
+        if (controller.signal.aborted) return;
         console.error("Gagal memuat profil mahasiswa:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    loadStudent();
-  }, [studentId]);
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setIsLoading(false);
+      });
 
-  useEffect(() => {
-    if (!isEditModalOpen) return;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = previousOverflow;
-    };
-  }, [isEditModalOpen]);
+    return () => controller.abort();
+  }, [studentId, isAdmin]);
+
+  if (!isReady) {
+    return <PortalLoader label="Memverifikasi Sesi..." />;
+  }
 
   if (!user) {
     return (
@@ -69,7 +88,7 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
     );
   }
 
-  if (!isAdminRole(user.role)) {
+  if (!isAdmin) {
     return (
       <section className="section site-width account-page">
         <div className="account-login-prompt">
@@ -84,13 +103,7 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
   }
 
   if (isLoading) {
-    return (
-      <section className="section site-width account-page">
-        <div style={{ textAlign: "center", padding: "80px 0", color: "#fff" }}>
-          <p>Memuat detail mahasiswa...</p>
-        </div>
-      </section>
-    );
+    return <PortalLoader label="Memuat detail mahasiswa..." />;
   }
 
   if (!student) {
@@ -99,8 +112,8 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
         <div className="account-login-prompt">
           <h1>Mahasiswa tidak ditemukan</h1>
           <p>Data mahasiswa dengan ID ini belum tersedia.</p>
-          <Link href="/admin/dashboard?tab=students" className="button button-primary">
-            Kembali ke Daftar Mahasiswa
+          <Link href={PORTAL_BACK_TARGETS.adminStudents.href} className="button button-primary">
+            {PORTAL_BACK_TARGETS.adminStudents.label}
           </Link>
         </div>
       </section>
@@ -110,31 +123,34 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
   const openEditModal = () => {
     setFormSuccess("");
     setResetInfoMessage("");
-    setStudentName(student.full_name || student.fullName);
-    setStudentEmail(student.email);
+    setStudentName(getUserDisplayName(student));
+    setStudentEmail(student.email ?? "");
     setStudentPassword("");
     setIsEditModalOpen(true);
   };
 
-  const submitEditStudent = (event: React.FormEvent<HTMLFormElement>) => {
+  const submitEditStudent = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormSuccess("UI dummy: data mahasiswa berhasil diperbarui di tampilan.");
     setIsEditModalOpen(false);
   };
 
+  const studentAddress =
+    student.address ||
+    student.origin_region ||
+    student.originRegion ||
+    student.malang_address ||
+    student.malangAddress ||
+    "-";
+
   return (
     <section className="section site-width account-page">
-      <div className="ticket-detail-top">
-        <Link href="/admin/dashboard?tab=students" className="ticket-back-link">
-          <ArrowLeft size={16} />
-          Kembali ke Daftar Mahasiswa
-        </Link>
-      </div>
+      <BackLink {...PORTAL_BACK_TARGETS.adminStudents} />
 
       <article className="admin-student-detail-card">
         <header className="admin-student-detail-header">
           <div className="admin-profile-identity-top">
-            <h1>{studentName || (student.full_name || student.fullName)}</h1>
+            <h1>{studentName || getUserDisplayName(student)}</h1>
             <button
               type="button"
               className="admin-admin-edit-trigger"
@@ -151,19 +167,19 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
         <div className="admin-student-detail-grid">
           <div className="admin-student-detail-row">
             <span>Jenis Kelamin</span>
-            <strong>{student.gender}</strong>
+            <strong>{student.gender || "-"}</strong>
           </div>
           <div className="admin-student-detail-row">
             <span>Fakultas</span>
-            <strong>{student.faculty}</strong>
+            <strong>{student.faculty || "-"}</strong>
           </div>
           <div className="admin-student-detail-row">
             <span>Jurusan</span>
-            <strong>{student.department}</strong>
+            <strong>{student.department || "-"}</strong>
           </div>
           <div className="admin-student-detail-row">
             <span>Alamat Email</span>
-            <strong>{studentEmail || student.email}</strong>
+            <strong>{studentEmail || student.email || "-"}</strong>
           </div>
           <div className="admin-student-detail-row">
             <span>Nomor HP</span>
@@ -171,142 +187,109 @@ export default function StudentDetailClient({ studentId }: { studentId: string }
           </div>
           <div className="admin-student-detail-row">
             <span>Alamat</span>
-            <strong>{student.address || student.origin_region || student.originRegion || student.malang_address || student.malangAddress || "-"}</strong>
+            <strong>{studentAddress}</strong>
           </div>
         </div>
       </article>
 
-      <section className="student-detail-tickets-section" style={{ marginTop: "36px" }}>
-        <h2 style={{ fontSize: "1.5rem", marginBottom: "16px", color: "var(--text-primary)", maxWidth: "none" }}>
+      <section className="student-detail-tickets-section" style={{ marginTop: "36px", display: "grid", gap: "16px" }}>
+        <h2 style={{ fontSize: "1.5rem", margin: 0, color: "var(--text-primary)", maxWidth: "none" }}>
           Riwayat Tiket Konseling
         </h2>
-        
+
         {studentTickets.length === 0 ? (
-          <div className="my-counseling-empty" style={{ padding: "32px 0", background: "rgba(255,255,255,0.02)", borderRadius: "16px", textAlign: "center", border: "1px solid rgba(255,255,255,0.06)" }}>
-            <p style={{ color: "var(--text-secondary)", margin: 0 }}>Mahasiswa ini belum pernah membuat tiket konseling.</p>
-          </div>
+          <EmptyState
+            icon={History}
+            title="Belum ada riwayat tiket."
+            description="Mahasiswa ini belum pernah membuat tiket konseling."
+          />
         ) : (
-          <div className="admin-scroll-list" style={{ display: "grid", gap: "12px" }}>
-            {studentTickets.map((ticket) => (
-              <article key={ticket.id} className="my-counseling-card my-counseling-card-ticket">
-                <div className={`my-counseling-card-top ticket-top-${ticket.status}`}>
-                  <div className="my-counseling-ticket-head">
-                    <span className={`ticket-status ticket-status-${ticket.status}`}>
-                      {ticket.status === "open" ? "Menunggu Balasan" : ticket.status === "in_progress" ? "Sudah Dibalas" : "Selesai"}
-                    </span>
-                  </div>
-                </div>
-                <div className="my-counseling-content my-counseling-content-ticket">
-                  <h2>{ticket.title}</h2>
-                  <p>
-                    {new Date(ticket.created_at || ticket.createdAt).toLocaleDateString("id-ID", {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    })} • {ticket.category}
-                  </p>
-                </div>
-                <Link
+          <div>
+            <CardScrollList ariaLabel="Riwayat tiket konseling mahasiswa" resetKey={page}>
+              {pageItems.map((ticket) => (
+                <TicketListCard
+                  key={ticket.id}
                   href={`/admin/tickets/${ticket.id}`}
-                  className="my-counseling-arrow-link"
-                  aria-label={`Buka tiket ${ticket.code}`}
-                >
-                  <span className="my-counseling-arrow" aria-hidden="true">
-                    <ChevronRight size={20} />
-                  </span>
-                </Link>
-              </article>
-            ))}
+                  code={ticket.code}
+                  title={ticket.title}
+                  subtitle={`${formatShortDate(getTicketCreatedAt(ticket))} • ${ticket.category}`}
+                  status={ticket.status}
+                  resolutionType={ticket.resolution_type}
+                  viewer="admin"
+                />
+              ))}
+            </CardScrollList>
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              totalItems={totalItems}
+              pageSize={pageSize}
+              onPageChange={setPage}
+              ariaLabel="Navigasi halaman riwayat tiket"
+            />
           </div>
         )}
       </section>
 
-      {isMounted && isEditModalOpen ? createPortal(
-        <div
-          className="admin-add-modal"
-          role="dialog"
-          aria-modal="true"
-          aria-label="Edit data mahasiswa"
-        >
-          <button
-            type="button"
-            className="admin-add-backdrop"
-            aria-label="Tutup pop up edit mahasiswa"
-            onClick={() => setIsEditModalOpen(false)}
-          />
-          <article className="admin-add-panel">
-            <header className="admin-add-header">
-              <h3>Edit Mahasiswa</h3>
-              <button
-                type="button"
-                className="admin-add-close"
-                aria-label="Tutup"
-                onClick={() => setIsEditModalOpen(false)}
-              >
-                <X size={18} />
-              </button>
-            </header>
-            <form className="admin-add-form" onSubmit={submitEditStudent}>
-              <label className="admin-add-field">
-                <span>Nama Lengkap</span>
-                <input
-                  type="text"
-                  className="admin-search-input"
-                  placeholder="Nama mahasiswa"
-                  value={studentName}
-                  onChange={(event) => setStudentName(event.target.value)}
-                  autoComplete="name"
-                />
-              </label>
-              <label className="admin-add-field">
-                <span>Email Mahasiswa</span>
-                <input
-                  type="email"
-                  className="admin-search-input"
-                  placeholder="mahasiswa@ub.ac.id"
-                  value={studentEmail}
-                  onChange={(event) => setStudentEmail(event.target.value)}
-                  autoComplete="email"
-                />
-              </label>
-              <label className="admin-add-field">
-                <span>Password Manual (Opsional)</span>
-                <input
-                  type="password"
-                  className="admin-search-input"
-                  placeholder="Minimal 8 karakter"
-                  value={studentPassword}
-                  onChange={(event) => setStudentPassword(event.target.value)}
-                  autoComplete="new-password"
-                />
-              </label>
-              <div className="admin-add-form-actions">
-                <button
-                  type="button"
-                  className="button button-secondary"
-                  onClick={() =>
-                    setResetInfoMessage(
-                      "UI dummy: email reset password akan dikirim ke mahasiswa ini."
-                    )
-                  }
-                >
-                  <KeyRound size={16} />
-                  Reset Password via Email
-                </button>
-                <button type="submit" className="button button-primary">
-                  Simpan Perubahan
-                </button>
-              </div>
-              {resetInfoMessage ? (
-                <p className="admin-form-success admin-reset-inline-message">
-                  {resetInfoMessage}
-                </p>
-              ) : null}
-            </form>
-          </article>
-        </div>,
-        document.body
-      ) : null}
+      <PortalModal open={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} title="Edit Mahasiswa">
+        <form className="admin-add-form" onSubmit={submitEditStudent}>
+          <label className="admin-add-field">
+            <span>Nama Lengkap</span>
+            <input
+              type="text"
+              className="admin-search-input"
+              placeholder="Nama mahasiswa"
+              value={studentName}
+              onChange={(event) => setStudentName(event.target.value)}
+              autoComplete="name"
+            />
+          </label>
+          <label className="admin-add-field">
+            <span>Email Mahasiswa</span>
+            <input
+              type="email"
+              className="admin-search-input"
+              placeholder="mahasiswa@ub.ac.id"
+              value={studentEmail}
+              onChange={(event) => setStudentEmail(event.target.value)}
+              autoComplete="email"
+            />
+          </label>
+          <label className="admin-add-field">
+            <span>Password Manual (Opsional)</span>
+            <input
+              type="password"
+              className="admin-search-input"
+              placeholder="Minimal 8 karakter"
+              value={studentPassword}
+              onChange={(event) => setStudentPassword(event.target.value)}
+              autoComplete="new-password"
+            />
+          </label>
+          <div className="admin-add-form-actions">
+            <button
+              type="button"
+              className="button button-secondary"
+              onClick={() =>
+                setResetInfoMessage(
+                  "UI dummy: email reset password akan dikirim ke mahasiswa ini."
+                )
+              }
+            >
+              <KeyRound size={16} />
+              Reset Password via Email
+            </button>
+            <button type="submit" className="button button-primary">
+              Simpan Perubahan
+            </button>
+          </div>
+          {resetInfoMessage ? (
+            <p className="admin-form-success admin-reset-inline-message">
+              {resetInfoMessage}
+            </p>
+          ) : null}
+        </form>
+      </PortalModal>
     </section>
   );
 }

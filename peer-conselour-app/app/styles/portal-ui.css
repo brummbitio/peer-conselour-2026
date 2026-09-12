@@ -1,0 +1,575 @@
+/* ==========================================================================
+   PORTAL UI BERSAMA — PORTAL MAHASISWA & ADMIN
+   Dipakai oleh komponen di app/_portal (modal, tombol kembali, paginasi,
+   list kartu, empty state, loader & skeleton). File ini diimpor langsung oleh
+   komponen-komponen tersebut, jadi halaman yang dibuka langsung (tanpa lewat
+   dashboard) tetap mendapatkan gaya yang sama.
+   ========================================================================== */
+
+/* Keyframes modal standar UB (identik dengan auth.css) */
+@keyframes authBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes authPanelZoom {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   MODAL STANDAR UB
+   ========================================================================== */
+
+.ub-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 160;
+  display: flex;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.ub-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: authBackdropFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+button.ub-modal-backdrop {
+  cursor: pointer;
+}
+
+.ub-modal-panel {
+  position: relative;
+  z-index: 1;
+  /* margin auto (bukan place-items: center) supaya panel yang lebih tinggi dari
+     layar tetap bisa di-scroll sampai ke bagian atasnya. */
+  margin: auto;
+  width: min(100%, 480px);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.14);
+  padding: 22px 26px 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  outline: none;
+  /* fill-mode "backwards": transform tidak menetap setelah animasi selesai,
+     sehingga popover position: fixed di dalam panel tetap mengacu ke viewport. */
+  animation: authPanelZoom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+.ub-modal-panel-sm {
+  width: min(100%, 430px);
+}
+
+.ub-modal-panel-lg {
+  width: min(100%, 620px);
+}
+
+.ub-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.ub-modal-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.ub-modal-brand-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.ub-modal-brand-text p {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.2;
+}
+
+.ub-modal-brand-text span {
+  display: block;
+  margin-top: 1px;
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+}
+
+.ub-modal-close {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  background: #ffffff;
+  color: var(--text-secondary, #64748b);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    border-color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ub-modal-close:hover:not(:disabled),
+.ub-modal-close:focus-visible {
+  color: var(--blue-dark);
+  border-color: rgba(84, 171, 199, 0.4);
+  background: rgba(84, 171, 199, 0.08);
+}
+
+.ub-modal-close:active:not(:disabled) {
+  transform: scale(0.94);
+}
+
+.ub-modal-close:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ub-modal-heading {
+  display: grid;
+  gap: 6px;
+}
+
+.ub-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #1e293b;
+}
+
+.ub-modal-description {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: #64748b;
+}
+
+.ub-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.ub-modal-error {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+@media (max-width: 767px) {
+  .ub-modal {
+    padding: 16px;
+  }
+
+  .ub-modal-panel {
+    padding: 18px 18px 20px;
+    border-radius: 22px;
+  }
+
+  .ub-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .ub-modal-actions > .button,
+  .ub-modal-actions > button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   TOMBOL KEMBALI
+   ========================================================================== */
+
+.portal-back-row {
+  margin-bottom: 10px;
+}
+
+.portal-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  /* Padding + margin negatif: area hover lebih lega tanpa menggeser teks dari
+     tepi kartu di bawahnya. */
+  margin-left: -10px;
+  padding: 6px 14px 6px 10px;
+  border-radius: 999px;
+  color: var(--blue-dark);
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 200ms cubic-bezier(0.16, 1, 0.3, 1),
+    color 200ms ease;
+}
+
+.portal-back-link svg {
+  flex-shrink: 0;
+  transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portal-back-link:hover,
+.portal-back-link:focus-visible {
+  background: rgba(84, 171, 199, 0.1);
+  color: #1f5f76;
+}
+
+.portal-back-link:hover svg,
+.portal-back-link:focus-visible svg {
+  transform: translateX(-3px);
+}
+
+.portal-back-link:focus-visible {
+  outline: 2px solid rgba(84, 171, 199, 0.5);
+  outline-offset: 2px;
+}
+
+@media (max-width: 767px) {
+  .portal-back-row {
+    margin-bottom: 2px;
+  }
+
+  .portal-back-link {
+    min-height: 44px;
+    font-size: 0.95rem;
+    line-height: 1.25;
+  }
+}
+
+/* ==========================================================================
+   LIST KARTU (MAKS. 3 KARTU) & PAGINASI
+   ========================================================================== */
+
+.portal-card-scroll {
+  max-height: 330px;
+  overflow-y: auto;
+  padding-right: 6px;
+  border-radius: 20px;
+}
+
+.portal-card-scroll:focus-visible {
+  outline: 2px solid rgba(84, 171, 199, 0.45);
+  outline-offset: 3px;
+}
+
+.portal-card-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.portal-card-scroll::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.35);
+  border-radius: 999px;
+}
+
+.portal-card-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.portal-card-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.portal-pagination {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.portal-pagination-step,
+.portal-pagination-page {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--blue-dark);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    transform 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.portal-pagination-step {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  background: #ffffff;
+}
+
+.portal-pagination-page {
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.portal-pagination-step:hover:not(:disabled),
+.portal-pagination-page:hover:not(.is-active) {
+  border-color: rgba(84, 171, 199, 0.4);
+  background: rgba(84, 171, 199, 0.1);
+}
+
+.portal-pagination-step:active:not(:disabled),
+.portal-pagination-page:active {
+  transform: scale(0.94);
+}
+
+.portal-pagination-step:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.portal-pagination-page.is-active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #ffffff;
+  cursor: default;
+}
+
+.portal-pagination-ellipsis {
+  min-width: 20px;
+  text-align: center;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.portal-pagination-summary {
+  flex-basis: 100%;
+  margin: 2px 0 0;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ==========================================================================
+   EMPTY STATE
+   ========================================================================== */
+
+.portal-empty {
+  border: 1px dashed rgba(17, 24, 39, 0.2);
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 32px 24px;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+.portal-empty-icon {
+  width: 48px;
+  height: 48px;
+  margin-bottom: 4px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: rgba(84, 171, 199, 0.1);
+  color: var(--blue-dark);
+}
+
+.portal-empty h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.portal-empty p {
+  margin: 0;
+  max-width: 44ch;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+.portal-empty .button {
+  margin-top: 6px;
+}
+
+/* ==========================================================================
+   LOADER & SKELETON
+   ========================================================================== */
+
+.portal-loader {
+  min-height: 420px;
+  padding: 48px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+
+.portal-loader.portal-loader-inline {
+  min-height: 0;
+  padding: 72px 0;
+  gap: 14px;
+}
+
+.portal-loader-bar {
+  position: relative;
+  width: 140px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: rgba(84, 171, 199, 0.16);
+}
+
+.portal-loader-bar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #54abc7, #8cc5d6);
+  animation: portalLoaderSlide 1.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+.portal-loader-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  opacity: 0.75;
+}
+
+@keyframes portalLoaderSlide {
+  from { left: -40%; }
+  to { left: 100%; }
+}
+
+.portal-skeleton-card {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.portal-skeleton-top {
+  padding: 15px 18px;
+  background: rgba(17, 24, 39, 0.03);
+  border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.portal-skeleton-body {
+  padding: 16px 18px 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.portal-skeleton-line {
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    rgba(17, 24, 39, 0.06) 25%,
+    rgba(17, 24, 39, 0.11) 37%,
+    rgba(17, 24, 39, 0.06) 63%
+  );
+  background-size: 400% 100%;
+  animation: portalShimmer 1.4s ease infinite;
+}
+
+.portal-skeleton-line.is-chip {
+  width: 112px;
+  height: 14px;
+}
+
+.portal-skeleton-line.is-title {
+  width: 62%;
+  height: 16px;
+}
+
+.portal-skeleton-line.is-meta {
+  width: 38%;
+}
+
+@keyframes portalShimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+
+/* ==========================================================================
+   STATUS "TIDAK TERTANGANI" (KHUSUS TAMPILAN ADMIN)
+   Kelas tunggal, sama seperti .ticket-status-open dkk., supaya reset
+   .my-counseling-card-top .ticket-status tetap berlaku di dalam kartu.
+   ========================================================================== */
+
+.ticket-status-unhandled {
+  border: 1px solid rgba(220, 38, 38, 0.26);
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.ticket-top-unhandled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+.ticket-status-banner-unhandled {
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ub-modal-backdrop,
+  .ub-modal-panel,
+  .portal-skeleton-line {
+    animation: none;
+  }
+
+  .portal-loader-bar::after {
+    animation-duration: 2.8s;
+  }
+
+  .portal-back-link,
+  .portal-back-link svg,
+  .ub-modal-close,
+  .portal-pagination-step,
+  .portal-pagination-page {
+    transition: none;
+  }
+}

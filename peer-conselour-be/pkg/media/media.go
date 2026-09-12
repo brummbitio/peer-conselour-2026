@@ -52,10 +52,14 @@ func DetectMimeType(r io.Reader) (string, []byte, error) {
 
 // ProcessImage resizes the image if it exceeds 2048px and encodes it to WebP at 82% quality.
 func ProcessImage(imgBytes []byte, mimeType string) ([]byte, error) {
-	// 1. Decode original image
-	img, _, err := image.Decode(bytes.NewReader(imgBytes))
+	// 1. Decode original image with auto-orientation
+	img, err := imaging.Decode(bytes.NewReader(imgBytes), imaging.AutoOrientation(true))
 	if err != nil {
-		return nil, errors.New("gagal melakukan decode gambar: " + err.Error())
+		var decErr error
+		img, _, decErr = image.Decode(bytes.NewReader(imgBytes))
+		if decErr != nil {
+			return nil, errors.New("gagal melakukan decode gambar: " + err.Error())
+		}
 	}
 
 	// 2. Resize image if either width or height exceeds 2048px

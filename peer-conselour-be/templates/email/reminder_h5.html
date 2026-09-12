@@ -1,0 +1,8 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s," .StudentName)}}
+<p style="margin:0 0 16px;">Sudah 5 hari sejak pesan terakhir dikirimkan oleh konselor pada tiket <strong>#{{.TicketCode}}</strong>.</p>
+<p style="margin:0 0 16px;">Kami ingin menanyakan apakah Anda masih ingin melanjutkan sesi konseling ini? Mohon berikan tanggapan singkat di portal konseling agar konselor dapat terus mendampingi proses Anda:</p>
+{{template "button" (button "Masuk ke Sesi Konseling" .TicketURL)}}
+<p style="margin:16px 0 0;font-size:13px;color:#64748b;">Jika Anda merasa kendala Anda saat ini sudah cukup teratasi dan ingin menyudahi sesi, Anda juga dapat menekan tombol &ldquo;Akhiri Sesi&rdquo; di dalam portal.</p>
+{{template "signoff"}}
+{{end}}

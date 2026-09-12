@@ -21,6 +21,7 @@ type TicketMessage struct {
 	SenderName string     `gorm:"size:255;not null" json:"sender_name"`
 	Body       string       `gorm:"type:text;not null" json:"body"`
 	CreatedAt  time.Time    `gorm:"not null" json:"created_at"`
+	EditedAt   *time.Time   `gorm:"default:null" json:"edited_at"`
 	Attachments []Attachment `gorm:"foreignKey:MessageID" json:"attachments,omitempty"`
 }
 

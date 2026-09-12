@@ -70,9 +70,11 @@ export default function PageTransitionLoader() {
       return () => clearTimeout(t);
     };
 
-    document.addEventListener("click", handleAnchorClick);
+    // Didaftarkan sekali saja: sebelumnya listener global ini dipasang
+    // ulang setiap kali state `loading` berubah.
+    document.addEventListener("click", handleAnchorClick, { passive: true });
     return () => document.removeEventListener("click", handleAnchorClick);
-  }, [loading]);
+  }, []);
 
   if (!loading) return null;
 

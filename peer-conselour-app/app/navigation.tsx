@@ -7,13 +7,18 @@ import { CircleUserRound, LayoutDashboard, LogOut, UserRound, ArrowLeftRight } f
 import { useEffect, useRef, useState } from "react";
 import { isAdminRole, useAuth } from "./auth/auth-provider";
 import { navItems } from "./data";
-import StartCounselingModal from "./StartCounselingModal";
+import dynamic from "next/dynamic";
+
+// Modal hanya muncul setelah interaksi -> keluarkan dari bundle awal.
+// ssr:false aman karena komponen ini di-portal ke document.body saat mounted.
+const StartCounselingModal = dynamic(() => import("./StartCounselingModal"), { ssr: false });
 
 
 export default function Navigation() {
   const pathname = usePathname();
   const { user, logout, actualRole, switchRole } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -23,20 +28,56 @@ export default function Navigation() {
   const isAdmin = isAdminRole(user?.role);
 
   useEffect(() => {
-    const handleScroll = () => {
+    setHasMounted(true);
+
+    // Listener pasif + throttle rAF: handler paling banyak jalan sekali
+    // per frame dan tidak pernah menahan scroll di thread utama.
+    let frame = 0;
+    const read = () => {
+      frame = 0;
       setIsScrolled(window.scrollY > 20);
     };
+    const handleScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(read);
+    };
 
-    handleScroll();
-    window.addEventListener("scroll", handleScroll);
+    read();
+    window.addEventListener("scroll", handleScroll, { passive: true });
 
-    return () => window.removeEventListener("scroll", handleScroll);
+    return () => {
+      if (frame) cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", handleScroll);
+    };
   }, []);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
     setIsAccountMenuOpen(false);
   }, [pathname]);
+
+  // Kunci scroll halaman selama drawer mobile/tablet terbuka (< 1024px saja,
+  // agar perilaku desktop sama sekali tidak berubah).
+  useEffect(() => {
+    if (!isMobileMenuOpen) return;
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(max-width: 1023px)").matches) return;
+
+    // Pakai class, bukan style inline: aturan blur global
+    // `body[style*="overflow: hidden"] .nav-mobile-bar` dipakai untuk modal
+    // dan tidak boleh ikut mem-blur bar saat drawer-nya sendiri terbuka.
+    document.body.classList.add("mobile-nav-locked");
+
+    const onEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsMobileMenuOpen(false);
+    };
+    window.addEventListener("keydown", onEscape);
+
+    return () => {
+      document.body.classList.remove("mobile-nav-locked");
+      window.removeEventListener("keydown", onEscape);
+    };
+  }, [isMobileMenuOpen]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -72,7 +113,7 @@ export default function Navigation() {
     <>
 
 
-      <nav className="nav-desktop">
+      <nav className={`nav-desktop ${!hasMounted ? "nav-no-transition" : ""}`}>
         <div
           className={`nav-desktop-side ${isScrolled ? "nav-desktop-side-hidden nav-desktop-side-left" : ""
             }`}
@@ -245,6 +286,11 @@ export default function Navigation() {
                 key={item.href}
                 href={item.href}
                 className={isActive ? "mobile-link-active" : ""}
+                /* Drawer tertutup memakai opacity:0, tapi elemennya tetap
+                   "terlihat" bagi IntersectionObserver milik Next -> tanpa
+                   gating ini setiap kunjungan mobile ikut mengunduh payload
+                   RSC seluruh rute yang tidak pernah dilihat pengguna. */
+                prefetch={isMobileMenuOpen ? undefined : false}
               >
                 {item.label}
               </Link>

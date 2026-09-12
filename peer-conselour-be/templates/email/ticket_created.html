@@ -1,0 +1,33 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s!" .StudentName)}}
+<p style="margin:0 0 16px;">Terima kasih telah berani melangkah dan membagikan cerita Anda. Kami ingin memberitahukan bahwa pengajuan sesi konseling Anda telah berhasil kami terima dan masuk ke dalam antrean sistem kami.</p>
+<p style="margin:0 0 12px;">Berikut adalah ringkasan tiket konseling Anda:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 20px;background-color:#f4f7fb;border:1px solid #dbe4ef;border-radius:10px;">
+  <tr>
+    <td style="padding:14px 18px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="font-family:'Segoe UI',Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:#1f2937;">
+        <tr>
+          <td class="email-summary-label" width="130" style="width:130px;padding:6px 0;color:#5b6b7f;vertical-align:top;">Nomor Tiket</td>
+          <td style="padding:6px 0;font-weight:700;color:#0f2b48;vertical-align:top;">#{{.TicketCode}}</td>
+        </tr>
+        <tr>
+          <td class="email-summary-label" width="130" style="width:130px;padding:6px 0;border-top:1px solid #e3e9f1;color:#5b6b7f;vertical-align:top;">Topik</td>
+          <td style="padding:6px 0;border-top:1px solid #e3e9f1;font-weight:600;vertical-align:top;">{{.Topic}}</td>
+        </tr>
+        <tr>
+          <td class="email-summary-label" width="130" style="width:130px;padding:6px 0;border-top:1px solid #e3e9f1;color:#5b6b7f;vertical-align:top;">Layanan</td>
+          <td style="padding:6px 0;border-top:1px solid #e3e9f1;font-weight:600;vertical-align:top;">{{.ServiceType}}</td>
+        </tr>
+        <tr>
+          <td class="email-summary-label" width="130" style="width:130px;padding:6px 0;border-top:1px solid #e3e9f1;color:#5b6b7f;vertical-align:top;">Tanggal Buat</td>
+          <td style="padding:6px 0;border-top:1px solid #e3e9f1;font-weight:600;vertical-align:top;">{{.CreatedAt}}</td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<p style="margin:0 0 16px;">Cerita dan informasi Anda terjaga kerahasiaannya bersama kami. Admin kami akan segera meninjau dan memberikan tanggapan awal pada tiket Anda.</p>
+<p style="margin:0;">Silakan pantau perkembangan tiket Anda melalui tombol di bawah ini:</p>
+{{template "button" (button "Buka Tiket Konseling" .TicketURL)}}
+{{template "signoff"}}
+{{end}}

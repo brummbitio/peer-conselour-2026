@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"time"
+
 	"peer-conselour-be/internal/model"
 
 	"gorm.io/gorm"
@@ -66,14 +68,24 @@ type CategoryCount struct {
 	Count    int64  `json:"count"`
 }
 
-type StatusCount struct {
-	Status string `json:"status"`
-	Count  int64  `json:"count"`
+// TicketOutcomeCounts adalah isi 4 kartu statistik dashboard admin
+type TicketOutcomeCounts struct {
+	Waiting    int64
+	InProgress int64
+	Handled    int64
+	Unhandled  int64
 }
 
 func (r *TicketRepository) GetDashboardStats() (map[string]interface{}, error) {
-	var statusCounts []StatusCount
-	err := r.db.Model(&model.Ticket{}).Select("status, count(*) as count").Group("status").Scan(&statusCounts).Error
+	var outcome TicketOutcomeCounts
+	// Tiket resolved lama (resolution_type NULL) dihitung sebagai tertangani
+	err := r.db.Model(&model.Ticket{}).Select(`
+		COUNT(*) FILTER (WHERE status = 'open') AS waiting,
+		COUNT(*) FILTER (WHERE status = 'in_progress') AS in_progress,
+		COUNT(*) FILTER (WHERE status = 'resolved' AND (resolution_type != ? OR resolution_type IS NULL)) AS handled,
+		COUNT(*) FILTER (WHERE status = 'resolved' AND resolution_type = ?) AS unhandled`,
+		model.ResolutionTidakTertangani, model.ResolutionTidakTertangani,
+	).Scan(&outcome).Error
 	if err != nil {
 		return nil, err
 	}
@@ -84,18 +96,58 @@ func (r *TicketRepository) GetDashboardStats() (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	var totalCount int64
-	err = r.db.Model(&model.Ticket{}).Count(&totalCount).Error
-	if err != nil {
-		return nil, err
-	}
-
 	// Format data agar mudah dibaca oleh frontend
 	stats := map[string]interface{}{
-		"total_tickets":   totalCount,
-		"status_counts":   statusCounts,
+		"waiting":         outcome.Waiting,
+		"in_progress":     outcome.InProgress,
+		"handled":         outcome.Handled,
+		"unhandled":       outcome.Unhandled,
 		"category_counts": categoryCounts,
+		"topic_stats":     categoryCounts,
 	}
 
 	return stats, nil
+}
+
+// FindReminderCandidates mengambil tiket yang boleh dikirimi reminder: sudah dibalas
+// konselor di web baru, belum dibalas mahasiswa, dan BUKAN hasil migrasi osTicket
+// (disaring lewat tanggal dibuat sekaligus prefix kode tiket web baru).
+func (r *TicketRepository) FindReminderCandidates(createdSince time.Time, codePrefix string, maxStep int) ([]model.Ticket, error) {
+	var tickets []model.Ticket
+	err := r.db.Preload("Student").
+		Where("status = ?", model.StatusInProgress).
+		Where("last_admin_reply_at IS NOT NULL").
+		Where("created_at >= ?", createdSince).
+		Where("code LIKE ?", codePrefix+"%").
+		Where("reminder_step < ?", maxStep).
+		Order("id ASC").
+		Find(&tickets).Error
+	return tickets, err
+}
+
+// ClaimReminderStep menaikkan reminder_step secara atomik (compare-and-set).
+// Mengembalikan false bila tiket sudah berubah sejak dibaca worker.
+func (r *TicketRepository) ClaimReminderStep(ticketID uint, fromStep int, at time.Time) (bool, error) {
+	result := r.db.Model(&model.Ticket{}).
+		Where("id = ? AND status = ? AND reminder_step = ?", ticketID, model.StatusInProgress, fromStep).
+		UpdateColumns(map[string]interface{}{
+			"reminder_step":    fromStep + 1,
+			"last_reminder_at": at,
+		})
+	return result.RowsAffected == 1, result.Error
+}
+
+// ReleaseReminderStep membatalkan klaim ketika email gagal terkirim, selama
+// step belum diubah oleh proses lain (misalnya direset karena mahasiswa membalas).
+func (r *TicketRepository) ReleaseReminderStep(ticketID uint, claimedStep int, previousReminderAt *time.Time) error {
+	var previous interface{}
+	if previousReminderAt != nil {
+		previous = *previousReminderAt
+	}
+	return r.db.Model(&model.Ticket{}).
+		Where("id = ? AND reminder_step = ?", ticketID, claimedStep).
+		UpdateColumns(map[string]interface{}{
+			"reminder_step":    claimedStep - 1,
+			"last_reminder_at": previous,
+		}).Error
 }

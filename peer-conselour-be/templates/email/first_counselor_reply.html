@@ -1,0 +1,8 @@
+{{define "content"}}
+{{template "greeting" (printf "Halo, %s!" .StudentName)}}
+<p style="margin:0 0 16px;">Admin Layanan Konseling UB telah membaca cerita Anda dan mengirimkan respon pada tiket <strong>#{{.TicketCode}}</strong>.</p>
+<p style="margin:0;">Jika Anda sudah memiliki waktu luang dan ruang yang nyaman, silakan membaca respon dari admin dan melanjutkan obrolan:</p>
+{{template "button" (button "Baca Tanggapan Konselor" .TicketURL)}}
+<p style="margin:0 0 16px;">Kami siap mendampingi prosesmu.</p>
+{{template "signoff"}}
+{{end}}

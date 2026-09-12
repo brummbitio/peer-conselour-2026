@@ -11,11 +11,18 @@ func CORSMiddleware() gin.HandlerFunc {
 		// Whitelist origin spesifik demi keamanan
 		allowedOrigins := map[string]bool{
 			"http://localhost:3000":          true,
+			"http://localhost:8080":          true,
+			"http://127.0.0.1:3000":          true,
+			"http://127.0.0.1:8080":          true,
+			"http://localhost":               true,
+			"http://127.0.0.1":               true,
 			"https://dev-konseling.ub.ac.id": true,
 			"https://konseling.ub.ac.id":     true,
 		}
 		origin := c.GetHeader("Origin")
 		if allowedOrigins[origin] {
+			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+		} else if origin != "" && (origin == "null" || origin == "http://localhost" || origin == "http://127.0.0.1") {
 			c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 		

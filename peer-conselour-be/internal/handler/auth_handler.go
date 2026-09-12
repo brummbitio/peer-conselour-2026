@@ -135,6 +135,7 @@ type IAMUserInfo struct {
 	Kelamin           string `json:"kelamin"`
 	Fakultas          string `json:"fakultas"`
 	Prodi             string `json:"prodi"`
+	Jurusan           string `json:"jurusan"`
 }
 
 // SSOCallback memproses data setelah login sukses dari IAM UB
@@ -209,6 +210,12 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 			address = userInfo.Alamat
 		}
 
+		// Fallback: Gunakan Prodi, jika kosong gunakan Jurusan
+		resolvedDept := userInfo.Prodi
+		if resolvedDept == "" {
+			resolvedDept = userInfo.Jurusan
+		}
+
 		newUser := &model.User{
 			NIM:        &nim,
 			Email:      userInfo.Email,
@@ -216,7 +223,7 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 			Role:       model.RoleStudent, // Default role pendaftar SSO baru
 			Gender:     &gender,
 			Faculty:    &userInfo.Fakultas,
-			Department: &userInfo.Prodi,
+			Department: &resolvedDept,
 			Phone:      &userInfo.NoHP,
 			Address:    &address,
 			CreatedAt:  time.Now(),
@@ -264,8 +271,13 @@ func (h *AuthHandler) SSOCallback(c *gin.Context) {
 			user.Faculty = &userInfo.Fakultas
 			updated = true
 		}
-		if userInfo.Prodi != "" && (user.Department == nil || *user.Department != userInfo.Prodi) {
-			user.Department = &userInfo.Prodi
+		// Update department dengan fallback prodi / jurusan
+		resolvedDept := userInfo.Prodi
+		if resolvedDept == "" {
+			resolvedDept = userInfo.Jurusan
+		}
+		if resolvedDept != "" && (user.Department == nil || *user.Department != resolvedDept) {
+			user.Department = &resolvedDept
 			updated = true
 		}
 		if userInfo.NoHP != "" && (user.Phone == nil || *user.Phone != userInfo.NoHP) {

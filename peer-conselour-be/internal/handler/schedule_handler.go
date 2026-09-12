@@ -153,3 +153,29 @@ func (h *ScheduleHandler) UpdateSchedule(c *gin.Context) {
 
 	c.JSON(http.StatusOK, schedule)
 }
+
+// DeleteSchedule menghapus jadwal konseling berdasarkan ID
+func (h *ScheduleHandler) DeleteSchedule(c *gin.Context) {
+	scheduleIDStr := c.Param("id")
+	scheduleIDVal, err := strconv.ParseUint(scheduleIDStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID jadwal tidak valid"})
+		return
+	}
+	scheduleID := uint(scheduleIDVal)
+
+	// Pastikan jadwal ada sebelum dihapus
+	_, err = h.scheduleRepo.FindByID(scheduleID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Jadwal tidak ditemukan"})
+		return
+	}
+
+	err = h.scheduleRepo.Delete(scheduleID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal menghapus jadwal konseling"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Jadwal berhasil dihapus", "id": scheduleID})
+}

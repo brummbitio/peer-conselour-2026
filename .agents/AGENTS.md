@@ -1,108 +1,264 @@
-# Project Rules — Website Layanan Konseling Mahasiswa UB
+# Project Rules — Layanan Konseling Mahasiswa Universitas Brawijaya
 
-## Bahasa
-- Komunikasi dengan user menggunakan **Bahasa Indonesia**.
-- Kode, komentar kode, dan nama variabel tetap dalam **Bahasa Inggris**.
+Berkas ini adalah sumber aturan utama bagi agen AI yang bekerja pada monorepo
+`peer-conselour-web`. Semua isi di bawah mencerminkan **kondisi kode saat ini**.
 
-## Konteks Utama
-- Selalu rujuk **`docs/migration-plan.md`** untuk konteks migrasi data dari osTicket lama.
-- File SQL dump osTicket lama tersedia di root project: `wp_dzj2w(4).sql` (208 MB, jangan di-commit ke git).
+> **PERINGATAN KREDENSIAL**
+> Dilarang keras menuliskan kredensial nyata (IAM Client Secret, password
+> database, password SMTP, kunci MinIO, JWT secret) pada berkas apa pun yang
+> terlacak Git — termasuk berkas ini, `README.md`, dan `docker-compose.yml`.
+> Gunakan `[DILINDUNGI_DI_ENV]` atau placeholder generik. Nilai sebenarnya
+> hanya boleh berada di `peer-conselour-be/.env` (di-ignore Git) dan password
+> manager tim.
 
-## Arsitektur
-- **Frontend**: Next.js (TypeScript) — repo ini (`peer-conselour-web`).
-- **Backend**: Golang — repo terpisah (belum dibuat).
-- **Database**: PostgreSQL (baru, skema dirancang dari nol).
-- Frontend dan backend adalah **dua repo terpisah**. Jangan mencampur kode backend ke repo ini.
+---
 
-## Data Migrasi
-- Sumber: osTicket (MariaDB), ~3.758 user, ~4.576 tiket, 32 staff/konselor.
-- Strategi: Migrasi **semua data**, field kosong biarkan NULL.
-- Password lama **tidak dimigrasi** — user harus reset di sistem baru.
+## 1. Identitas & Bahasa
 
-## Frontend (Repo Ini)
-- Saat ini frontend masih menggunakan **mock data** di `app/tickets/mock-data.ts` dan `app/auth/auth-provider.tsx`.
-- Nantinya mock data akan diganti dengan fetch ke API backend Go.
-- Jangan hapus mock data sampai backend dan API sudah siap.
+- Komunikasi dengan user: **Bahasa Indonesia**.
+- Kode, nama variabel, komentar kode, dan pesan commit: **Bahasa Inggris**.
+- Format pesan commit mengikuti **Conventional Commits**:
+  `feat:`, `fix:`, `refactor:`, `docs:`, `security:`, `chore:`.
 
-## Gaya Kode
-- Gunakan TypeScript strict untuk frontend.
-- Pertahankan semua komentar dan dokumentasi yang sudah ada kecuali diminta sebaliknya.
+---
 
-## Autentikasi & IAM UB
-- Sistem login menggunakan **Pure SSO UB** via IAM (OAuth2/OpenID Connect) untuk Mahasiswa & Staff aktif. Login lokal ditiadakan.
-- Konfigurasi Client ID: `konseling` / Client Secret: `[DILINDUNGI_DI_ENV]`.
-- **Dev Bypass Login**: Rute `/api/auth/dev-login` dibuat untuk keperluan pengujian lokal (development). **WAJIB dipastikan dinonaktifkan/dihapus di lingkungan production/aaPanel** agar tidak memicu celah keamanan bypass login.
+## 2. Arsitektur Monorepo
 
-## Server & Deployment
-- Domain Dev: `dev-konseling.ub.ac.id`
-- Frontend: Plesk Hosting UB
-- Backend (Go): A Panel (aaPanel) UB
-  - Host: `https://panel-konseling.ub.ac.id/2kv8tq2z`
-  - Username: `[TERSEDIA_DI_PASSWORD_MANAGER]` (jangan diubah)
-  - Password: `[TERSEDIA_DI_PASSWORD_MANAGER]` (jangan diubah)
+Satu repositori berisi frontend, backend, dan orkestrasi container.
 
+| Direktori | Peran | Stack |
+| --- | --- | --- |
+| `peer-conselour-app/` | Frontend web | Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS v4, Lucide React, Recharts, Motion (Framer), GSAP |
+| `peer-conselour-be/` | REST API | Go (go.mod: `go 1.26.4`), Gin, GORM, PostgreSQL, MinIO Go SDK v7, SMTP mailer |
+| `docker-compose.yml` | Orkestrasi lokal/staging | Docker Compose: `backend`, `frontend`, `minio` |
+| `.agents/` | Aturan agen (berkas ini) | — |
 
+Catatan penting:
 
-## Catatan Perubahan & Perkembangan Terakhir (06 Juli 2026)
+- Frontend dan backend berada di **satu repo (monorepo)**. Aturan lama "dua repo
+  terpisah" sudah tidak berlaku.
+- Backend Go **sudah selesai dibangun dan berjalan**; tidak ada lagi mock data
+  di frontend — seluruh data diambil dari API Go melalui `src/utils/api.ts`.
+- Database PostgreSQL sudah terisi hasil migrasi dari osTicket lama.
 
-### 1. Paginasi & Batasan Layout List Kartu (Frontend)
-Mengimplementasikan paginasi sisi klien (10 item per halaman) dan membatasi tinggi kontainer setinggi maksimal 3 kartu (`maxHeight: "330px"`, `overflowY: "auto"`) pada empat area daftar utama di dashboard admin:
-* **Daftar Tiket** (Dashboard)
-* **Daftar Mahasiswa** (Dashboard) — *Bonus memperbaiki render nama lengkap mahasiswa yang sebelumnya kosong akibat kompatibilitas properti GORM/JSON*.
-* **Daftar Admin** (Dashboard) — *Membuka pembatasan hardcode slice 5 data sehingga seluruh 31 akun admin terdaftar dapat diakses*.
-* **Daftar Tiket Tugas Admin** (Halaman Detail Admin) — *Bonus memperbaiki render tanggal lokal dan nama mahasiswa pembuat tiket*.
+### Struktur backend (`peer-conselour-be/`)
 
-### 2. Format Chat Detail Tiket (Pembersihan Tag HTML)
-Menyisipkan fungsi deteksi format pesan dinamis (`renderMessageBody`) pada halaman detail chat percakapan tiket:
-* Pesan baru bermigrasi bertipe HTML (osTicket lama) dirender secara native (`dangerouslySetInnerHTML`) agar tag HTML mentah seperti `<p>` tidak tampil sebagai teks literal.
-* Pesan teks biasa (baru) tetap dirender menggunakan fungsi pembantu link URL otomatis.
-* Mengatur margin paragraf HTML di dalam chat bubble agar rapi melalui stylesheet `account-ticket.css`.
+```
+cmd/api/main.go              Entry point: config, DB, MinIO, ENUM, AutoMigrate, worker, router
+config/                      config.go (env loader) + database.go (koneksi GORM)
+internal/handler/            auth, ticket, schedule, user, upload
+internal/model/              user, ticket, message, schedule, attachment
+internal/repository/         user, ticket, message, schedule (akses GORM)
+internal/notification/       ticket_notifier.go — dispatch email asinkron
+internal/worker/             reminder_worker.go — reminder berjenjang H+1/H+3/H+5/H+7
+middleware/                  auth_middleware, cors_middleware, rate_limit
+pkg/email/                   mailer.go, ticket_emails.go
+pkg/jwt/                     jwt.go — sign & verify token
+pkg/media/                   media.go — magic-number detection, resize, WebP encode
+pkg/storage/                 minio.go — client init & presigned URL
+templates/email/             Template HTML email (embed.go)
+```
 
-### 3. Otomatisasi Alur Status Tiket (Backend & Database)
-* **Backend Go**: Memperbarui logika update status tiket pada fungsi `ReplyTicket` (`internal/handler/ticket_handler.go`) agar status otomatis beralih:
-  * Menjadi `in_progress` (Sudah Dibalas) jika dibalas oleh Admin/Konselor.
-  * Kembali menjadi `open` (Menunggu Balasan) jika dibalas oleh Mahasiswa (agar masuk kembali ke antrean admin).
-* **Pembersihan Database PostgreSQL**: Menjalankan kueri pembaruan massal (*bulk update*) di PostgreSQL untuk mengubah status **1.977 tiket** lama dari `open` menjadi `in_progress` karena terdeteksi sudah memiliki minimal satu tanggapan dari peran admin di riwayat percakapannya.
+### Struktur frontend (`peer-conselour-app/`)
 
-### 4. Perbaikan Visual Grafik Topik Konseling (Dashboard)
-* Memperbaiki parse data stat dari API backend (mengubah array objek response menjadi pemetaan dictionary/key-value yang ramah Recharts).
-* Membatasi visual grafik topik hanya memuat 3 baris bar teratas dengan area scroll vertikal dinamis berdasarkan total jumlah kategori (`Math.max(160, topicStats.length * 48)`).
-* Menghapus awalan redundan `"Konseling "` pada label YAxis serta memperlebar batas kolom teks kiri dan margin kanan agar tulisan label serta angka nilai bar tidak terpotong di tepi canvas.
+```
+app/                         App Router
+app/_portal/                 Komponen & util bersama portal (lihat bagian 8)
+app/admin/                   dashboard, tickets/[id], students/[id], admins/[nim]
+app/tickets/[id]/            Detail tiket + chat mahasiswa
+app/my-counseling/           Riwayat konseling mahasiswa
+app/auth/                    auth-provider.tsx (context sesi)
+app/berita/, app/psikoedukasi/, app/resources/, app/about/, app/services/
+app/styles/                  auth.css, account-ticket.css, content-pages.css
+src/utils/api.ts             SINGLE SOURCE OF TRUTH konfigurasi API
+src/components/              Komponen base & application (buttons, input, date-picker)
+src/hooks/                   Custom hooks
+```
 
-## Desain Penyimpanan Lampiran (MinIO & Golang Backend)
-Untuk implementasi upload lampiran/file chat nantinya, ikuti panduan berikut demi keamanan dan efisiensi:
-1. **Keamanan & Privasi Data**:
-   - MinIO Bucket untuk lampiran konseling **WAJIB bersifat PRIVAT** (bukan public bucket).
-   - Akses file oleh user/konselor dilakukan menggunakan **Temporary Presigned GET URL** (misal berlaku selama 10-15 menit) yang digenerate oleh backend Go saat membuka halaman chat.
-2. **Validasi File di Backend Go**:
-   - Deteksi tipe file asli menggunakan **Magic Numbers (512 byte pertama)** melalui `http.DetectContentType` (jangan percaya ekstensi nama file atau header Content-Type).
-   - Hanya izinkan format yang aman: PDF, Word (Doc/Docx), dan Gambar (JPEG, PNG, WebP).
-3. **Pemrosesan Gambar (BE-side Processing)**:
-   - Gunakan library Go seperti `disintegration/imaging` untuk me-resize gambar yang terlalu besar ke lebar maksimal **2048px**.
-   - Kompres dan konversi semua gambar menjadi format **WebP** dengan kualitas **82%** sebelum dikirim ke MinIO.
-4. **Pencegahan Directory Traversal**:
-   - Selalu ganti nama file asli menjadi **UUID v4** acak sebelum diunggah ke MinIO. Nama asli file hanya disimpan di database untuk kebutuhan tampilan.
+---
 
-## Cara Pindah Environment (Dev / Prod)
-### 1. Frontend Configuration
-Konfigurasi API URL dan JWT Key di frontend terpusat pada satu file saja: **`src/utils/api.ts`**. Berkas `.env` di frontend tidak digunakan lagi untuk mempermudah peralihan.
-- **Untuk Development (Lokal)**: Aktifkan `export const BASE_URL = "http://localhost:8080"` di `src/utils/api.ts` dan komentari baris URL production.
-- **Untuk Production**: Komentari baris lokal dev, lalu uncomment `export const BASE_URL = "https://api-konseling.ub.ac.id"`.
-- Agen dilarang keras memecah konfigurasi URL ini kembali ke berkas `.env` eksternal lain di frontend agar tetap memiliki *single source of truth*.
+## 3. Autentikasi & Pengamanan Sesi
 
-### 2. Backend Configuration (Golang BE)
-Konfigurasi environment backend berada di berkas **`peer-conselour-be/.env`**. Berkas ini memiliki dua blok konfigurasi utama (Dev dan Prod) yang dipisahkan dengan jelas:
-- **Untuk Development (Lokal)**: Aktifkan/uncomment semua baris di bawah blok `✅ DEVELOPMENT (Local Config)` dan berikan tanda komentar (`#`) pada baris di bawah blok `🚀 PRODUCTION (Server Config)`.
-- **Untuk Production**: Berikan tanda komentar (`#`) pada baris di bawah blok `✅ DEVELOPMENT` dan aktifkan/uncomment baris di bawah blok `🚀 PRODUCTION`.
-- Pengaturan IAM UB yang bersifat umum didefinisikan di bagian bawah berkas sebagai nilai bersama (shared configs).
+- **Pure SSO UB via IAM** (OAuth2 Authorization Code flow). Login lokal
+  (username/password publik) **ditiadakan**.
+  Endpoint: `GET /api/auth/sso` → IAM → `GET /api/auth/callback`.
+- **JWT disimpan di HttpOnly + Secure + SameSite cookie** bernama `token`
+  (`c.SetCookie` pada `internal/handler/auth_handler.go`), **bukan di
+  `localStorage`**, untuk mencegah pencurian token lewat XSS. Request frontend
+  mengirim cookie ini dengan `credentials: "include"` (`src/utils/api.ts`).
+- **UTANG TEKNIS (wajib dibersihkan)**: masih tersisa jalur *legacy* di
+  `app/auth/auth-provider.tsx` yang menyimpan query param `?token=` ke
+  `localStorage`, serta header `Authorization` cadangan di `src/utils/api.ts`.
+  Jalur ini membatalkan manfaat HttpOnly cookie bila terpakai — hapus keduanya
+  saat menyentuh berkas tersebut, dan jangan menambah jalur penyimpanan token
+  di sisi klien yang baru.
+- **Dynamic CSRF state parameter**: nilai `state` acak disimpan di cookie
+  `oauth_state` (HttpOnly, path `/api/auth`, TTL 300 detik) lalu dibandingkan
+  dengan `state` yang dikembalikan IAM saat callback. Mismatch → callback
+  ditolak.
+- **CORS whitelisting**: hanya origin terdaftar di `middleware/cors_middleware.go`
+  yang diizinkan, dengan `Access-Control-Allow-Credentials: true`.
+- **Rate limiting global**: `middleware.RateLimitMiddleware(20, 40)`
+  (20 req/detik, burst 40) diterapkan ke seluruh route.
+- **Rute `dev-login`**: `GET /api/auth/dev-login` **hanya** terdaftar bila
+  `APP_ENV=development` (dijaga di `cmd/api/main.go`). Dilarang mengaktifkannya
+  di production.
+- Otorisasi bertingkat via middleware: `AuthMiddleware` → `AdminOnly` →
+  `SuperAdminOnly` (pembuatan/edit/reset password akun admin).
 
-## Aturan Desain & Animasi Pop-up Modal
-1. **Penyelarasan Desain Modal**:
-   - Setiap modal baru atau yang dimodifikasi wajib mengikuti bahasa visual modal login/SSO (sudut membulat `border-radius: 22px` atau `24px`, bayangan lembut `box-shadow`, padding nyaman, dan struktur header yang bersih).
-   - Tajuk modal (*Header*) wajib menyertakan identitas branding resmi (Logo UB + nama unit *"Layanan Konseling - Universitas Brawijaya"*) dan tombol silang penutup bulat (`X` bulat) jika penutupan manual diizinkan.
-2. **Efek Animasi Pembukaan (Transition & Keyframes)**:
-   - **Backdrop (Overlay)**: Wajib dianimasikan memudar masuk (*fade-in*) menggunakan `authBackdropFade` atau `ticketBackdropFade` (transisi opacity dari `0` ke `1` selama `0.25s` dengan bezier `cubic-bezier(0.16, 1, 0.3, 1)`).
-   - **Panel Modal**: Wajib dianimasikan dengan efek melompat membesar halus (*scale zoom-in*) menggunakan `authPanelZoom` atau `ticketPanelZoom` (transisi scale dari `0.92` ke `1` dan opacity `0` ke `1` selama `0.32s` dengan bezier elastic `cubic-bezier(0.34, 1.56, 0.64, 1)`).
-   - Semua modal baru harus mengimplementasikan atau mewarisi kelas animasi ini agar transisi tampil seragam di seluruh aplikasi.
+---
 
+## 4. Penyimpanan Lampiran & Media (MinIO + Go)
 
+Aturan wajib untuk semua pekerjaan terkait upload:
+
+1. **Bucket privat**: `counseling-attachments` bersifat **PRIVAT**, bukan public
+   bucket.
+2. **Akses file** hanya melalui **Temporary Presigned GET URL** yang digenerate
+   backend Go, berlaku **15 menit** (`storage.GetPresignedURL(ctx, obj, 15*time.Minute)`).
+3. **Validasi tipe asli via Magic Numbers**: 512 byte pertama dibaca dengan
+   `http.DetectContentType` (`pkg/media/media.go`). **Jangan** percaya ekstensi
+   nama file atau header `Content-Type` dari klien.
+   Format diizinkan: `image/jpeg`, `image/png`, `image/webp`, `application/pdf`,
+   `application/msword` (doc), dan `...wordprocessingml.document` (docx).
+4. **Batas ukuran**: maksimal **10 MB** per berkas (`upload_handler.go`).
+5. **Pemrosesan gambar di backend**: gambar yang sisi terpanjangnya melebihi
+   **2048px** di-resize dengan `disintegration/imaging`, lalu dikonversi ke
+   **WebP kualitas 82%** (`chai2010/webp`) sebelum disimpan ke MinIO.
+6. **Pencegahan Directory Traversal**: nama objek di MinIO selalu **UUID v4**
+   acak + ekstensi. Nama asli file hanya disimpan di database untuk tampilan.
+7. **Validasi kepemilikan lampiran**: akses lampiran diverifikasi terhadap
+   pemilik tiket sebelum presigned URL diterbitkan.
+
+---
+
+## 5. Notifikasi Email Asinkron
+
+- Pengiriman email **tidak memblokir request HTTP**: `internal/notification/ticket_notifier.go`
+  men-dispatch email di dalam goroutine terpisah.
+- `internal/worker/reminder_worker.go` adalah **background worker** yang
+  dijalankan sebagai goroutine dari `main.go` dan berdenyut memakai
+  `time.NewTicker`, untuk mengirim reminder berjenjang **H+1, H+3, H+5, H+7**
+  pada tiket yang belum ditanggapi.
+- Template email berupa **HTML** di `templates/email/` (di-embed via
+  `templates/embed.go`): `layout.html`, `ticket_created.html`,
+  `first_counselor_reply.html`, `session_closed.html`, `reminder_h{1,3,5,7}.html`.
+- **Guardrail wajib saat development**: `EMAIL_ENABLED=false` atau
+  `EMAIL_DEV_MODE=true` + `EMAIL_DEV_OVERRIDE_TO=<email dev>` supaya email
+  tidak pernah terkirim ke mahasiswa asli. Jangan pernah commit konfigurasi
+  yang mengaktifkan email production.
+
+---
+
+## 6. Manajemen Environment (Single Source of Truth)
+
+### Frontend
+
+- Konfigurasi API **terpusat di `peer-conselour-app/src/utils/api.ts`**.
+  Berkas `.env` frontend **tidak digunakan** untuk URL API.
+- Development: aktifkan `export const BASE_URL = "http://localhost:8080";`
+  dan komentari baris production.
+- Production: aktifkan `export const BASE_URL = "https://api-konseling.ub.ac.id";`
+  dan komentari baris development.
+- **Agen dilarang** memecah konfigurasi URL ini kembali ke berkas `.env`
+  terpisah — single source of truth harus dipertahankan.
+
+### Backend
+
+- Konfigurasi berada di `peer-conselour-be/.env`, mengikuti format
+  `peer-conselour-be/.env.example` (satu-satunya berkas env yang boleh
+  di-commit, dan isinya wajib placeholder).
+- `APP_ENV=development` / `APP_ENV=production` menentukan perilaku
+  keamanan (mis. pendaftaran rute `dev-login`).
+- Kelompok variabel: `PORT`, `APP_ENV`, `DB_*`, `IAM_*`, `JWT_*`, `MINIO_*`,
+  `FRONTEND_URL`, `SMTP_*`, `EMAIL_*`.
+
+### Server & Deployment
+
+- Frontend: Plesk Hosting UB (Next.js `output: standalone`).
+- Backend Go: aaPanel UB (binary mandiri hasil `go build`).
+- Kredensial panel/hosting: `[TERSEDIA_DI_PASSWORD_MANAGER]` — jangan dituliskan
+  di repo dan jangan diubah.
+
+---
+
+## 7. Kebersihan Repositori (Git Hygiene)
+
+Yang **tidak boleh** masuk Git (sudah diatur di `.gitignore` root):
+
+- `**/.env` dan `**/.env.*` (kecuali `.env.example`)
+- `*.sql`, `*.zip` — dump osTicket & paket deploy berisi data pribadi mahasiswa
+- `new-db/`, `_asset-archive/`, `server-binaries/`, `graphify-out/`
+- `docs/` — rencana migrasi & skema database internal
+- `security_audit_report.md` — temuan celah keamanan
+
+Yang **harus** tampil di root GitHub: `.agents/`, `peer-conselour-app/`,
+`peer-conselour-be/`, `docker-compose.yml`, `.gitignore`, `README.md`.
+
+---
+
+## 8. Standar Desain UI & Animasi Modal
+
+1. **Bahasa visual modal** mengikuti modal login/SSO: sudut membulat
+   `border-radius: 22px` atau `24px`, `box-shadow` lembut, padding nyaman,
+   header bersih. Header modal menyertakan identitas branding (Logo UB + teks
+   *"Layanan Konseling — Universitas Brawijaya"*) dan tombol tutup bulat (`X`)
+   bila penutupan manual diizinkan.
+2. **Animasi pembukaan wajib seragam** di seluruh aplikasi:
+   - **Backdrop**: `authBackdropFade` / `ticketBackdropFade` — opacity `0 → 1`,
+     durasi `0.25s`, easing `cubic-bezier(0.16, 1, 0.3, 1)`.
+   - **Panel**: `authPanelZoom` / `ticketPanelZoom` — scale `0.92 → 1` dan
+     opacity `0 → 1`, durasi `0.32s`, easing elastis
+     `cubic-bezier(0.34, 1.56, 0.64, 1)`.
+   Modal baru harus mengimplementasikan atau mewarisi kelas animasi ini.
+3. **Paginasi daftar kartu**: daftar tiket/mahasiswa/admin di dashboard admin
+   memakai paginasi sisi klien dengan kontainer setinggi maksimal **3 kartu**
+   dan scroll vertikal dinamis (`maxHeight` + `overflowY: "auto"`).
+   Gunakan komponen bersama `app/_portal/CardScrollList.tsx` dan
+   `app/_portal/usePagination.ts`.
+4. **Grafik topik konseling** (Recharts) menampilkan 3 baris teratas dengan
+   area scroll dinamis: `Math.max(160, topicStats.length * 48)`.
+5. **Komponen portal bersama** ada di `app/_portal/` — gunakan kembali
+   `PortalModal`, `PortalLoader`, `Pagination`, `TicketListCard`, `EmptyState`,
+   `BackLink`, dan pemetaan label status di `ticketStatus.ts`. Jangan menduplikasi
+   komponen ini per halaman.
+
+---
+
+## 9. Keamanan Konten Chat
+
+- Pesan lama hasil migrasi osTicket bertipe HTML dirender lewat
+  `dangerouslySetInnerHTML`, namun **wajib** disanitasi dengan **DOMPurify**
+  terlebih dahulu (`app/tickets/[id]/components/messageFormat.ts` dan
+  `MessageBody.tsx`).
+- Pesan teks biasa dirender sebagai teks dengan auto-linking URL.
+- Dilarang menambah jalur render HTML baru tanpa melewati sanitasi DOMPurify.
+
+---
+
+## 10. Alur Status Tiket
+
+`ReplyTicket` (`internal/handler/ticket_handler.go`) mengubah status otomatis:
+
+- Dibalas Admin/Konselor → `in_progress` (Sudah Dibalas).
+- Dibalas Mahasiswa → kembali `open` (Menunggu Balasan), agar masuk lagi ke
+  antrean admin.
+- Mahasiswa dapat menutup tiket sendiri via `PUT /api/tickets/:id/resolve`
+  → `resolved`.
+
+ENUM PostgreSQL yang berlaku: `user_role`, `ticket_status`, `message_sender`,
+`schedule_status`, `service_type` — dibuat manual di `main.go` sebelum
+`AutoMigrate` karena GORM tidak membuat ENUM secara otomatis.
+
+---
+
+## 11. Gaya Kode
+
+- TypeScript **strict** untuk frontend; hindari `any` pada kode baru.
+- Go: pola layered `handler → repository → model`; jangan mengakses `config.DB`
+  langsung dari handler bila repository sudah tersedia.
+- Pertahankan komentar dan dokumentasi yang sudah ada kecuali diminta sebaliknya.
+- Verifikasi frontend: `npx tsc --noEmit` adalah satu-satunya pemeriksa tipe
+  (`next.config.mjs` memakai `ignoreBuildErrors`). Jangan menjalankan
+  `npm run build` di direktori yang sama saat `next dev` sedang berjalan.
+- Verifikasi backend: `go build ./...` dan `go test ./...`.

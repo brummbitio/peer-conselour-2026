@@ -1,0 +1,2024 @@
+.admin-schedule-toolbar {
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.admin-schedule-toolbar-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-schedule-toolbar-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-schedule-toolbar-copy h2 {
+  margin: 0;
+  font-size: 1.02rem;
+}
+
+.admin-schedule-toolbar-copy p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.admin-schedule-view-toggle {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 999px;
+  padding: 3px;
+  background: #f8fafc;
+  display: inline-grid;
+  grid-template-columns: repeat(2, 36px);
+  gap: 4px;
+}
+
+.admin-schedule-view-toggle button {
+  width: 36px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #51606f;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.admin-schedule-view-toggle button.is-active {
+  background: #ffffff;
+  color: #1f3345;
+  box-shadow: 0 4px 10px rgba(17, 24, 39, 0.12);
+}
+
+.admin-schedule-view-toggle button svg {
+  flex-shrink: 0;
+}
+
+.admin-schedule-view-toggle button:disabled {
+  opacity: 0.58;
+  cursor: not-allowed;
+}
+
+.admin-schedule-add-button {
+  min-height: 42px;
+  padding-inline: 15px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.admin-schedule-board {
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.admin-schedule-board::-webkit-scrollbar {
+  height: 8px;
+}
+
+.admin-schedule-board::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(90, 105, 124, 0.38);
+}
+
+.admin-schedule-board::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-schedule-column {
+  flex: 0 0 350px;
+  width: 350px;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  background: #f8fbfd;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  transition: width 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+              flex-basis 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+              padding 0.35s cubic-bezier(0.25, 0.8, 0.25, 1),
+              background-color 160ms ease,
+              border-color 160ms ease,
+              box-shadow 160ms ease;
+}
+
+.admin-schedule-column-body-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+  transform-origin: top left;
+  transition: opacity 0.25s ease,
+              transform 0.25s ease,
+              visibility 0.25s ease,
+              height 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.admin-schedule-column-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-schedule-column-head h3 {
+  margin: 0;
+  font-size: 0.94rem;
+  line-height: 1.32;
+}
+
+.admin-schedule-column-head span {
+  min-width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #325368;
+  background: rgba(50, 83, 104, 0.12);
+}
+
+.admin-schedule-column-head-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-schedule-column-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.admin-schedule-column-toggle:hover {
+  background: rgba(17, 24, 39, 0.06);
+  color: #1e293b;
+}
+
+.admin-schedule-column.is-collapsed {
+  flex: 0 0 60px;
+  width: 60px;
+  min-width: 60px;
+  padding: 12px 10px;
+  gap: 0;
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-body-wrap {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  height: 0;
+  overflow: hidden;
+  transform: scale(0.95);
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-head {
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-head-title {
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-schedule-column.is-collapsed h3 {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: none;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.admin-schedule-column.is-collapsed .admin-schedule-column-head span {
+  transform: none;
+  writing-mode: horizontal-tb;
+}
+
+.admin-schedule-column-body-wrap > p {
+  margin: 0;
+  color: #6f7f8e;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.admin-schedule-column-list {
+  flex: 1;
+  min-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  overscroll-behavior: contain;
+  transition: background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.admin-schedule-column-list::-webkit-scrollbar {
+  width: 7px;
+}
+
+.admin-schedule-column-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(90, 105, 124, 0.38);
+}
+
+.admin-schedule-column-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-schedule-card {
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 12px;
+  display: grid;
+  gap: 10px;
+  cursor: grab;
+  user-select: none;
+  transition: box-shadow 200ms ease, opacity 160ms ease, transform 200ms ease;
+}
+
+.admin-schedule-card:active {
+  cursor: grabbing;
+}
+
+.admin-schedule-card.is-dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+}
+
+/*
+ * Kartu yang sedang di-drag TIDAK boleh diberi `pointer-events: none`:
+ * elemen sumber harus tetap bisa dijangkau browser supaya `dragend` terkirim.
+ * Cukup matikan pill di dalamnya agar tidak ada klik nyasar saat drag, dan agar
+ * `dragenter`/`dragleave` tidak dipicu elemen kecil di dalam kartu.
+ */
+.admin-schedule-board.is-dragging-card .admin-schedule-pill,
+.admin-schedule-board.is-dragging-card .admin-schedule-column-toggle,
+.admin-schedule-board.is-dragging-card .admin-schedule-column-body-wrap > p {
+  pointer-events: none;
+}
+
+.admin-schedule-column.is-drag-over {
+  border-color: rgba(99, 102, 241, 0.7) !important;
+  background: rgba(238, 242, 255, 0.8) !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+}
+
+/*
+ * Umpan balik dropzone digambar dengan `box-shadow: inset`, bukan `border`.
+ * Border 2px akan menambah lebar kotak dan menggeser semua kartu di dalamnya —
+ * pergeseran itulah yang terbaca sebagai "kedipan" saat kursor melintasi kolom.
+ */
+.admin-schedule-column.is-drag-over .admin-schedule-column-list {
+  background: rgba(99, 102, 241, 0.05);
+  box-shadow: inset 0 0 0 2px rgba(99, 102, 241, 0.4);
+  border-radius: 14px;
+}
+
+/* Kartu mendarat di kolom baru: sekali sapuan halus, tanpa menggeser tetangga. */
+@keyframes admin-schedule-card-land {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.97);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.45);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+  }
+}
+
+.admin-schedule-card.is-landing {
+  animation: admin-schedule-card-land 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.admin-schedule-empty-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  border: 1.5px dashed rgba(17, 24, 39, 0.12);
+  border-radius: 12px;
+  color: #94a3b8;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 16px;
+  transition: all 180ms ease;
+  user-select: none;
+}
+
+.admin-schedule-empty-dropzone.is-active-drag {
+  border-color: rgba(99, 102, 241, 0.5);
+  color: #4f46e5;
+  background: rgba(99, 102, 241, 0.08);
+}
+
+/* Kolom kosong yang sedang dibidik: target lepas harus jelas terlihat. */
+.admin-schedule-empty-dropzone.is-drop-target {
+  border-color: rgba(99, 102, 241, 0.9);
+  border-style: dashed;
+  color: #4338ca;
+  background: rgba(99, 102, 241, 0.16);
+}
+
+.admin-schedule-card h4 {
+  margin: 0;
+  max-width: none;
+  font-size: 0.95rem;
+  line-height: 1.32;
+}
+
+.admin-schedule-pill-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.admin-schedule-pill {
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  padding: 0 11px;
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 999px;
+  background: #f7fbff;
+  color: #355164;
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.admin-schedule-pill:hover,
+.admin-schedule-pill:focus-visible,
+.admin-schedule-pill.is-active {
+  outline: none;
+  border-color: rgba(45, 127, 154, 0.48);
+  box-shadow: 0 0 0 3px rgba(84, 171, 199, 0.16);
+  transform: translateY(-1px);
+}
+
+.admin-schedule-pill svg {
+  flex-shrink: 0;
+  color: #5f7992;
+}
+
+.admin-schedule-pill-calendar {
+  border-color: rgba(84, 171, 199, 0.22);
+  background: #eff8ff;
+  color: #2D7F9A;
+}
+
+.admin-schedule-overlay-panel {
+  position: fixed;
+  z-index: 3210;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  box-shadow: 0 18px 38px rgba(17, 24, 39, 0.14);
+}
+
+.admin-schedule-overlay-panel-datetime {
+  width: min(480px, calc(100vw - 24px));
+  overflow: hidden;
+  overscroll-behavior: contain;
+  border-radius: 16px;
+  background: #ffffff;
+}
+
+.admin-schedule-overlay-panel-handler {
+  width: min(300px, calc(100vw - 24px));
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 0;
+}
+
+.admin-schedule-overlay-panel-service {
+  width: min(260px, calc(100vw - 24px));
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 0;
+}
+
+.admin-calendar-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 6px;
+}
+
+.admin-calendar-heading {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  color: #1e293b;
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.admin-calendar-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ── DateTimePanel (dtp-*) ───────────────────────────── */
+
+.dtp-root {
+  display: flex;
+  flex-direction: column;
+}
+
+.dtp-body {
+  display: flex;
+}
+
+.dtp-calendar-wrap {
+  flex: 1 1 0%;
+  min-width: 0;
+  padding: 20px 18px;
+}
+
+/* Calendar grid inside the panel */
+
+.dtp-calendar-wrap table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 2px 3px;
+}
+
+.dtp-calendar-wrap th {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding-bottom: 6px;
+}
+
+.dtp-calendar-wrap th div {
+  width: 30px !important;
+  height: 28px !important;
+  margin: 0 auto;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.dtp-calendar-wrap td {
+  padding: 0;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* Sel tanggal (lingkaran 30px presisi proporsional) */
+.dtp-calendar-wrap td > div,
+.dtp-calendar-wrap .react-aria-CalendarCell {
+  width: 30px;
+  height: 30px;
+  min-height: 30px;
+  max-width: 30px;
+  margin: 0 auto;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50% !important;
+  background: transparent;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1;
+  cursor: pointer;
+  outline: none !important;
+  transition: all 120ms ease;
+  position: relative;
+}
+
+/* Elemen dalam pembungkus angka */
+.dtp-calendar-wrap td > div > div,
+.dtp-calendar-wrap .react-aria-CalendarCell > div {
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% !important;
+  border: none !important;
+  outline: none !important;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+/* Hover pada tanggal biasa yang tidak aktif */
+.dtp-calendar-wrap td > div:hover:not([data-selected]),
+.dtp-calendar-wrap .react-aria-CalendarCell:hover:not([data-selected]) {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.dtp-calendar-wrap td > div:focus-visible:not([data-selected]),
+.dtp-calendar-wrap .react-aria-CalendarCell:focus-visible:not([data-selected]) {
+  background: #f1f5f9;
+  box-shadow: 0 0 0 2px rgba(84, 171, 199, 0.4);
+}
+
+/* STATUS TERPILIH (SELECTED) - BULATAN PENUH SIMETRIS PROPORSIAL */
+.dtp-calendar-wrap [data-selected],
+.dtp-calendar-wrap [data-selected] > div,
+.dtp-calendar-wrap td > div[data-selected],
+.dtp-calendar-wrap td > div[data-selected] > div {
+  background: linear-gradient(135deg, #54abc7 0%, #2D7F9A 100%) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  border-radius: 50% !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: 0 2px 6px rgba(45, 127, 154, 0.28) !important;
+}
+
+.dtp-calendar-wrap [data-selected]:hover,
+.dtp-calendar-wrap [data-selected] > div:hover {
+  background: linear-gradient(135deg, #489eb9 0%, #236980 100%) !important;
+  color: #ffffff !important;
+}
+
+/* Tanggal di luar bulan atau non-aktif */
+.dtp-calendar-wrap [data-outside-month],
+.dtp-calendar-wrap [data-outside-month] > div,
+.dtp-calendar-wrap [data-disabled],
+.dtp-calendar-wrap [data-disabled] > div {
+  color: #cbd5e1 !important;
+  cursor: default;
+}
+
+.dtp-calendar-wrap [data-outside-month]:hover,
+.dtp-calendar-wrap [data-disabled]:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Nav buttons */
+
+.dtp-calendar-wrap button[slot="previous"],
+.dtp-calendar-wrap button[slot="next"] {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #64748b;
+  font: inherit;
+  font-size: 0;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 140ms ease;
+  position: relative;
+  z-index: 1;
+}
+
+.dtp-calendar-wrap button[slot="previous"] svg,
+.dtp-calendar-wrap button[slot="next"] svg {
+  width: 14px;
+  height: 14px;
+}
+
+.dtp-calendar-wrap button[slot="previous"]:hover,
+.dtp-calendar-wrap button[slot="next"]:hover {
+  background: #f1f5f9;
+  border-color: rgba(17, 24, 39, 0.2);
+  color: #334155;
+}
+
+/* Month heading */
+
+.dtp-calendar-wrap h2 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.dtp-time-wrap {
+  width: 200px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-left: 1px solid rgba(17, 24, 39, 0.1);
+}
+
+.dtp-time-title {
+  padding: 22px 20px 0;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.dtp-time-scroll-area {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  height: 260px;
+}
+
+.dtp-time-list {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0 20px 20px;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  -webkit-mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 80%, transparent 100%);
+}
+
+.dtp-time-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dtp-time-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.14);
+}
+
+.dtp-time-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dtp-time-btn {
+  width: 100%;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.dtp-time-btn:hover {
+  background: #f8fafc;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.dtp-time-btn.is-selected {
+  background: linear-gradient(135deg, #54abc7 0%, #74c4dc 100%);
+  border-color: transparent;
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 2px 6px rgba(84, 171, 199, 0.3);
+}
+
+.dtp-time-btn.is-in-range {
+  background: rgba(84, 171, 199, 0.1);
+  border-color: rgba(84, 171, 199, 0.25);
+  color: #3a8ba0;
+}
+
+.dtp-time-btn.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Footer ── */
+
+.dtp-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(17, 24, 39, 0.1);
+}
+
+.dtp-footer-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dtp-footer-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dtp-date-display {
+  height: 36px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #475569;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.dtp-btn {
+  height: 36px;
+  padding: 0 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 140ms ease;
+  white-space: nowrap;
+}
+
+.dtp-btn-secondary {
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  background: #ffffff;
+  color: #334155;
+}
+
+.dtp-btn-secondary:hover {
+  background: #f8fafc;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.dtp-btn-primary {
+  border: 1px solid transparent;
+  background: linear-gradient(135deg, #54abc7 0%, #74c4dc 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(84, 171, 199, 0.24);
+}
+
+.dtp-btn-primary:hover {
+  box-shadow: 0 6px 14px rgba(84, 171, 199, 0.3);
+}
+
+.admin-schedule-overlay-panel-handler,
+.admin-schedule-overlay-panel-service {
+  overflow-y: auto;
+}
+
+.admin-schedule-overlay-list-wrap {
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-schedule-overlay-list-wrap h5 {
+  margin: 0;
+  color: #1e293b;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.admin-schedule-overlay-list {
+  max-height: min(220px, calc(100vh - 320px));
+  overflow-y: auto;
+  display: grid;
+  gap: 6px;
+}
+
+.admin-schedule-overlay-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.admin-schedule-overlay-list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.14);
+}
+
+.admin-schedule-overlay-option {
+  min-height: 38px;
+  width: 100%;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 8px;
+  background: #ffffff;
+  color: #334155;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all 140ms ease;
+}
+
+.admin-schedule-overlay-option span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-schedule-overlay-option:hover,
+.admin-schedule-overlay-option:focus-visible {
+  outline: none;
+  background: #f8fafc;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.admin-schedule-overlay-option.is-selected {
+  background: #f1f5f9;
+  border-color: rgba(17, 24, 39, 0.22);
+  font-weight: 700;
+}
+
+.admin-schedule-overlay-option-handler {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.admin-schedule-overlay-option-handler.is-selected {
+  background: #f1f5f9;
+  border-color: rgba(17, 24, 39, 0.22);
+}
+
+.admin-schedule-overlay-option-service-online {
+  background: #ffffff;
+}
+
+.admin-schedule-overlay-option-service-online.is-selected {
+  background: #f0fdf4;
+  border-color: rgba(22, 163, 74, 0.4);
+  color: #166534;
+}
+
+.admin-schedule-overlay-option-service-tatap_muka {
+  background: #ffffff;
+}
+
+.admin-schedule-overlay-option-service-tatap_muka.is-selected {
+  background: #eff6ff;
+  border-color: rgba(37, 99, 235, 0.4);
+  color: #1e40af;
+}
+
+.admin-schedule-pill-service {
+  border-color: rgba(84, 171, 199, 0.34);
+  background: rgba(84, 171, 199, 0.12);
+  color: #235f76;
+}
+
+.admin-schedule-pill-service-online {
+  border-color: rgba(34, 197, 94, 0.34);
+  background: rgba(34, 197, 94, 0.12);
+  color: #166534;
+}
+
+.admin-schedule-pill-service-tatap_muka {
+  border-color: rgba(59, 130, 246, 0.34);
+  background: rgba(59, 130, 246, 0.1);
+  color: #1e40af;
+}
+
+.admin-schedule-pill-delete {
+  padding: 0 8px;
+  min-width: 30px;
+  justify-content: center;
+  border-color: rgba(239, 68, 68, 0.25);
+  background: rgba(254, 242, 242, 0.7);
+  color: #dc2626;
+  transition: all 160ms ease;
+}
+
+.admin-schedule-pill-delete:hover,
+.admin-schedule-pill-delete:focus-visible {
+  border-color: rgba(239, 68, 68, 0.6);
+  background: #fee2e2;
+  color: #b91c1c;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.16);
+  transform: translateY(-1px);
+}
+
+.admin-schedule-pill-delete svg {
+  color: #dc2626;
+  transition: color 160ms ease;
+}
+
+.admin-schedule-pill-delete:hover svg {
+  color: #b91c1c;
+}
+
+.admin-schedule-column-pending_confirmation {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.11) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-pending_confirmation .admin-schedule-column-head span {
+  color: #9a5d08;
+  background: rgba(245, 158, 11, 0.2);
+}
+
+.admin-schedule-column-scheduled {
+  background: linear-gradient(180deg, rgba(45, 127, 154, 0.15) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-scheduled .admin-schedule-column-head span {
+  color: #23657c;
+  background: rgba(45, 127, 154, 0.2);
+}
+
+.admin-schedule-column-reschedule {
+  background: linear-gradient(180deg, rgba(139, 92, 246, 0.11) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-reschedule .admin-schedule-column-head span {
+  color: #6d28d9;
+  background: rgba(139, 92, 246, 0.18);
+}
+
+.admin-schedule-column-cancelled {
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.1) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-cancelled .admin-schedule-column-head span {
+  color: #b91c1c;
+  background: rgba(220, 38, 38, 0.15);
+}
+
+.admin-schedule-column-completed {
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.1) 0%, #f8fbfd 46%);
+}
+
+.admin-schedule-column-completed .admin-schedule-column-head span {
+  color: #047857;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+/* ── Calendar View ────────────────────────────── */
+
+.admin-calendar-view {
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  overflow: hidden;
+  height: 100%;
+}
+
+.admin-calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.admin-calendar-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-calendar-toolbar-left h2 {
+  font-size: 1.15rem;
+  margin: 0;
+}
+
+.admin-calendar-week-badge {
+  font-size: 0.75rem;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-calendar-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-calendar-nav-group {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-calendar-nav-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.admin-calendar-nav-btn:hover {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.admin-calendar-today-btn {
+  height: 36px;
+  padding: 0 16px;
+  background: transparent;
+  border: none;
+  border-left: 1px solid #e2e8f0;
+  border-right: 1px solid #e2e8f0;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.admin-calendar-today-btn:hover {
+  background: #f8fafc;
+}
+
+.admin-calendar-view-select {
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  font-size: 0.85rem;
+  color: #334155;
+  cursor: pointer;
+}
+
+.admin-calendar-content {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Month View */
+.admin-calendar-month {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-calendar-month-header {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-calendar-month-header-cell {
+  padding: 10px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.admin-calendar-month-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(140px, auto);
+  background: #e2e8f0;
+  gap: 1px;
+  overflow-y: auto;
+}
+
+.admin-calendar-month-cell {
+  background: #ffffff;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.admin-calendar-month-cell.is-outside {
+  background: #f8fafc;
+}
+
+.admin-calendar-month-cell.is-outside .admin-calendar-date-number {
+  color: #cbd5e1;
+}
+
+.admin-calendar-month-cell.is-today {
+  background: #f0fdfa;
+}
+
+.admin-calendar-date-number {
+  font-size: 0.85rem;
+  color: #334155;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.admin-calendar-date-number.is-today {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #54abc7;
+  color: #ffffff !important;
+  font-weight: 700;
+}
+
+.admin-calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.admin-calendar-event {
+  padding: 4px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.admin-calendar-event-title {
+  font-weight: 600;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.admin-calendar-event-time {
+  opacity: 0.8;
+  font-size: 0.7rem;
+}
+
+/* Time Grid (Week / Day) */
+.admin-calendar-timegrid {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.admin-calendar-timegrid-header {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-header-corner {
+  width: 60px;
+  flex-shrink: 0;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-header-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  border-right: 1px solid #e2e8f0;
+  gap: 4px;
+}
+
+.admin-calendar-timegrid-day-name {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.admin-calendar-timegrid-day-num {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #0f172a;
+}
+
+.admin-calendar-timegrid-header-cell.is-today {
+  background: #f0fdfa;
+}
+
+.admin-calendar-timegrid-header-cell.is-today .admin-calendar-timegrid-day-name {
+  color: #2d7f9a;
+  font-weight: 700;
+}
+
+.admin-calendar-timegrid-header-cell.is-today .admin-calendar-timegrid-day-num {
+  background: #54abc7;
+  color: #ffffff;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.admin-calendar-timegrid-body {
+  display: flex;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.admin-calendar-timegrid-times {
+  width: 60px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-time-label {
+  height: 60px; /* matching the JS line height */
+  position: relative;
+  flex-shrink: 0;
+}
+
+.admin-calendar-timegrid-time-label span {
+  position: absolute;
+  top: -8px;
+  right: 8px;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.admin-calendar-timegrid-columns {
+  flex: 1;
+  display: grid;
+  position: relative;
+}
+
+.admin-calendar-timegrid-col {
+  position: relative;
+  border-right: 1px solid #e2e8f0;
+}
+
+.admin-calendar-timegrid-line {
+  height: 60px;
+  border-bottom: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
+
+.admin-calendar-timegrid-event {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  border-radius: 6px;
+  padding: 6px 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-calendar-timegrid-event-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.admin-calendar-timegrid-event-time {
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+/* Event Types Colors based on Kanban Status */
+.admin-calendar-event-pending_confirmation {
+  background: rgba(234, 179, 8, 0.15); /* Yellow */
+  color: #a16207;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.admin-calendar-event-scheduled {
+  background: rgba(59, 130, 246, 0.15); /* Blue */
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.admin-calendar-event-reschedule {
+  background: rgba(168, 85, 247, 0.15); /* Purple */
+  color: #7e22ce;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.admin-calendar-event-completed {
+  background: rgba(34, 197, 94, 0.15); /* Green */
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.admin-calendar-event-cancelled {
+  background: rgba(239, 68, 68, 0.15); /* Red */
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.admin-calendar-event {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.admin-calendar-event:hover {
+  opacity: 0.8;
+}
+
+.admin-calendar-event-more {
+  font-size: 0.75rem;
+  color: #64748b;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 2px;
+  cursor: pointer;
+}
+
+/* Event Popup Modal */
+.admin-calendar-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 150ms ease-out;
+}
+
+.admin-calendar-popup {
+  background: #ffffff;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideUpFade 200ms ease-out;
+}
+
+.admin-calendar-popup-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.admin-calendar-popup-title-input {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  border: none;
+  border-bottom: 2px solid transparent;
+  width: 100%;
+  margin-right: 16px;
+  padding: 4px 0;
+  background: transparent;
+}
+
+.admin-calendar-popup-title-input:focus {
+  outline: none;
+  border-bottom-color: #3b82f6;
+}
+
+.admin-calendar-popup-close {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.admin-calendar-popup-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.admin-calendar-popup-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.admin-calendar-popup-icon {
+  font-size: 1.2rem;
+  line-height: 1;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.admin-calendar-popup-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.admin-calendar-popup-info strong {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+.admin-calendar-popup-info div {
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.admin-calendar-popup-select {
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  color: #334155;
+  background: #f8fafc;
+  outline: none;
+}
+
+.admin-calendar-popup-select:focus {
+  border-color: #3b82f6;
+}
+
+.admin-calendar-popup-footer {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+
+
+/* ==========================================================================
+   Modal Konfirmasi Hapus Jadwal
+   ========================================================================== */
+.schedule-delete-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.schedule-delete-backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: ticketBackdropFade 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+  cursor: pointer;
+}
+
+.schedule-delete-panel {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 540px);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.14);
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  animation: ticketPanelZoom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes ticketBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ticketPanelZoom {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.schedule-delete-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.06);
+}
+
+.schedule-delete-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.schedule-delete-brand-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.schedule-delete-brand-text p {
+  margin: 0;
+  font-size: 0.96rem;
+  font-weight: 700;
+  color: var(--text-primary, #0f172a);
+  line-height: 1.2;
+}
+
+.schedule-delete-brand-text span {
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+  display: block;
+  margin-top: 1px;
+}
+
+.schedule-delete-close {
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  background: #ffffff;
+  color: var(--text-secondary, #64748b);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 160ms ease;
+  flex-shrink: 0;
+}
+
+.schedule-delete-close:hover,
+.schedule-delete-close:focus-visible {
+  color: #1e293b;
+  border-color: rgba(17, 24, 39, 0.25);
+  background: #f1f5f9;
+}
+
+.schedule-delete-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schedule-delete-body h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.schedule-delete-body p {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+@media (max-width: 580px) {
+  .schedule-delete-body p {
+    white-space: normal;
+  }
+}
+
+.schedule-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.schedule-delete-btn-cancel {
+  padding: 9px 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.schedule-delete-btn-cancel:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.schedule-delete-btn-confirm {
+  padding: 9px 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  background: #dc2626;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 160ms ease;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+}
+
+.schedule-delete-btn-confirm:hover:not(:disabled) {
+  background: #b91c1c;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
+.schedule-delete-btn-confirm:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* Hormati preferensi sistem: tanpa animasi, tapi umpan balik warna tetap ada. */
+@media (prefers-reduced-motion: reduce) {
+  .admin-schedule-card,
+  .admin-schedule-column,
+  .admin-schedule-column-list,
+  .admin-schedule-column-body-wrap,
+  .admin-schedule-empty-dropzone {
+    transition-duration: 1ms !important;
+  }
+
+  .admin-schedule-card.is-landing {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE TAB JADWAL KONSELING (KANBAN, KALENDER, OVERLAY)
+   Desktop (> 1024px) tidak disentuh. Aturan yang juga ditimpa blok lama
+   @media 760px di ticket-chat.css memakai prefix .admin-dashboard-main agar
+   tetap menang meski file itu dimuat belakangan.
+   ========================================================================== */
+
+/* Tablet: 768px - 1024px */
+@media (max-width: 1024px) {
+  /* h2 global dibatasi 14ch sehingga judul pecah dua baris; di sini ruangnya cukup. */
+  .admin-schedule-toolbar-copy h2 {
+    max-width: none;
+  }
+
+  /* 2–3 kolom terlihat sekaligus; .is-collapsed (dua class) tetap menang. */
+  .admin-schedule-column {
+    flex: 0 0 290px;
+    width: 290px;
+  }
+
+  .admin-calendar-toolbar {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .admin-calendar-month-grid {
+    grid-auto-rows: minmax(112px, auto);
+  }
+}
+
+/* Mobile: < 768px */
+@media (max-width: 767px) {
+  /* Toolbar: judul di baris pertama, toggle + tombol tambah di baris kedua. */
+  .admin-dashboard-main .admin-schedule-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .admin-dashboard-main .admin-schedule-toolbar-actions {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .admin-dashboard-main .admin-schedule-add-button {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding: 0 12px;
+    gap: 6px;
+    font-size: 0.84rem;
+    white-space: nowrap;
+  }
+
+  /* Kanban: satu kolom per layar dengan scroll snap; kolom berikutnya sedikit
+     mengintip sebagai petunjuk bisa digeser. Lebar dihitung dari lebar papan
+     (100%), bukan 100vw, karena 100vw ikut menghitung gutter .page-shell. */
+  .admin-dashboard-main .admin-schedule-board {
+    gap: 10px;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: 12px;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Snap dimatikan selama drag agar auto-scroll browser di tepi papan tidak
+     terus ditarik balik ke kolom asal. */
+  .admin-dashboard-main .admin-schedule-board.is-dragging-card {
+    scroll-snap-type: none;
+  }
+
+  .admin-schedule-column {
+    flex: 0 0 min(320px, calc(100% - 28px));
+    width: min(320px, calc(100% - 28px));
+    scroll-snap-align: center;
+  }
+
+  .admin-schedule-column-list {
+    min-height: 200px;
+  }
+
+  /* Kalender: toolbar membungkus, grid 7 kolom dipadatkan agar tidak overflow. */
+  .admin-calendar-toolbar {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .admin-calendar-toolbar-left h2 {
+    font-size: 1rem;
+  }
+
+  .admin-calendar-toolbar-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .admin-calendar-nav-btn {
+    width: 34px;
+    height: 34px;
+  }
+
+  .admin-calendar-today-btn,
+  .admin-calendar-view-select {
+    height: 34px;
+  }
+
+  .admin-calendar-today-btn {
+    padding: 0 12px;
+  }
+
+  .admin-calendar-month-header,
+  .admin-calendar-month-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+
+  .admin-calendar-month-header-cell {
+    padding: 8px 0;
+    font-size: 0.68rem;
+  }
+
+  .admin-calendar-month-grid {
+    grid-auto-rows: minmax(72px, auto);
+  }
+
+  .admin-calendar-month-cell {
+    padding: 4px 3px;
+    gap: 2px;
+  }
+
+  .admin-calendar-date-number {
+    font-size: 0.72rem;
+    margin-bottom: 2px;
+  }
+
+  .admin-calendar-date-number.is-today {
+    width: 20px;
+    height: 20px;
+  }
+
+  .admin-calendar-events {
+    gap: 2px;
+  }
+
+  .admin-calendar-event {
+    padding: 2px 3px;
+    border-radius: 3px;
+    font-size: 0.6rem;
+  }
+
+  .admin-calendar-event-title {
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .admin-calendar-event-time,
+  .admin-calendar-timegrid-event-time {
+    display: none;
+  }
+
+  .admin-calendar-event-more {
+    font-size: 0.58rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-calendar-timegrid-header-corner,
+  .admin-calendar-timegrid-times {
+    width: 40px;
+  }
+
+  .admin-calendar-timegrid-header-cell {
+    min-width: 0;
+    padding: 8px 0;
+    gap: 2px;
+  }
+
+  .admin-calendar-timegrid-day-name {
+    font-size: 0.6rem;
+  }
+
+  .admin-calendar-timegrid-day-num {
+    font-size: 0.88rem;
+  }
+
+  .admin-calendar-timegrid-header-cell.is-today .admin-calendar-timegrid-day-num {
+    width: 24px;
+    height: 24px;
+  }
+
+  .admin-calendar-timegrid-time-label span {
+    right: 4px;
+    font-size: 0.58rem;
+  }
+
+  .admin-calendar-timegrid-event {
+    padding: 3px 4px;
+  }
+
+  .admin-calendar-timegrid-event-title {
+    font-size: 0.6rem;
+  }
+
+  /* Overlay kartu kanban (tanggal/penangan/layanan) menjadi bottom sheet.
+     Posisinya dihitung JS untuk desktop dan diset inline (left bisa negatif di
+     layar 360px), jadi !important diperlukan untuk menimpanya. */
+  body > .admin-schedule-overlay-panel {
+    top: auto !important;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 12px !important;
+    width: auto;
+    max-height: calc(100dvh - 96px) !important;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* Popover tanggal di modal Tambah Jadwal memakai pola bottom sheet yang sama. */
+  .ub-modal-panel .admin-schedule-add-datetime-popover {
+    position: fixed;
+    top: auto;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    width: auto;
+    max-height: calc(100dvh - 96px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  /* DateTimePanel: kalender dan daftar jam ditumpuk vertikal. */
+  .dtp-body {
+    flex-direction: column;
+  }
+
+  .dtp-calendar-wrap {
+    padding: 14px 12px 6px;
+  }
+
+  .dtp-time-wrap {
+    width: auto;
+    gap: 8px;
+    border-left: 0;
+    border-top: 1px solid rgba(17, 24, 39, 0.1);
+  }
+
+  .dtp-time-title {
+    padding: 12px 16px 0;
+  }
+
+  /* Basis tetap wajib: `flex: 1` bawaan diperlakukan sebagai tinggi konten di
+     kolom yang tingginya tidak pasti, dan kontennya (list absolute) setinggi 0. */
+  .dtp-time-scroll-area {
+    flex: 0 0 148px;
+    height: 148px;
+  }
+
+  .dtp-time-list {
+    padding: 0 16px 12px;
+  }
+
+  .dtp-footer {
+    flex-wrap: wrap;
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .dtp-footer-right {
+    margin-left: auto;
+  }
+}

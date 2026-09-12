@@ -35,6 +35,8 @@ export type CounselingFormState = {
   serviceType: string;
   topic: string;
   stage: string;
+  // null until the student picks "Pernah" or "Belum Pernah" in step 4
+  hasPsychologistExp: boolean | null;
   subject: string;
   detail: string;
 };
@@ -370,6 +372,7 @@ export default function StartCounselingModal({ open, onClose, onSuccess }: Start
           <ProfileCompletionForm
             user={user}
             updateStudentProfile={updateStudentProfile}
+            onClose={onClose}
             onCompleted={() => {
               // Trigger ticket active state reload or profiles updates implicitly
               if (onSuccess) onSuccess();

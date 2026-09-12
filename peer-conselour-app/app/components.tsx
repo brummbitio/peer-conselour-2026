@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { Instagram, Mail } from "lucide-react";
 import Navigation from "./navigation";
 import { counselors, newsItems, resources, services, steps } from "./data";
+import { MagicBento } from "@/components/MagicBento";
 
 export function ServiceIcon({ type }: { type: string }) {
   if (type === "heart") {
@@ -211,7 +212,7 @@ export function ResourcesSection() {
           <p className="eyebrow">Resources</p>
           <h2>Helpful guides for everyday emotional wellbeing</h2>
         </div>
-        <Link className="text-link" href="/resources">
+        <Link className="text-link" href="/psikoedukasi">
           Explore all resources
         </Link>
       </div>
@@ -224,7 +225,7 @@ export function ResourcesSection() {
             <p className="resource-excerpt">{resource.excerpt}</p>
             <div className="resource-meta">
               <span>{resource.meta}</span>
-              <Link href={`/resources/${resource.slug}`}>Read article</Link>
+              <Link href="/psikoedukasi">Read article</Link>
             </div>
           </article>
         ))}
@@ -362,44 +363,37 @@ export function EditorialFeedSection({
 
 export function LatestNewsSection() {
   return (
-    <EditorialFeedSection
-      title="Berita Terbaru"
-      items={newsItems}
-      hrefBase="/news#"
-      moreHref="/news"
-      variant="headline-only"
-    />
+    <section className="section site-width editorial-section" style={{ maxWidth: "1040px", margin: "0 auto" }}>
+      <div className="section-heading editorial-heading" style={{ marginBottom: "1rem" }}>
+        <div>
+          <h2 style={{ fontSize: "clamp(1.5rem, 2.6vw, 2.15rem)" }}>Berita Terbaru</h2>
+        </div>
+      </div>
+
+      <MagicBento
+        items={newsItems}
+        hrefBase="/berita/"
+        disableAnimations={false}
+        enableStars={true}
+        enableMagnetism={false}
+        enableTilt={false}
+        enableSpotlight={false}
+        enableBorderGlow={false}
+        clickEffect={false}
+      />
+    </section>
   );
 }
 
+import { PsychoeducationBento } from "../src/components/PsychoeducationBento";
+import { LandingCTASection } from "./LandingCTASection";
+export { WhoWeAreSection } from "./WhoWeAreSection";
+export { LandingCTASection };
+
 export function LatestPsychoeducationSection() {
-  return (
-    <EditorialFeedSection
-      title="Psikoedukasi Terbaru"
-      items={resources}
-      hrefBase="/resources/"
-      moreHref="/resources"
-      variant="video-feed"
-    />
-  );
+  return <PsychoeducationBento />;
 }
 
 export function CTASection() {
-  return (
-    <section className="section site-width">
-      <div className="glass callout">
-        <div>
-          <p className="eyebrow">Ready when you are</p>
-          <h2>Taking the first step can be gentle.</h2>
-          <p>
-            Connect with our counseling team and choose the support format that
-            feels most comfortable for you.
-          </p>
-        </div>
-        <Link className="button button-primary" href="/contact">
-          Start Your Intake
-        </Link>
-      </div>
-    </section>
-  );
+  return <LandingCTASection />;
 }

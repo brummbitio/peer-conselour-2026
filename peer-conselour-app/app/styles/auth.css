@@ -1023,3 +1023,214 @@
     min-height: 168px;
   }
 }
+
+/* =====================================================================
+   RESPONSIVE OPTIMIZATION — TABLET (<= 1023px) & MOBILE (<= 767px)
+   Modal konseling / SSO. Tidak ada yang aktif di desktop (>= 1024px).
+   ===================================================================== */
+
+@media (max-width: 1023px) {
+
+  /* ── Shell modal ── */
+  .auth-modal {
+    /* Scroll vertikal seluruh modal supaya keyboard virtual tidak
+       pernah mengunci tombol submit di luar jangkauan. */
+    display: block;
+    padding: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .auth-modal-backdrop {
+    position: fixed;
+  }
+
+  .auth-modal-panel {
+    width: min(94vw, 540px);
+    margin: 0 auto;
+    /* Padding bawah ekstra = ruang aman untuk keyboard + home indicator */
+    padding: clamp(16px, 5vh, 48px) 0 calc(clamp(24px, 8vh, 64px) + env(safe-area-inset-bottom, 0px));
+  }
+
+  .start-counseling-modal-panel {
+    width: min(94vw, 540px);
+  }
+
+  .auth-card-modal {
+    width: 100%;
+    padding: 14px;
+    border-radius: 22px;
+  }
+
+  /* ── Header modal & tombol tutup ── */
+  .auth-modal-header {
+    margin-bottom: 18px;
+  }
+
+  .auth-close {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 14px;
+  }
+
+  .auth-close span {
+    width: 16px;
+    height: 2px;
+  }
+
+  .auth-modal-brand-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* ── Stepper ── */
+  .auth-card-modal .auth-stepper-track,
+  .start-counseling-card .auth-stepper-track {
+    padding: 14px 14px 10px;
+  }
+
+  .auth-card-modal .auth-step-pane,
+  .start-counseling-card .auth-step-pane {
+    padding: 12px 14px 16px;
+  }
+
+  .auth-card-modal .auth-stepper-footer {
+    padding: 0 16px 18px;
+  }
+
+  .auth-step-grid,
+  .auth-mode-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modal kini yang men-scroll, bukan shell dalam -> hindari nested scroll */
+  .start-counseling-card-scroll .auth-stepper-shell {
+    max-height: none;
+    overflow-y: visible;
+  }
+
+  .start-counseling-card-scroll .auth-step-pane {
+    padding-bottom: 22px;
+  }
+
+  /* ── Field: >= 44px & font >= 16px (mencegah auto-zoom iOS) ── */
+  .auth-card-modal .auth-field input,
+  .auth-card-modal .auth-field select,
+  .auth-select-trigger,
+  .start-counseling-textarea {
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  .start-counseling-textarea {
+    min-height: 116px;
+    line-height: 1.6;
+  }
+
+  .auth-field.auth-field-inline {
+    grid-template-columns: minmax(0, 1fr) 56px;
+    gap: 10px;
+  }
+
+  .auth-inline-next {
+    width: 56px;
+    height: 48px;
+  }
+
+  /* ── Dropdown pilihan ── */
+  .auth-select-option {
+    min-height: 46px;
+    padding: 0 12px;
+    font-size: 0.95rem;
+  }
+
+  .auth-select-menu-2rows {
+    max-height: 184px;
+  }
+
+  /* ── Tombol navigasi stepper ── */
+  .auth-card-modal .next-button,
+  .auth-card-modal .back-button {
+    min-height: 46px;
+    min-width: 96px;
+  }
+
+  .auth-card .next-button {
+    min-width: 108px;
+  }
+
+  .start-counseling-submit {
+    min-height: 50px;
+  }
+
+  /* ── Lampiran ── */
+  .start-counseling-upload-button {
+    width: 44px;
+    height: 44px;
+    min-height: 44px;
+    border-radius: 12px;
+  }
+
+  .start-counseling-attachment-chip {
+    width: auto;
+    min-width: 46px;
+    height: 40px;
+    gap: 6px;
+    padding: 0 8px;
+  }
+
+  .start-counseling-attachment-chip button {
+    width: 22px;
+    height: 22px;
+  }
+
+  .auth-success-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 767px) {
+  .auth-modal-panel,
+  .start-counseling-modal-panel {
+    width: min(94vw, 460px);
+  }
+
+  .auth-card-modal {
+    padding: 12px;
+    border-radius: 20px;
+  }
+
+  .auth-header-modal h1,
+  .auth-card-modal .auth-step-heading h3 {
+    font-size: clamp(1.02rem, 4.4vw, 1.2rem);
+    line-height: 1.3;
+  }
+
+  .auth-modal-brand p {
+    font-size: 0.95rem;
+  }
+
+  .auth-modal-brand span {
+    font-size: 0.75rem;
+  }
+
+  /* Sisi kanan pane form tidak boleh memotong dropdown */
+  .auth-card-modal .auth-step-pane {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .auth-card-stepper .step-indicator-inner {
+    height: 2rem;
+    width: 2rem;
+  }
+}
+
+@media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+  .auth-modal-panel {
+    animation: none;
+  }
+}

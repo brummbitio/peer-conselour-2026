@@ -1,0 +1,2206 @@
+.ticket-chat-layout {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 16px;
+}
+
+.ticket-chat-main {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+  overflow: hidden;
+  height: 640px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+}
+
+.ticket-message-list-wrap {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+
+.ticket-chat-header {
+  padding: 10px 0 0;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+  display: grid;
+  gap: 0;
+}
+
+.ticket-chat-id {
+  margin: 0;
+  padding: 0 20px 10px;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ticket-status-banner {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ticket-status-banner-label {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.9;
+}
+
+.ticket-status-banner-value {
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.ticket-status-banner-open {
+  background: rgba(251, 191, 36, 0.16);
+  color: #9a6700;
+}
+
+.ticket-status-banner-in_progress {
+  background: rgba(84, 171, 199, 0.2);
+  color: var(--blue-dark);
+}
+
+.ticket-status-banner-resolved {
+  background: rgba(34, 197, 94, 0.16);
+  color: #166534;
+}
+
+.ticket-chat-subject {
+  padding: 16px 20px 14px;
+  border-bottom: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ticket-chat-subject h1 {
+  margin: 0;
+  max-width: none;
+  font-size: clamp(1.04rem, 1.2vw, 1.2rem);
+  line-height: 1.28;
+}
+
+.ticket-chat-subject p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.ticket-message-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f9fafb;
+}
+
+.ticket-message-list::before {
+  content: "";
+  margin-top: auto;
+}
+
+.ticket-message-bubble {
+  max-width: 100%;
+  height: fit-content;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.ticket-message-admin {
+  align-self: flex-start;
+}
+
+.ticket-message-mahasiswa {
+  align-self: flex-end;
+}
+
+.ticket-message-self {
+  align-self: flex-end;
+  background: rgba(84, 171, 199, 0.12);
+  border-color: rgba(84, 171, 199, 0.24);
+}
+
+.ticket-message-other {
+  align-self: flex-start;
+  background: #ffffff;
+}
+
+.ticket-message-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ticket-message-head strong {
+  font-size: 0.82rem;
+}
+
+.ticket-message-head span {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.ticket-message-bubble p {
+  margin: 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.ticket-message-html p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.ticket-message-html p:last-child {
+  margin-bottom: 0;
+}
+
+.ticket-message-link {
+  color: var(--blue-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ticket-message-attachments {
+  margin-top: 10px;
+  display: grid;
+  gap: 6px;
+}
+
+.ticket-message-attachment-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(84, 171, 199, 0.26);
+  background: rgba(84, 171, 199, 0.1);
+  color: var(--blue-dark);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-decoration: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-composer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  padding: 14px 16px 16px;
+  border-top: 1px solid rgba(17, 24, 39, 0.08);
+  background: #ffffff;
+}
+
+.ticket-composer-main {
+  display: grid;
+  gap: 8px;
+}
+
+/* Editor balasan berbasis contentEditable: format bold/italic/list tampil visual
+   langsung di layar, bukan simbol markdown mentah. */
+.ticket-composer-editor {
+  position: relative;
+  width: 100%;
+  min-height: 46px;
+  max-height: 168px;
+  overflow-y: auto;
+  padding: 10px 14px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  font: inherit;
+  line-height: 1.5;
+  color: var(--text-primary, #0f172a);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  cursor: text;
+}
+
+.ticket-composer-editor:focus {
+  outline: none;
+  border-color: rgba(84, 171, 199, 0.38);
+  box-shadow: 0 0 0 4px rgba(84, 171, 199, 0.1);
+}
+
+.ticket-composer-editor.is-empty::before {
+  content: attr(data-placeholder);
+  position: absolute;
+  top: 10px;
+  left: 14px;
+  right: 14px;
+  color: var(--text-secondary);
+  opacity: 0.72;
+  pointer-events: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-composer-editor b,
+.ticket-composer-editor strong {
+  font-weight: 700;
+}
+
+.ticket-composer-editor i,
+.ticket-composer-editor em {
+  font-style: italic;
+}
+
+/* Reset margin bawaan browser: <p> default punya margin 1em (±16px atas & bawah)
+   yang menimbulkan rongga raksasa di dalam kotak composer yang tingginya terbatas. */
+.ticket-composer-editor p,
+.ticket-composer-editor div {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.ticket-composer-editor ul,
+.ticket-composer-editor ol {
+  margin: 4px 0;
+  padding-left: 22px;
+}
+
+.ticket-composer-editor li {
+  margin: 2px 0;
+}
+
+.ticket-composer-actions {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.ticket-attach-input {
+  display: none;
+}
+
+.ticket-attach-button {
+  min-height: 46px;
+  min-width: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  background: #ffffff;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease;
+}
+
+.ticket-attach-button:hover,
+.ticket-attach-button:focus-visible {
+  border-color: rgba(84, 171, 199, 0.36);
+  color: var(--blue-dark);
+  background: rgba(84, 171, 199, 0.1);
+}
+
+.ticket-composer-actions .button {
+  min-height: 46px;
+  gap: 8px;
+}
+
+.ticket-pending-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ticket-pending-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  max-width: 100%;
+  padding: 0 8px 0 10px;
+  border: 1px solid rgba(17, 24, 39, 0.14);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.ticket-pending-attachment-chip span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ticket-pending-attachment-chip button {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6b7280;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.ticket-pending-attachment-chip button:hover,
+.ticket-pending-attachment-chip button:focus-visible {
+  background: rgba(17, 24, 39, 0.08);
+}
+
+/* Status unggah lampiran: progress bar indeterminate & penanda gagal */
+.ticket-pending-attachment-chip {
+  position: relative;
+  overflow: hidden;
+}
+
+.ticket-pending-attachment-chip.is-uploading {
+  border-color: rgba(84, 171, 199, 0.32);
+}
+
+.ticket-pending-attachment-chip.has-error {
+  border-color: #ef4444;
+}
+
+.ticket-pending-attachment-chip .ticket-pending-attachment-status {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--text-secondary);
+}
+
+.ticket-pending-attachment-chip .ticket-pending-attachment-status.is-error {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+.ticket-pending-attachment-chip .ticket-upload-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: rgba(84, 171, 199, 0.16);
+}
+
+.ticket-upload-progress::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -40%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, #54abc7, #8cc5d6);
+  animation: ticketUploadSlide 1.2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes ticketUploadSlide {
+  from { left: -40%; }
+  to { left: 100%; }
+}
+
+/* Zona drag & drop lampiran di composer */
+.ticket-composer {
+  position: relative;
+}
+
+.ticket-composer.is-drag-active::after {
+  content: "Lepaskan file untuk melampirkan";
+  position: absolute;
+  inset: 6px;
+  z-index: 5;
+  display: grid;
+  place-items: center;
+  border: 2px dashed rgba(84, 171, 199, 0.6);
+  border-radius: 14px;
+  background: rgba(240, 248, 251, 0.94);
+  color: var(--blue-dark);
+  font-size: 0.9rem;
+  font-weight: 700;
+  pointer-events: none;
+  animation: ticketBackdropFade 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Nama mahasiswa & konselor di bawah judul tiket (khusus admin) */
+.ticket-chat-subject .ticket-chat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.ticket-chat-meta strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+
+.ticket-chat-side {
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 20px;
+  background: #ffffff;
+  padding: 16px 16px 12px;
+  align-self: start;
+}
+
+.ticket-chat-side h2 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.ticket-side-info {
+  margin-top: 12px;
+  display: grid;
+  gap: 10px;
+}
+
+.ticket-side-divider {
+  height: 1px;
+  margin: 2px 2px 0;
+  background: rgba(17, 24, 39, 0.1);
+}
+
+.ticket-side-subtitle {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ticket-side-student-link {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid rgba(84, 171, 199, 0.28);
+  border-radius: 10px;
+  background: rgba(84, 171, 199, 0.08);
+  color: var(--blue-dark);
+  font-size: 0.86rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.ticket-side-student-link:hover,
+.ticket-side-student-link:focus-visible {
+  background: rgba(84, 171, 199, 0.14);
+}
+
+.ticket-side-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ticket-side-row span {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.ticket-side-row strong {
+  font-size: 0.95rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.ticket-side-action {
+  /* Sebelumnya item grid .ticket-side-info (gap 10px). Setelah dipindah jadi
+     anak langsung .ticket-chat-side, jaraknya dijaga lewat margin. */
+  margin-top: 12px;
+  padding: 14px 12px 2px;
+  border-top: 1px solid rgba(17, 24, 39, 0.1);
+  display: grid;
+  gap: 10px;
+}
+
+.ticket-side-action p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.ticket-finish-button {
+  width: 100%;
+  justify-content: center;
+}
+
+.ticket-finish-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.78;
+}
+
+/* Keyframes animasi modal tiket (dipakai lightbox & zona drag lampiran).
+   Modal konfirmasi kini memakai PortalModal (app/styles/portal-ui.css). */
+@keyframes ticketBackdropFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ticketPanelZoom {
+  from {
+    transform: scale(0.92);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   RESOLUSI TIKET: FORM ADMIN, RINGKASAN HASIL, & PENUTUP SESI MAHASISWA
+   ========================================================================== */
+
+.ticket-resolution-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.ticket-resolution-legend {
+  margin-bottom: 8px;
+  padding: 0;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ticket-resolution-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1.5px solid rgba(17, 24, 39, 0.12);
+  border-radius: 14px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+.ticket-resolution-option:hover {
+  border-color: rgba(84, 171, 199, 0.5);
+}
+
+.ticket-resolution-option.is-selected {
+  border-color: var(--blue-dark);
+  background: rgba(84, 171, 199, 0.08);
+}
+
+.ticket-resolution-option.is-unhandled.is-selected {
+  border-color: #dc2626;
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.ticket-resolution-option input {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin: 3px 0 0;
+  accent-color: var(--blue-dark);
+}
+
+.ticket-resolution-option.is-unhandled input {
+  accent-color: #dc2626;
+}
+
+.ticket-resolution-option-text {
+  display: grid;
+  gap: 2px;
+}
+
+.ticket-resolution-option-text strong {
+  color: #111827;
+  font-size: 0.93rem;
+  line-height: 1.3;
+}
+
+.ticket-resolution-option-text small {
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.ticket-resolution-field {
+  display: grid;
+  gap: 6px;
+}
+
+.ticket-resolution-field label {
+  color: #111827;
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.ticket-resolution-field label span {
+  color: #dc2626;
+}
+
+.ticket-resolution-field select,
+.ticket-resolution-field textarea {
+  width: 100%;
+  border: 1.5px solid rgba(17, 24, 39, 0.14);
+  border-radius: 12px;
+  background: #ffffff;
+  padding: 10px 12px;
+  color: #111827;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.ticket-resolution-field select {
+  min-height: 44px;
+}
+
+.ticket-resolution-field textarea {
+  min-height: 88px;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.ticket-resolution-field select:focus-visible,
+.ticket-resolution-field textarea:focus-visible {
+  outline: none;
+  border-color: var(--blue-dark);
+  box-shadow: 0 0 0 3px rgba(84, 171, 199, 0.2);
+}
+
+.ticket-resolution-summary {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ticket-resolution-summary-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ticket-resolution-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.ticket-resolution-badge.is-handled {
+  background: rgba(34, 197, 94, 0.14);
+  color: #166534;
+}
+
+.ticket-resolution-badge.is-unhandled {
+  background: rgba(239, 68, 68, 0.12);
+  color: #b91c1c;
+}
+
+.ticket-resolution-detail {
+  display: grid;
+  gap: 2px;
+}
+
+.ticket-resolution-detail span {
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.ticket-resolution-detail strong {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+
+.ticket-resolution-notes {
+  font-weight: 500;
+  white-space: pre-wrap;
+}
+
+.ticket-closure-note {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+}
+
+@media (max-width: 760px) {
+  .my-counseling-tabs button {
+    min-height: 62px;
+    font-size: 0.95rem;
+    padding: 0 14px;
+  }
+
+  .admin-stat-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-line-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-dashboard-main-schedule {
+    height: calc(100dvh - 170px);
+    min-height: 430px;
+  }
+
+  .admin-schedule-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-schedule-toolbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .admin-schedule-view-toggle {
+    flex-shrink: 0;
+  }
+
+  .admin-schedule-add-button {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .admin-schedule-overlay-panel-datetime {
+    width: min(460px, calc(100vw - 20px));
+    border-radius: 16px;
+  }
+
+  .admin-search-input {
+    width: 100%;
+  }
+
+  .admin-tab-tools-admins {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+
+  .admin-tab-tools-admins .button {
+    width: 100%;
+  }
+
+  .admin-admin-card-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .admin-admin-inline-meta {
+    gap: 6px;
+  }
+
+  .admin-scroll-list-active {
+    max-height: min(480px, calc(100vh - 280px));
+  }
+
+  .admin-student-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .admin-student-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-profile-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .student-profile-toast-stack {
+    top: calc(env(safe-area-inset-top, 0px) + 88px);
+    right: 12px;
+    left: 12px;
+  }
+
+  .student-profile-toast {
+    min-width: 0;
+    max-width: none;
+    width: 100%;
+  }
+
+  .admin-line-labels span {
+    font-size: 0.7rem;
+  }
+
+  .my-counseling-card {
+    grid-template-columns: 1fr;
+  }
+
+  .my-counseling-card-top {
+    grid-column: 1;
+  }
+
+  .admin-profile-card {
+    grid-template-columns: 1fr;
+  }
+
+  .my-counseling-arrow-link {
+    border-left: 0;
+    border-top: 1px solid rgba(17, 24, 39, 0.1);
+  }
+
+  .my-counseling-arrow {
+    min-height: 52px;
+  }
+
+  .ticket-page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+}
+/* ==========================================================================
+   WHATSAPP-STYLE GALLERY GRID & DYNAMIC LIGHTBOX
+   ========================================================================== */
+
+.ticket-message-gallery {
+  display: grid;
+  gap: 4px;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 8px;
+  cursor: pointer;
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.ticket-message-gallery-item {
+  position: relative;
+  overflow: hidden;
+  background: rgba(15, 23, 42, 0.05);
+  border-radius: 8px;
+}
+
+.ticket-message-gallery-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ticket-message-gallery-item:hover .ticket-message-gallery-img {
+  transform: scale(1.06);
+}
+
+/* 1 Gambar */
+.ticket-message-gallery-1 {
+  grid-template-columns: 1fr;
+  width: 100%;
+}
+.ticket-message-gallery-1 .ticket-message-gallery-item {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.04);
+}
+.ticket-message-gallery-1 .ticket-message-gallery-img {
+  width: 100%;
+  height: auto;
+  max-height: 280px;
+  object-fit: contain;
+  display: block;
+}
+
+/* 2 Gambar */
+.ticket-message-gallery-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+.ticket-message-gallery-2 .ticket-message-gallery-item {
+  height: 150px;
+}
+
+/* 3 Gambar */
+.ticket-message-gallery-3 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.ticket-message-gallery-3 .ticket-message-gallery-item {
+  height: 110px;
+}
+.ticket-message-gallery-3 .ticket-message-gallery-item:first-child {
+  grid-row: span 2;
+  height: 224px;
+}
+
+/* 4 Gambar atau lebih */
+.ticket-message-gallery-4 {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+.ticket-message-gallery-4 .ticket-message-gallery-item {
+  height: 110px;
+}
+
+/* Overlay sisa gambar */
+.ticket-message-gallery-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  backdrop-filter: blur(2px);
+}
+
+/* Tampilan list dokumen */
+.ticket-message-document-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: rgba(17, 24, 39, 0.03);
+  border: 1px solid rgba(17, 24, 39, 0.08);
+  text-decoration: none;
+  color: var(--text-primary) !important;
+  transition: all 0.2s ease;
+  max-width: 320px;
+}
+
+.ticket-message-document-row:hover {
+  background: rgba(17, 24, 39, 0.07);
+  border-color: rgba(17, 24, 39, 0.15);
+  transform: translateY(-1px);
+}
+
+.ticket-message-document-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.ticket-message-document-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.ticket-message-document-name {
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Lightbox Modal */
+.ticket-lightbox-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: ticketLightboxFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ticket-lightbox-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.ticket-lightbox-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-download {
+  position: absolute;
+  top: -50px;
+  right: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-zoom {
+  position: absolute;
+  top: -50px;
+  right: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-zoom:hover,
+.ticket-lightbox-close:hover,
+.ticket-lightbox-download:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.ticket-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 50%;
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ticket-lightbox-nav:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  transform: translateY(-50%) scale(1.1);
+}
+
+.ticket-lightbox-nav-prev {
+  left: -80px;
+}
+
+.ticket-lightbox-nav-next {
+  right: -80px;
+}
+
+.ticket-lightbox-image-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ticket-lightbox-image {
+  max-width: 80vw;
+  max-height: 75vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ticket-lightbox-caption {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.9rem;
+  margin-top: 16px;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  text-align: center;
+  max-width: 600px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.ticket-lightbox-content {
+  animation: ticketPanelZoom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+/* Stage zoom: gambar diperbesar 2x ke titik kursor, sisa area dipotong rapi */
+.ticket-lightbox-stage {
+  overflow: hidden;
+  border-radius: 8px;
+  cursor: zoom-in;
+}
+
+.ticket-lightbox-stage .ticket-lightbox-image {
+  display: block;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ticket-lightbox-stage.is-zoomed {
+  cursor: zoom-out;
+}
+
+.ticket-lightbox-stage.is-zoomed .ticket-lightbox-image {
+  transform: scale(2);
+}
+
+.ticket-lightbox-counter {
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-lightbox-content,
+  .ticket-composer.is-drag-active::after {
+    animation: none;
+  }
+
+  .ticket-lightbox-stage .ticket-lightbox-image {
+    transition: none;
+  }
+}
+
+@keyframes ticketLightboxFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .ticket-lightbox-nav-prev {
+    left: 10px;
+    z-index: 10001;
+  }
+  .ticket-lightbox-nav-next {
+    right: 10px;
+    z-index: 10001;
+  }
+}
+
+/* ==========================================================================
+   SEPARATED CHAT BUBBLES LOGIC
+   ========================================================================== */
+
+.ticket-message-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.ticket-message-group-self {
+  align-items: flex-end;
+}
+
+.ticket-message-group-other {
+  align-items: flex-start;
+}
+
+.ticket-message-group-self .ticket-message-bubble {
+  align-self: flex-end;
+}
+
+.ticket-message-group-other .ticket-message-bubble {
+  align-self: flex-start;
+}
+
+/* Bubble-wrap must not stretch full width */
+.ticket-message-group-self .ticket-message-bubble-wrap {
+  align-self: flex-end;
+  max-width: 75%;
+}
+
+.ticket-message-group-other .ticket-message-bubble-wrap {
+  align-self: flex-start;
+  max-width: 75%;
+}
+
+.ticket-message-attachments-bubble {
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 24, 39, 0.08);
+}
+
+.ticket-message-group-self .ticket-message-attachments-bubble {
+  background: rgba(84, 171, 199, 0.12);
+  border-color: rgba(84, 171, 199, 0.24);
+}
+
+/* ==========================================================================
+   FORMATTING TOOLBAR
+   ========================================================================== */
+
+.ticket-composer-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 2px;
+}
+
+.ticket-format-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 700;
+  font-family: inherit;
+  transition: background 120ms ease, color 120ms ease;
+  flex-shrink: 0;
+}
+
+.ticket-format-btn:hover {
+  background: rgba(84, 171, 199, 0.12);
+  color: var(--blue-dark);
+}
+
+.ticket-format-btn-active {
+  background: rgba(84, 171, 199, 0.16);
+  color: var(--blue-dark);
+}
+
+.ticket-format-btn svg {
+  pointer-events: none;
+}
+
+.ticket-format-divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(17, 24, 39, 0.12);
+  margin: 0 3px;
+  flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   SCROLL TO BOTTOM BUTTON
+   ========================================================================== */
+
+.ticket-scroll-bottom-btn {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid rgba(84, 171, 199, 0.3);
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.12);
+  color: var(--blue-dark);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 10;
+  white-space: nowrap;
+}
+
+.ticket-scroll-bottom-btn.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+.ticket-scroll-bottom-btn:hover {
+  background: rgba(84, 171, 199, 0.1);
+  border-color: rgba(84, 171, 199, 0.5);
+}
+
+
+/* ==========================================================================
+   REPLY QUOTE
+   ========================================================================== */
+
+.ticket-reply-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(84, 171, 199, 0.07);
+  border: 1px solid rgba(84, 171, 199, 0.18);
+  border-left: 3px solid var(--blue-dark);
+}
+
+.ticket-reply-bar-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.ticket-reply-bar-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+  margin-bottom: 2px;
+}
+
+.ticket-reply-bar-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ticket-reply-bar-close {
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 120ms ease;
+}
+
+.ticket-reply-bar-close:hover {
+  background: rgba(17, 24, 39, 0.08);
+}
+
+/* Reply preview in sent bubble */
+.ticket-message-reply-quote {
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  border-left: 3px solid var(--blue-dark);
+  border-radius: 4px;
+  background: rgba(17, 24, 39, 0.05);
+}
+
+.ticket-message-reply-quote-name {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--blue-dark);
+  margin-bottom: 2px;
+}
+
+.ticket-message-reply-quote-text {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Click scroll highlight target flash animation */
+@keyframes messageHighlightSelf {
+  0% { background: rgba(54, 161, 203, 0.45); }
+  100% { background: rgba(84, 171, 199, 0.12); }
+}
+@keyframes messageHighlightOther {
+  0% { background: rgba(54, 161, 203, 0.35); }
+  100% { background: #ffffff; }
+}
+
+.ticket-message-highlight.ticket-message-group-self .ticket-message-bubble {
+  animation: messageHighlightSelf 1.5s ease-out;
+}
+.ticket-message-highlight.ticket-message-group-other .ticket-message-bubble {
+  animation: messageHighlightOther 1.5s ease-out;
+}
+
+/* ==========================================================================
+   BUBBLE CONTEXT MENU (Reply / Copy) — inline-flex sibling approach
+   ========================================================================== */
+
+.ticket-message-bubble-wrap {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0; /* gap managed by actions width itself */
+}
+
+.ticket-bubble-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  /* Always reserves 34px — bubble width never changes on hover */
+  width: 34px;
+  flex-shrink: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ticket-message-bubble-wrap:hover .ticket-bubble-actions,
+.ticket-message-bubble-wrap:focus-within .ticket-bubble-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.ticket-bubble-action-btn {
+  width: 28px;
+  height: 28px;
+  border: 1px solid rgba(17, 24, 39, 0.1);
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.08);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 120ms ease;
+  font-size: 0.78rem;
+  flex-shrink: 0;
+}
+
+.ticket-bubble-action-btn:hover {
+  background: rgba(84, 171, 199, 0.1);
+  border-color: rgba(84, 171, 199, 0.3);
+  color: var(--blue-dark);
+  transform: scale(1.08);
+}
+
+/* ==========================================================================
+   COPY TOAST NOTIFICATION
+   ========================================================================== */
+
+.ticket-copy-toast {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  min-height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(17, 24, 39, 0.85);
+  backdrop-filter: blur(8px);
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 200ms ease, transform 200ms ease;
+  z-index: 9999;
+  white-space: nowrap;
+}
+
+.ticket-copy-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ==========================================================================
+   MARKDOWN RENDERING IN BUBBLES
+   ========================================================================== */
+
+.ticket-message-md strong,
+.ticket-message-md b {
+  font-weight: 700;
+}
+
+.ticket-message-md em,
+.ticket-message-md i {
+  font-style: italic;
+}
+
+.ticket-message-md s {
+  text-decoration: line-through;
+}
+
+.ticket-message-md ul {
+  margin: 4px 0;
+  padding-left: 18px;
+  list-style: disc;
+}
+
+.ticket-message-md ol {
+  margin: 4px 0;
+  padding-left: 20px;
+  list-style: decimal;
+}
+
+.ticket-message-md li {
+  margin: 2px 0;
+  line-height: 1.5;
+}
+
+.ticket-message-md code {
+  font-family: 'Fira Code', 'Courier New', monospace;
+  font-size: 0.85em;
+  background: rgba(17, 24, 39, 0.07);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
+
+/* Paragraf markdown memakai jarak yang sama dengan pesan HTML lama supaya
+   tampilan pesan lama dan pesan baru konsisten setelah disunting. */
+.ticket-message-markdown p {
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.ticket-message-markdown p:last-child {
+  margin-bottom: 0;
+}
+
+.ticket-message-markdown ul,
+.ticket-message-markdown ol {
+  margin: 6px 0;
+  padding-left: 22px;
+}
+
+.ticket-message-markdown li {
+  margin: 2px 0;
+}
+
+.ticket-message-markdown > *:last-child {
+  margin-bottom: 0;
+}
+
+
+/* ==========================================================================
+   REOPEN TICKET BUTTON (BATALKAN STATUS SELESAI)
+   ========================================================================== */
+
+.ticket-finish-button.ticket-reopen-button {
+  border: 1.5px solid var(--blue-dark);
+  background: rgba(84, 171, 199, 0.08);
+  color: var(--blue-dark);
+  font-weight: 700;
+}
+
+.ticket-finish-button.ticket-reopen-button:hover,
+.ticket-finish-button.ticket-reopen-button:focus-visible {
+  background: var(--blue-dark);
+  border-color: var(--blue-dark);
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   BUBBLE ACTION: HAPUS PESAN
+   ========================================================================== */
+
+/* Tampilan admin punya 4 aksi. Susun 2x2 supaya tinggi baris aksi tetap 60px
+   (sama seperti versi 2 aksi) dan tinggi minimum bubble tidak ikut bertambah. */
+.ticket-bubble-actions.ticket-bubble-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 28px);
+  grid-auto-rows: 28px;
+  gap: 4px;
+  width: 60px;
+}
+
+.ticket-bubble-action-btn.ticket-bubble-action-danger:hover {
+  background: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.32);
+  color: #dc2626;
+}
+
+/* ==========================================================================
+   MODE EDIT PESAN ALA WHATSAPP (COMPOSER BAWAH + REDUP CHAT LIST)
+   ========================================================================== */
+
+/* Chat list diredupkan, kecuali bubble yang sedang disunting */
+.ticket-message-list .ticket-message-group {
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.ticket-message-list-dimmed .ticket-message-group:not(.ticket-message-editing) {
+  filter: blur(2.5px);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.ticket-message-editing {
+  position: relative;
+  z-index: 20;
+}
+
+.ticket-message-editing .ticket-message-bubble {
+  box-shadow: 0 0 0 2px #54abc7, 0 8px 24px rgba(84, 171, 199, 0.22);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Bar info "Mengedit Pesan" di atas editor composer */
+.ticket-edit-bar {
+  border-left-color: #54abc7;
+  background: rgba(84, 171, 199, 0.1);
+}
+
+.ticket-edit-bar .ticket-reply-bar-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--blue-dark);
+}
+
+.ticket-edit-bar .ticket-reply-bar-name svg {
+  flex-shrink: 0;
+}
+
+/* Tombol centang "Simpan Perubahan" menggantikan tombol Kirim */
+.ticket-composer-save-btn {
+  min-width: 46px;
+  padding-inline: 14px;
+  justify-content: center;
+}
+
+.ticket-composer-save-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ticket-attach-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ticket-attach-button:disabled:hover {
+  border-color: rgba(17, 24, 39, 0.14);
+  color: var(--text-secondary);
+  background: #ffffff;
+}
+
+/* Penanda pesan yang pernah disunting */
+.ticket-message-edited-flag {
+  margin-left: 6px;
+  font-style: italic;
+  font-size: 0.92em;
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-message-list .ticket-message-group,
+  .ticket-message-editing .ticket-message-bubble {
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   MODAL KONFIRMASI HAPUS PESAN (STANDAR DESAIN UB)
+   ========================================================================== */
+
+.ticket-message-delete-preview {
+  margin: 0;
+  padding: 10px 14px;
+  border-left: 3px solid rgba(84, 171, 199, 0.6);
+  border-radius: 0 10px 10px 0;
+  background: rgba(84, 171, 199, 0.08);
+  color: #475569;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.ticket-message-delete-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.ticket-message-delete-btn-cancel {
+  padding: 9px 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 160ms ease;
+}
+
+.ticket-message-delete-btn-cancel:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #1e293b;
+}
+
+.ticket-message-delete-btn-confirm {
+  padding: 9px 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: 10px;
+  border: none;
+  background: #dc2626;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 160ms ease;
+  box-shadow: 0 2px 6px rgba(220, 38, 38, 0.25);
+}
+
+.ticket-message-delete-btn-confirm:hover:not(:disabled) {
+  background: #b91c1c;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+  transform: translateY(-1px);
+}
+
+.ticket-message-delete-btn-cancel:disabled,
+.ticket-message-delete-btn-confirm:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   PANEL "DETAIL LAYANAN": HEADER + TOMBOL COLLAPSE
+   Tombol hanya aktif di mobile (< 768px); di tablet & desktop panel selalu
+   terbuka sehingga tampilan lama tidak berubah.
+   ========================================================================== */
+
+.ticket-chat-side-head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ticket-chat-side-toggle {
+  display: none;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(17, 24, 39, 0.12);
+  border-radius: 10px;
+  background: #ffffff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+/* Seluruh baris judul ikut jadi area sentuh, bukan hanya kotak 36px. */
+.ticket-chat-side-toggle::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.ticket-chat-side-toggle:hover,
+.ticket-chat-side-toggle:focus-visible {
+  border-color: rgba(84, 171, 199, 0.36);
+  background: rgba(84, 171, 199, 0.1);
+  color: var(--blue-dark);
+}
+
+.ticket-chat-side-toggle svg {
+  transition: transform 220ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ticket-chat-side.is-open .ticket-chat-side-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   RESPONSIVE — TABLET (768px - 1024px)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  /* Sidebar diramping supaya kolom percakapan tetap leluasa. */
+  .ticket-chat-layout {
+    grid-template-columns: minmax(0, 1fr) 272px;
+    gap: 14px;
+  }
+
+  .ticket-chat-main {
+    height: min(640px, calc(100dvh - 200px));
+    min-height: 520px;
+  }
+
+  .ticket-message-list {
+    padding: 14px 16px;
+  }
+
+  .ticket-message-group-self .ticket-message-bubble-wrap,
+  .ticket-message-group-other .ticket-message-bubble-wrap {
+    max-width: 86%;
+  }
+
+  .ticket-chat-side {
+    padding: 14px 14px 12px;
+  }
+
+  .ticket-side-row {
+    padding: 10px;
+  }
+
+  .ticket-side-row strong {
+    font-size: 0.9rem;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — MOBILE (< 768px)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* ---- 1. Layout satu kolom: panel detail turun ke bawah percakapan ---- */
+  .ticket-chat-layout {
+    margin-top: 12px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  /* ---- 2. Tinggi chat mengikuti viewport, tanpa scrollbar ganda ---- */
+  .ticket-chat-main {
+    height: min(640px, calc(100dvh - 160px));
+    min-height: 460px;
+    border-radius: 16px;
+  }
+
+  /* ---- 3. Header tiket, status banner & tombol kembali ---- */
+  .ticket-chat-header {
+    padding: 8px 0 0;
+  }
+
+  .ticket-chat-id {
+    padding: 0 14px 8px;
+  }
+
+  .ticket-status-banner {
+    min-height: 44px;
+    padding: 8px 14px;
+    flex-wrap: wrap;
+    gap: 2px 12px;
+  }
+
+  .ticket-status-banner-label {
+    flex: 1 1 auto;
+  }
+
+  .ticket-chat-subject {
+    padding: 12px 14px;
+  }
+
+  .ticket-chat-subject h1 {
+    font-size: clamp(1rem, 4.2vw, 1.16rem);
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- 4. Daftar pesan & lebar bubble ---- */
+  .ticket-message-list {
+    /* Padding atas lebih longgar: menyediakan ruang bagi toolbar aksi
+       mengambang milik pesan paling atas agar tidak terpotong area scroll.
+       Tidak terlihat pada percakapan pendek karena list ter-anchor ke bawah. */
+    padding: 52px 12px 12px;
+    gap: 10px;
+  }
+
+  .ticket-message-group-self .ticket-message-bubble-wrap,
+  .ticket-message-group-other .ticket-message-bubble-wrap {
+    max-width: 92%;
+  }
+
+  .ticket-message-bubble-wrap {
+    position: relative;
+  }
+
+  .ticket-message-bubble {
+    padding: 10px 12px;
+  }
+
+  /* ---- 5. Aksi bubble jadi toolbar mengambang ----
+     Sebelumnya .ticket-bubble-actions memesan 34px/60px lebar inline sehingga
+     teks bubble tersisa ~50px. Di mobile aksi dikeluarkan dari alur flex
+     (position: absolute) dan hanya muncul saat bubble di-tap. */
+  .ticket-bubble-actions,
+  .ticket-bubble-actions.ticket-bubble-actions-grid {
+    position: absolute;
+    /* Melayang PENUH di atas bubble supaya tidak menutup nama & jam pengirim. */
+    bottom: calc(100% + 4px);
+    z-index: 6;
+    display: flex;
+    flex-direction: row;
+    width: auto;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid rgba(17, 24, 39, 0.08);
+    border-radius: 999px;
+    background: #ffffff;
+    box-shadow: 0 6px 18px rgba(17, 24, 39, 0.16);
+    transform: translateY(4px) scale(0.96);
+    transform-origin: center bottom;
+    transition:
+      opacity 160ms ease,
+      transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .ticket-message-group-self .ticket-bubble-actions {
+    right: 4px;
+  }
+
+  .ticket-message-group-other .ticket-bubble-actions {
+    left: 4px;
+  }
+
+  /* Layar sentuh tidak punya hover natural (dan :hover bisa "nyangkut"
+     setelah tap), jadi pemunculan sepenuhnya dikendalikan .is-actions-open. */
+  .ticket-message-bubble-wrap:hover .ticket-bubble-actions {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .ticket-message-bubble-wrap.is-actions-open .ticket-bubble-actions,
+  .ticket-message-bubble-wrap:focus-within .ticket-bubble-actions {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0) scale(1);
+  }
+
+  .ticket-bubble-action-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
+  /* ---- 6. Lampiran: galeri & dokumen ikut lebar bubble ---- */
+  .ticket-message-gallery,
+  .ticket-message-document-row {
+    max-width: 100%;
+  }
+
+  .ticket-message-gallery-1 .ticket-message-gallery-item {
+    max-height: 220px;
+    height: auto;
+  }
+
+  .ticket-message-gallery-2 .ticket-message-gallery-item,
+  .ticket-message-gallery-4 .ticket-message-gallery-item {
+    height: 118px;
+  }
+
+  /* ---- 7. Composer ---- */
+  .ticket-composer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+    padding: 10px 12px 12px;
+  }
+
+  /* Toolbar format bisa digeser horizontal di layar sangat sempit. */
+  .ticket-composer-toolbar {
+    gap: 4px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ticket-composer-toolbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .ticket-format-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ticket-composer-editor {
+    max-height: 132px;
+    padding: 10px 12px;
+    /* 16px mencegah Safari iOS auto-zoom saat editor difokuskan. */
+    font-size: 16px;
+  }
+
+  .ticket-composer-editor.is-empty::before {
+    left: 12px;
+    right: 12px;
+  }
+
+  .ticket-composer-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .ticket-attach-button {
+    flex: 0 0 46px;
+  }
+
+  .ticket-composer-actions .button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  .ticket-reply-bar {
+    padding: 8px 10px;
+  }
+
+  /* ---- 8. Panel Detail Layanan sebagai accordion ---- */
+  .ticket-chat-side {
+    padding: 4px 14px 14px;
+    border-radius: 16px;
+  }
+
+  .ticket-chat-side-head {
+    min-height: 52px;
+  }
+
+  .ticket-chat-side-toggle {
+    display: inline-flex;
+  }
+
+  .ticket-chat-side .ticket-side-info {
+    display: none;
+  }
+
+  .ticket-chat-side.is-open .ticket-side-info {
+    display: grid;
+  }
+
+  /* Tombol "Tandai Selesai"/"Buka Kembali" tetap terlihat walau panel tertutup. */
+  .ticket-side-action {
+    margin-top: 10px;
+    padding: 12px 0 0;
+  }
+
+  .ticket-finish-button {
+    min-height: 46px;
+  }
+
+  .ticket-side-student-link {
+    min-height: 44px;
+  }
+
+  /* ---- 9. Modal & lightbox ---- */
+  .ticket-message-delete-actions {
+    flex-direction: column-reverse;
+  }
+
+  .ticket-message-delete-btn-cancel,
+  .ticket-message-delete-btn-confirm {
+    width: 100%;
+    min-height: 44px;
+    justify-content: center;
+  }
+
+  .ticket-lightbox-close {
+    top: -46px;
+    right: 0;
+  }
+
+  .ticket-lightbox-download {
+    top: -46px;
+    right: 48px;
+  }
+
+  .ticket-lightbox-image {
+    max-width: 92vw;
+    max-height: 68vh;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE — LAYAR SANGAT SEMPIT (< 380px)
+   ========================================================================== */
+
+@media (max-width: 380px) {
+  .ticket-message-group-self .ticket-message-bubble-wrap,
+  .ticket-message-group-other .ticket-message-bubble-wrap {
+    max-width: 96%;
+  }
+
+  .ticket-message-head {
+    gap: 6px;
+  }
+
+  .ticket-status-banner-value {
+    font-size: 0.86rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ticket-bubble-actions,
+  .ticket-chat-side-toggle svg {
+    transition: none;
+  }
+}

@@ -62,16 +62,17 @@ func (h *UploadHandler) UploadFile(c *gin.Context) {
 		// Convert and resize to WebP
 		processed, err := media.ProcessImage(fullData, mimeType)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			return
+			log.Printf("Peringatan: Gagal memproses gambar ke WebP (%v), mengunggah gambar asli", err)
+			finalData = fullData
+		} else {
+			finalData = processed
+			finalMimeType = "image/webp"
+			ext = ".webp"
+			
+			// Update file name extension to webp
+			origNameWithoutExt := strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename))
+			finalFileName = origNameWithoutExt + ".webp"
 		}
-		finalData = processed
-		finalMimeType = "image/webp"
-		ext = ".webp"
-		
-		// Update file name extension to webp
-		origNameWithoutExt := strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename))
-		finalFileName = origNameWithoutExt + ".webp"
 	} else {
 		finalData = fullData
 	}

@@ -47,7 +47,13 @@ func InitMinio() {
 
 // UploadFile mengunggah file ke bucket MinIO
 func UploadFile(ctx context.Context, objectName string, reader io.Reader, objectSize int64, contentType string) error {
-	_, err := MinioClient.PutObject(ctx, config.AppConfig.MinioBucketName, objectName, reader, objectSize, minio.PutObjectOptions{
+	bucketName := config.AppConfig.MinioBucketName
+	exists, err := MinioClient.BucketExists(ctx, bucketName)
+	if err == nil && !exists {
+		_ = MinioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{})
+	}
+
+	_, err = MinioClient.PutObject(ctx, bucketName, objectName, reader, objectSize, minio.PutObjectOptions{
 		ContentType: contentType,
 	})
 	return err

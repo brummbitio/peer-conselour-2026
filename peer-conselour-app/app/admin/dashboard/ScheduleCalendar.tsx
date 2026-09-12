@@ -46,7 +46,7 @@ export function ScheduleCalendar({
   onStatusChange?: (itemId: string, newStatus: CounselingScheduleStatus) => void;
 }) {
   const [viewMode, setViewMode] = useState<"month" | "week" | "day">("month");
-  const [currentDate, setCurrentDate] = useState(() => new Date(2026, 3, 24)); // Default to April 24, 2026 for demo based on mock data
+  const [currentDate, setCurrentDate] = useState(() => new Date());
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   const events = useMemo(() => {
@@ -85,6 +85,15 @@ export function ScheduleCalendar({
   const daysInMonth = (year: number, month: number) => new Date(year, month + 1, 0).getDate();
   const firstDayOfMonth = (year: number, month: number) => new Date(year, month, 1).getDay();
 
+  const isToday = (date: Date) => {
+    const now = new Date();
+    return (
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear()
+    );
+  };
+
   const handlePrev = () => {
     const newDate = new Date(currentDate);
     if (viewMode === "month") newDate.setMonth(newDate.getMonth() - 1);
@@ -102,7 +111,7 @@ export function ScheduleCalendar({
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date(2026, 3, 24)); // Mock today
+    setCurrentDate(new Date());
   };
 
   const currentMonthName = currentDate.toLocaleString("en-US", { month: "long" });
@@ -215,15 +224,16 @@ export function ScheduleCalendar({
                 const dayEvents = events.filter((e) => e.dateValue === cellDateStr);
                 const visibleEvents = dayEvents.slice(0, 3);
                 const hiddenCount = dayEvents.length - 3;
+                const isCurrentDay = isToday(cell.date);
 
                 return (
                   <div
                     key={idx}
                     className={`admin-calendar-month-cell ${
                       !cell.isCurrentMonth ? "is-outside" : ""
-                    }`}
+                    } ${isCurrentDay ? "is-today" : ""}`}
                   >
-                    <span className="admin-calendar-date-number">
+                    <span className={`admin-calendar-date-number ${isCurrentDay ? "is-today" : ""}`}>
                       {cell.date.getDate()}
                     </span>
                     <div className="admin-calendar-events">
@@ -257,18 +267,21 @@ export function ScheduleCalendar({
             <div className="admin-calendar-timegrid-header">
               <div className="admin-calendar-timegrid-header-corner"></div>
               {viewMode === "week" ? (
-                generateWeekDays().map((day, idx) => (
-                  <div key={idx} className="admin-calendar-timegrid-header-cell">
-                    <span className="admin-calendar-timegrid-day-name">
-                      {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day.getDay()]}
-                    </span>
-                    <span className="admin-calendar-timegrid-day-num">
-                      {day.getDate()}
-                    </span>
-                  </div>
-                ))
+                generateWeekDays().map((day, idx) => {
+                  const isDayToday = isToday(day);
+                  return (
+                    <div key={idx} className={`admin-calendar-timegrid-header-cell ${isDayToday ? "is-today" : ""}`}>
+                      <span className="admin-calendar-timegrid-day-name">
+                        {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][day.getDay()]}
+                      </span>
+                      <span className="admin-calendar-timegrid-day-num">
+                        {day.getDate()}
+                      </span>
+                    </div>
+                  );
+                })
               ) : (
-                <div className="admin-calendar-timegrid-header-cell">
+                <div className={`admin-calendar-timegrid-header-cell ${isToday(currentDate) ? "is-today" : ""}`}>
                   <span className="admin-calendar-timegrid-day-name">
                     {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][currentDate.getDay()]}
                   </span>
