@@ -18,7 +18,8 @@ export type AdminTab =
   | "tickets"
   | "students"
   | "admins"
-  | "profile";
+  | "profile"
+  | "rekaman_konseling";
 
 export type TrendRange = "day" | "month" | "year";
 

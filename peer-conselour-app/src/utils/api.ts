@@ -4,10 +4,10 @@
 // =======================================================
 
 // ✅ DEVELOPMENT (local)
-// export const BASE_URL = "http://localhost:8080";
+ export const BASE_URL = "http://localhost:8080";
 
 // 🚀 PRODUCTION (host server)
-export const BASE_URL = "https://api-konseling.ub.ac.id";
+//export const BASE_URL = "https://api-konseling.ub.ac.id";
 
 // =======================================================
 

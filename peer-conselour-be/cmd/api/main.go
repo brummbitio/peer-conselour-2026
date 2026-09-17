@@ -90,12 +90,14 @@ func main() {
 	ticketRepo := repository.NewTicketRepository(config.DB)
 	messageRepo := repository.NewMessageRepository(config.DB)
 	scheduleRepo := repository.NewScheduleRepository(config.DB)
+	rekamanRepo := repository.NewRekamanKonselingRepository(config.DB)
 
 	authHandler := handler.NewAuthHandler(userRepo)
 	ticketHandler := handler.NewTicketHandler(ticketRepo, messageRepo, userRepo, ticketNotifier)
 	scheduleHandler := handler.NewScheduleHandler(scheduleRepo)
 	userHandler := handler.NewUserHandler(userRepo, ticketRepo)
 	uploadHandler := handler.NewUploadHandler()
+	rekamanHandler := handler.NewRekamanKonselingHandler(rekamanRepo, userRepo)
 
 	// 3.5. Background worker reminder email berjenjang (H+1, H+3, H+5, H+7)
 	go worker.NewReminderWorker(ticketRepo, ticketNotifier).Start(context.Background())
@@ -192,7 +194,16 @@ func main() {
 		}
 	}
 
-	// 8. Jalankan server
+	// 8. REGISTRASI ROUTE REKAMAN KONSELING
+	rekamanGroup := api.Group("/rekaman-konseling")
+	{
+		rekamanGroup.POST("", rekamanHandler.Create)
+		rekamanGroup.GET("", rekamanHandler.GetByNIM)
+		rekamanGroup.PUT("/:id", rekamanHandler.Update)
+		rekamanGroup.DELETE("/:id", rekamanHandler.Delete)
+	}
+
+	// 9. Jalankan server
 	addr := fmt.Sprintf(":%s", config.AppConfig.Port)
 	log.Printf("Server berjalan di port %s...", config.AppConfig.Port)
 	if err := router.Run(addr); err != nil {

@@ -7,6 +7,7 @@ import { isAdminRole, useAuth } from "../../auth/auth-provider";
 import { PortalLoader } from "../../_portal/PortalLoader";
 import { useAdminDashboardData } from "./hooks/useAdminDashboardData";
 import type { AdminTab } from "./types";
+import AdminRekamanKonselingTab from "./components/AdminRekamanKonselingTab";
 import "../../styles/admin-dashboard.css";
 import "../../styles/account-ticket.css";
 
@@ -47,10 +48,11 @@ function preloadTabChunks(includeAdminsTab: boolean) {
   void import("./components/AdminTicketsTab");
   void import("./components/AdminStudentsTab");
   void import("./components/AdminProfileTab");
+  void import("./components/AdminRekamanKonselingTab");
   if (includeAdminsTab) void import("./components/AdminAdminsTab");
 }
 
-const ADMIN_TABS: readonly AdminTab[] = ["dashboard", "schedules", "tickets", "students", "admins", "profile"];
+const ADMIN_TABS: readonly AdminTab[] = ["dashboard", "schedules", "tickets", "students", "admins", "profile", "rekaman_konseling"];
 
 const isAdminTab = (value: string | null): value is AdminTab =>
   value !== null && (ADMIN_TABS as readonly string[]).includes(value);
@@ -161,6 +163,7 @@ export default function AdminDashboardClient() {
     { id: "students", label: "Daftar Mahasiswa", visible: true },
     { id: "admins", label: "Daftar Admin", visible: isSuperadmin },
     { id: "profile", label: "Profil Saya", visible: true },
+    { id: "rekaman_konseling", label: "Rekaman Konseling", visible: true },
   ];
 
   return (
@@ -209,6 +212,8 @@ export default function AdminDashboardClient() {
               isSuperadmin={isSuperadmin}
               createAdmin={createAdmin}
             />
+          ) : contentTab === "rekaman_konseling" ? (
+            <AdminRekamanKonselingTab />
           ) : (
             <AdminProfileTab
               user={user}
