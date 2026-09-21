@@ -484,6 +484,10 @@ func (h *AuthHandler) DevLogin(c *gin.Context) {
 		return
 	}
 
+	// Set session cookie untuk lingkungan lokal (development)
+	// secure diset ke false agar cookie tetap tersimpan di http://localhost (tanpa HTTPS)
+	c.SetCookie("token", token, 3600*config.AppConfig.JWTExpHours, "/", "", false, true)
+
 	frontendRedirectURL := fmt.Sprintf("%s/?token=%s", config.AppConfig.FrontendURL, token)
 	c.Redirect(http.StatusFound, frontendRedirectURL)
 }

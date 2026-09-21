@@ -30,6 +30,13 @@ type CreateRekamanDTO struct {
 	Status           string `json:"status"`
 }
 
+type UpdateRekamanDTO struct {
+	DurationMinutes  int    `json:"duration_minutes"`
+	ObservationNotes string `json:"observation_notes"`
+	InterventionPlan string `json:"intervention_plan"`
+	Status           string `json:"status"`
+}
+
 func (h *RekamanKonselingHandler) Create(c *gin.Context) {
 	var req CreateRekamanDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -39,8 +46,20 @@ func (h *RekamanKonselingHandler) Create(c *gin.Context) {
 
 	counselorEmail := "admin@ub.ac.id"
 	if userIDVal, exists := c.Get("userID"); exists {
-		if u, err := h.userRepo.FindByID(userIDVal.(uint)); err == nil {
-			counselorEmail = u.Email
+		var uid uint
+		switch v := userIDVal.(type) {
+		case uint:
+			uid = v
+		case int:
+			uid = uint(v)
+		case float64:
+			uid = uint(v)
+		}
+
+		if uid > 0 {
+			if u, err := h.userRepo.FindByID(uid); err == nil && u.Email != "" {
+				counselorEmail = u.Email
+			}
 		}
 	}
 
@@ -107,14 +126,18 @@ func (h *RekamanKonselingHandler) Update(c *gin.Context) {
 		return
 	}
 
-	var req CreateRekamanDTO
+	var req UpdateRekamanDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	record.ObservationNotes = req.ObservationNotes
-	record.InterventionPlan = req.InterventionPlan
+	if req.ObservationNotes != "" {
+		record.ObservationNotes = req.ObservationNotes
+	}
+	if req.InterventionPlan != "" {
+		record.InterventionPlan = req.InterventionPlan
+	}
 	if req.Status != "" {
 		record.Status = req.Status
 	}

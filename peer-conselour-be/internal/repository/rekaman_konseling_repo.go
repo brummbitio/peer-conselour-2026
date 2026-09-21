@@ -44,11 +44,12 @@ func (r *rekamanKonselingRepository) Update(record *model.RekamanKonseling) erro
 }
 
 func (r *rekamanKonselingRepository) Delete(id uint) error {
-	return r.db.Delete(&model.RekamanKonseling{}, "id = ?", id).Error
+	return r.db.Delete(&model.RekamanKonseling{}, id).Error
 }
 
 func (r *rekamanKonselingRepository) CountByNIM(nim string) (int64, error) {
 	var count int64
-	err := r.db.Model(&model.RekamanKonseling{}).Where("client_nim = ?", nim).Count(&count).Error
+	// Unscoped() memastikan sesi yang pernah dihapus tetap dihitung agar urutan nomor sesi tidak duplikat
+	err := r.db.Unscoped().Model(&model.RekamanKonseling{}).Where("client_nim = ?", nim).Count(&count).Error
 	return count, err
 }

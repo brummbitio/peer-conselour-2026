@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { BASE_URL } from "@/utils/api";
-import { Search, Plus, Trash2, Calendar, Clock, User, FileText, X } from "lucide-react";
+import { Search, Plus, Trash2, Edit2, Calendar, Clock, User, FileText, X } from "lucide-react";
 
 interface RekamanKonseling {
   id: number;
@@ -22,8 +22,9 @@ export default function AdminRekamanKonselingTab() {
   const [records, setRecords] = useState<RekamanKonseling[]>([]);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-  const [formData, setFormData] = useState({
+  const initialFormState = {
     client_nim: "",
     client_name: "",
     session_date: new Date().toISOString().split("T")[0],
@@ -31,7 +32,9 @@ export default function AdminRekamanKonselingTab() {
     observation_notes: "",
     intervention_plan: "",
     status: "Konseling Berjalan",
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormState);
 
   const fetchRecords = async (nim: string) => {
     if (!nim.trim()) return;
@@ -58,11 +61,41 @@ export default function AdminRekamanKonselingTab() {
     fetchRecords(searchNIM.trim());
   };
 
+  const handleOpenCreate = () => {
+    setEditingId(null);
+    setFormData({
+      ...initialFormState,
+      client_nim: searchNIM.trim() || "",
+      client_name: records.length > 0 ? records[0].client_name : "",
+    });
+    setShowModal(true);
+  };
+
+  const handleOpenEdit = (record: RekamanKonseling) => {
+    setEditingId(record.id);
+    setFormData({
+      client_nim: record.client_nim,
+      client_name: record.client_name,
+      session_date: record.session_date ? record.session_date.split("T")[0] : "",
+      duration_minutes: record.duration_minutes || 60,
+      observation_notes: record.observation_notes || "",
+      intervention_plan: record.intervention_plan || "",
+      status: record.status || "Konseling Berjalan",
+    });
+    setShowModal(true);
+  };
+
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const res = await fetch(`${BASE_URL}/api/rekaman-konseling`, {
-        method: "POST",
+      const url = editingId
+        ? `${BASE_URL}/api/rekaman-konseling/${editingId}`
+        : `${BASE_URL}/api/rekaman-konseling`;
+      
+      const method = editingId ? "PUT" : "POST";
+
+      const res = await fetch(url, {
+        method: method,
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify(formData),
@@ -70,27 +103,21 @@ export default function AdminRekamanKonselingTab() {
 
       if (res.ok) {
         setShowModal(false);
+        setEditingId(null);
         setSearchNIM(formData.client_nim);
         fetchRecords(formData.client_nim);
-        setFormData({
-          client_nim: "",
-          client_name: "",
-          session_date: new Date().toISOString().split("T")[0],
-          duration_minutes: 60,
-          observation_notes: "",
-          intervention_plan: "",
-          status: "Konseling Berjalan",
-        });
+        setFormData(initialFormState);
       } else {
-        alert("Gagal menyimpan data rekaman konseling");
+        const errorData = await res.json().catch(() => ({}));
+        alert(errorData.error || "Gagal menyimpan rekaman konseling");
       }
     } catch {
-      alert("Terjadi kesalahan jaringan");
+      alert("Terjadi kesalahan jaringan saat menyimpan data");
     }
   };
 
   const handleDelete = async (id: number) => {
-    if (!confirm("Hapus rekaman sesi ini?")) return;
+    if (!confirm("Hapus rekaman sesi ini? Data yang dihapus tidak akan ditampilkan lagi di riwayat.")) return;
     try {
       const res = await fetch(`${BASE_URL}/api/rekaman-konseling/${id}`, {
         method: "DELETE",
@@ -98,9 +125,11 @@ export default function AdminRekamanKonselingTab() {
       });
       if (res.ok) {
         setRecords((prev) => prev.filter((r) => r.id !== id));
+      } else {
+        alert("Gagal menghapus rekaman konseling");
       }
     } catch {
-      alert("Gagal menghapus rekaman");
+      alert("Terjadi kesalahan jaringan saat menghapus data");
     }
   };
 
@@ -108,7 +137,7 @@ export default function AdminRekamanKonselingTab() {
     <div className="admin-scroll-list">
       {/* Header & Tools Navigasi */}
       <div className="admin-tab-tools-admins">
-        <form onSubmit={handleSearch} className="admin-tab-tools">
+        <form onSubmit={handleSearch} className="rekaman-search-form">
           <input
             type="text"
             className="admin-search-input"
@@ -116,7 +145,7 @@ export default function AdminRekamanKonselingTab() {
             value={searchNIM}
             onChange={(e) => setSearchNIM(e.target.value)}
           />
-          <button type="submit" className="button">
+          <button type="submit" className="button rekaman-search-btn">
             <Search size={16} />
             <span>Cari</span>
           </button>
@@ -124,7 +153,7 @@ export default function AdminRekamanKonselingTab() {
 
         <button
           type="button"
-          onClick={() => setShowModal(true)}
+          onClick={handleOpenCreate}
           className="button button-primary"
         >
           <Plus size={16} />
@@ -138,13 +167,12 @@ export default function AdminRekamanKonselingTab() {
           <p className="admin-filter-current">Memverifikasi dan memuat rekaman sesi...</p>
         </div>
       ) : records.length === 0 ? (
-        <div className="admin-topic-card">
-          <div className="admin-student-card-main">
-            <h2>Belum Ada Data Terpilih</h2>
-            <p className="admin-student-meta">
-              Masukkan NIM mahasiswa pada kolom pencarian di atas untuk meninjau riwayat rekaman konseling.
-            </p>
-          </div>
+        <div className="admin-topic-card rekaman-empty-state">
+          <FileText size={36} className="rekaman-empty-icon" />
+          <h2 className="rekaman-empty-title">Belum Ada Data Terpilih</h2>
+          <p className="rekaman-empty-desc">
+            Masukkan NIM mahasiswa pada kolom pencarian di atas untuk meninjau riwayat rekaman konseling.
+          </p>
         </div>
       ) : (
         <div className="admin-scroll-list">
@@ -153,7 +181,7 @@ export default function AdminRekamanKonselingTab() {
             <div className="admin-student-detail-header">
               <div>
                 <span className="admin-student-detail-eyebrow">Rekam Medis Klien Terpilih</span>
-                <h1>{records[0].client_name}</h1>
+                <h1 className="rekaman-client-title">{records[0].client_name}</h1>
               </div>
               <span className="admin-student-detail-nim">NIM: {records[0].client_nim}</span>
             </div>
@@ -175,24 +203,40 @@ export default function AdminRekamanKonselingTab() {
                         Sesi #{item.session_number}
                       </button>
                     </span>
-                    <span className="admin-admin-card-role">
+                    <span
+                      className={`rekaman-status-badge ${
+                        item.status === "Selesai"
+                          ? "rekaman-status-selesai"
+                          : "rekaman-status-berjalan"
+                      }`}
+                    >
                       {item.status}
                     </span>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() => handleDelete(item.id)}
-                    className="admin-admin-edit-trigger"
-                    title="Hapus catatan sesi ini"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  <div className="rekaman-card-actions">
+                    <button
+                      type="button"
+                      onClick={() => handleOpenEdit(item)}
+                      className="admin-admin-edit-trigger"
+                      title="Edit catatan sesi ini"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(item.id)}
+                      className="admin-admin-edit-trigger rekaman-delete-btn"
+                      title="Hapus catatan sesi ini"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="admin-admin-inline-meta">
                   <p>
-                    <Calendar size={14} /> {item.session_date.split("T")[0]}
+                    <Calendar size={14} /> {item.session_date ? item.session_date.split("T")[0] : "-"}
                   </p>
                   <span className="admin-admin-inline-separator">•</span>
                   <p>
@@ -223,16 +267,23 @@ export default function AdminRekamanKonselingTab() {
         </div>
       )}
 
-      {/* Modal Tambah Sesi */}
+      {/* Modal Dialog Form (Create / Edit) - Self Contained */}
       {showModal && (
-        <div className="admin-schedule-add-datetime-popover" style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}>
-          <div className="admin-schedule-add-panel">
-            <div className="admin-line-header">
-              <h2>Catat Sesi Rekaman Konseling</h2>
+        <div className="rekaman-modal-overlay">
+          <button
+            type="button"
+            className="rekaman-modal-backdrop"
+            onClick={() => setShowModal(false)}
+            aria-label="Tutup modal"
+          />
+          <div className="rekaman-modal-dialog">
+            <div className="rekaman-modal-header">
+              <h2>{editingId ? "Perbarui Rekaman Konseling" : "Catat Sesi Rekaman Konseling"}</h2>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
                 className="admin-admin-edit-trigger"
+                aria-label="Tutup"
               >
                 <X size={18} />
               </button>
@@ -245,6 +296,7 @@ export default function AdminRekamanKonselingTab() {
                   <input
                     type="text"
                     required
+                    disabled={editingId !== null}
                     className="admin-search-input"
                     value={formData.client_nim}
                     onChange={(e) => setFormData({ ...formData, client_nim: e.target.value })}
@@ -255,6 +307,7 @@ export default function AdminRekamanKonselingTab() {
                   <input
                     type="text"
                     required
+                    disabled={editingId !== null}
                     className="admin-search-input"
                     value={formData.client_name}
                     onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
@@ -268,6 +321,7 @@ export default function AdminRekamanKonselingTab() {
                   <input
                     type="date"
                     required
+                    disabled={editingId !== null}
                     className="admin-search-input"
                     value={formData.session_date}
                     onChange={(e) => setFormData({ ...formData, session_date: e.target.value })}
@@ -285,11 +339,22 @@ export default function AdminRekamanKonselingTab() {
               </div>
 
               <div className="admin-add-field">
+                <span>Status Konseling</span>
+                <input
+                  type="text"
+                  className="admin-search-input"
+                  placeholder="Misal: Konseling Berjalan, Selesai, Dirujuk"
+                  value={formData.status}
+                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                />
+              </div>
+
+              <div className="admin-add-field">
                 <span>Catatan Observasi</span>
                 <textarea
                   required
                   rows={3}
-                  className="admin-search-input"
+                  className="admin-search-input rekaman-textarea"
                   value={formData.observation_notes}
                   onChange={(e) => setFormData({ ...formData, observation_notes: e.target.value })}
                 />
@@ -299,13 +364,13 @@ export default function AdminRekamanKonselingTab() {
                 <span>Rencana Intervensi</span>
                 <textarea
                   rows={2}
-                  className="admin-search-input"
+                  className="admin-search-input rekaman-textarea-sm"
                   value={formData.intervention_plan}
                   onChange={(e) => setFormData({ ...formData, intervention_plan: e.target.value })}
                 />
               </div>
 
-              <div className="admin-add-form-actions admin-add-form-actions-inline">
+              <div className="admin-add-form-actions admin-add-form-actions-inline rekaman-modal-actions">
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
@@ -314,7 +379,7 @@ export default function AdminRekamanKonselingTab() {
                   Batal
                 </button>
                 <button type="submit" className="button button-primary">
-                  Simpan Sesi
+                  {editingId ? "Simpan Perubahan" : "Simpan Sesi"}
                 </button>
               </div>
             </form>
