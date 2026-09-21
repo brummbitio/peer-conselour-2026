@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { BASE_URL } from "@/utils/api";
 import { Search, Plus, Trash2, Edit2, Calendar, Clock, User, FileText, X } from "lucide-react";
 
@@ -36,29 +36,40 @@ export default function AdminRekamanKonselingTab() {
 
   const [formData, setFormData] = useState(initialFormState);
 
-  const fetchRecords = async (nim: string) => {
-    if (!nim.trim()) return;
+  // Mengambil rekaman konseling: jika nim kosong, ambil semua data
+  const fetchRecords = useCallback(async (nim?: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`${BASE_URL}/api/rekaman-konseling?nim=${encodeURIComponent(nim)}`, {
+      const query = nim && nim.trim() ? `?nim=${encodeURIComponent(nim.trim())}` : "";
+      const res = await fetch(`${BASE_URL}/api/rekaman-konseling${query}`, {
         credentials: "include",
       });
+
       if (res.ok) {
         const data = await res.json();
-        setRecords(data);
+        console.log("Data rekaman diterima:", data);
+        // Pastikan selalu array meski backend mengembalikan null
+        setRecords(Array.isArray(data) ? data : []);
       } else {
+        console.error("Gagal mengambil data, status:", res.status);
         setRecords([]);
       }
-    } catch {
+    } catch (err) {
+      console.error("Error jaringan saat fetch records:", err);
       setRecords([]);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Panggil saat komponen aktif
+  useEffect(() => {
+    fetchRecords();
+  }, [fetchRecords]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchRecords(searchNIM.trim());
+    fetchRecords(searchNIM);
   };
 
   const handleOpenCreate = () => {
@@ -66,7 +77,7 @@ export default function AdminRekamanKonselingTab() {
     setFormData({
       ...initialFormState,
       client_nim: searchNIM.trim() || "",
-      client_name: records.length > 0 ? records[0].client_name : "",
+      client_name: searchNIM.trim() && records.length > 0 ? records[0].client_name : "",
     });
     setShowModal(true);
   };
@@ -91,7 +102,7 @@ export default function AdminRekamanKonselingTab() {
       const url = editingId
         ? `${BASE_URL}/api/rekaman-konseling/${editingId}`
         : `${BASE_URL}/api/rekaman-konseling`;
-      
+
       const method = editingId ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -104,8 +115,7 @@ export default function AdminRekamanKonselingTab() {
       if (res.ok) {
         setShowModal(false);
         setEditingId(null);
-        setSearchNIM(formData.client_nim);
-        fetchRecords(formData.client_nim);
+        fetchRecords(searchNIM);
         setFormData(initialFormState);
       } else {
         const errorData = await res.json().catch(() => ({}));
@@ -141,7 +151,7 @@ export default function AdminRekamanKonselingTab() {
           <input
             type="text"
             className="admin-search-input"
-            placeholder="Cari berdasarkan NIM mahasiswa..."
+            placeholder="Cari berdasarkan NIM mahasiswa (kosongkan untuk semua)..."
             value={searchNIM}
             onChange={(e) => setSearchNIM(e.target.value)}
           />
@@ -169,26 +179,38 @@ export default function AdminRekamanKonselingTab() {
       ) : records.length === 0 ? (
         <div className="admin-topic-card rekaman-empty-state">
           <FileText size={36} className="rekaman-empty-icon" />
-          <h2 className="rekaman-empty-title">Belum Ada Data Terpilih</h2>
+          <h2 className="rekaman-empty-title">Belum Ada Data Rekaman</h2>
           <p className="rekaman-empty-desc">
-            Masukkan NIM mahasiswa pada kolom pencarian di atas untuk meninjau riwayat rekaman konseling.
+            {searchNIM.trim()
+              ? `Tidak ditemukan data rekaman konseling untuk NIM "${searchNIM}".`
+              : "Belum ada riwayat rekaman konseling yang tersimpan di sistem."}
           </p>
         </div>
       ) : (
         <div className="admin-scroll-list">
-          {/* Ringkasan Mahasiswa Klien */}
+          {/* Ringkasan Header Klien / Hasil */}
           <div className="admin-student-detail-card">
             <div className="admin-student-detail-header">
               <div>
-                <span className="admin-student-detail-eyebrow">Rekam Medis Klien Terpilih</span>
-                <h1 className="rekaman-client-title">{records[0].client_name}</h1>
+                <span className="admin-student-detail-eyebrow">
+                  {searchNIM.trim() ? "Rekam Medis Klien Terpilih" : "Daftar Rekaman Konseling"}
+                </span>
+                <h1 className="rekaman-client-title">
+                  {searchNIM.trim() ? records[0]?.client_name : "Semua Sesi Terdata"}
+                </h1>
               </div>
-              <span className="admin-student-detail-nim">NIM: {records[0].client_nim}</span>
+              {searchNIM.trim() && (
+                <span className="admin-student-detail-nim">NIM: {records[0]?.client_nim}</span>
+              )}
             </div>
             <div className="admin-admin-inline-meta">
               <p>Total Sesi: <strong>{records.length} Pertemuan</strong></p>
-              <span className="admin-admin-inline-separator">•</span>
-              <p>Status Kasus: <strong>{records[records.length - 1].status}</strong></p>
+              {searchNIM.trim() && (
+                <>
+                  <span className="admin-admin-inline-separator">•</span>
+                  <p>Status Kasus: <strong>{records[records.length - 1]?.status}</strong></p>
+                </>
+              )}
             </div>
           </div>
 
@@ -203,6 +225,9 @@ export default function AdminRekamanKonselingTab() {
                         Sesi #{item.session_number}
                       </button>
                     </span>
+                    {!searchNIM.trim() && (
+                      <strong>{item.client_name} ({item.client_nim})</strong>
+                    )}
                     <span
                       className={`rekaman-status-badge ${
                         item.status === "Selesai"

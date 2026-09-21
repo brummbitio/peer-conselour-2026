@@ -13,10 +13,17 @@ type RekamanKonselingRepository interface {
 	Update(record *model.RekamanKonseling) error
 	Delete(id uint) error
 	CountByNIM(nim string) (int64, error)
+	FindAll() ([]model.RekamanKonseling, error)
 }
 
 type rekamanKonselingRepository struct {
 	db *gorm.DB
+}
+
+func (r *rekamanKonselingRepository) FindAll() ([]model.RekamanKonseling, error) {
+	var records []model.RekamanKonseling
+	err := r.db.Order("session_date DESC, created_at DESC").Find(&records).Error
+	return records, err
 }
 
 func NewRekamanKonselingRepository(db *gorm.DB) RekamanKonselingRepository {

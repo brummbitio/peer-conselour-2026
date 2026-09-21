@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"peer-conselour-be/internal/model"
@@ -98,13 +99,19 @@ func (h *RekamanKonselingHandler) Create(c *gin.Context) {
 }
 
 func (h *RekamanKonselingHandler) GetByNIM(c *gin.Context) {
-	nim := c.Query("nim")
+	nim := strings.TrimSpace(c.Query("nim"))
+
+	var records []model.RekamanKonseling
+	var err error
+
+	// Jika NIM kosong, tampilkan seluruh rekaman konseling
 	if nim == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Query param nim wajib diisi"})
-		return
+		records, err = h.repo.FindAll()
+	} else {
+		// Jika ada NIM, filter berdasarkan NIM tersebut
+		records, err = h.repo.FindByNIM(nim)
 	}
 
-	records, err := h.repo.FindByNIM(nim)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil data rekaman"})
 		return
