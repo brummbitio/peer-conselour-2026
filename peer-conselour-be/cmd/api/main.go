@@ -7,13 +7,13 @@ import (
 
 	"peer-conselour-be/config"
 	"peer-conselour-be/internal/handler"
-	"peer-conselour-be/internal/repository"
 	"peer-conselour-be/internal/model"
 	"peer-conselour-be/internal/notification"
+	"peer-conselour-be/internal/repository"
 	"peer-conselour-be/internal/worker"
+	"peer-conselour-be/middleware"
 	"peer-conselour-be/pkg/email"
 	"peer-conselour-be/pkg/storage"
-	"peer-conselour-be/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -53,6 +53,7 @@ func main() {
 		&model.TicketMessage{},
 		&model.CounselingSchedule{},
 		&model.Attachment{},
+		&model.RekamanKonseling{},
 	)
 	if err != nil {
 		log.Fatalf("Gagal melakukan auto-migrasi database: %v", err)
@@ -127,7 +128,7 @@ func main() {
 	{
 		authRoutes.GET("/sso", authHandler.SSOLogin)
 		authRoutes.GET("/callback", authHandler.SSOCallback)
-		
+
 		// Hanya daftarkan dev-login di lingkungan development
 		if config.AppConfig.Env == "development" {
 			authRoutes.GET("/dev-login", authHandler.DevLogin)
@@ -183,7 +184,7 @@ func main() {
 
 		// Manajemen Akun Admin / Peer Counselor
 		adminRoutes.GET("/admins", userHandler.AdminGetAllAdmins)
-		
+
 		// Khusus Superadmin (Pembuatan, Edit, & Reset Password Admin)
 		superAdminRoutes := adminRoutes.Group("")
 		superAdminRoutes.Use(middleware.SuperAdminOnly())
@@ -195,7 +196,8 @@ func main() {
 	}
 
 	// 8. REGISTRASI ROUTE REKAMAN KONSELING
-	rekamanGroup := api.Group("/rekaman-konseling")
+	rekamanGroup := router.Group("/api/rekaman-konseling")
+	rekamanGroup.Use(middleware.AuthMiddleware(), middleware.AdminOnly())
 	{
 		rekamanGroup.POST("", rekamanHandler.Create)
 		rekamanGroup.GET("", rekamanHandler.GetByNIM)
