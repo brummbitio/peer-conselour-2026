@@ -64,15 +64,19 @@ func (r *UserRepository) FindAllStudents(search string) ([]model.User, error) {
 }
 
 func (r *UserRepository) FindAllAdmins(search string) ([]model.User, error) {
-	var admins []model.User
-	query := r.db.Where("role IN ('admin', 'superadmin')")
+	var users []model.User
+	query := r.db.Where("role IN ?", []string{
+		string(model.RoleSuperAdmin),
+		string(model.RoleAdmin),
+		"konselor",
+		"peer",
+	})
+
 	if search != "" {
-		searchPattern := "%" + search + "%"
-		query = query.Where("full_name ILIKE ? OR email ILIKE ?", searchPattern, searchPattern)
+		searchVal := "%" + search + "%"
+		query = query.Where("(full_name ILIKE ? OR email ILIKE ?)", searchVal, searchVal)
 	}
-	err := query.Order("full_name ASC").Find(&admins).Error
-	if err != nil {
-		return nil, err
-	}
-	return admins, nil
+
+	err := query.Find(&users).Error
+	return users, err
 }

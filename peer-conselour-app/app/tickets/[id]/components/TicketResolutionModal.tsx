@@ -62,11 +62,11 @@ export function TicketResolutionModal({
   const [isLoadingCounselors, setIsLoadingCounselors] = useState(false);
 
   // Field Form Rekaman Konseling (Seluruhnya Full Text)
-  const [deskripsiKeluhan, setDeskripsiKeluhan] = useState("");   // Full text
-  const [kodeDiagnosa, setKodeDiagnosa] = useState("");           // Full text
-  const [intervensi, setIntervensi] = useState("");               // Full text
-  const [rekomendasiJadwal, setRekomendasiJadwal] = useState(""); // Full text
-  const [keterangan, setKeterangan] = useState("");               // Full text
+  const [deskripsiKeluhan, setDeskripsiKeluhan] = useState("");
+  const [kodeDiagnosa, setKodeDiagnosa] = useState("");
+  const [intervensi, setIntervensi] = useState("");
+  const [rekomendasiJadwal, setRekomendasiJadwal] = useState("");
+  const [keterangan, setKeterangan] = useState("");
 
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -76,24 +76,40 @@ export function TicketResolutionModal({
   const isResolutionForm = isAdminView && !isReopen;
   const isUnhandled = resolutionType === "tidak_tertangani";
 
-  // Ambil daftar Konselor & Peer dari DB untuk Dropdown
   useEffect(() => {
     if (!isResolutionForm) return;
 
     const fetchCounselors = async () => {
       setIsLoadingCounselors(true);
       try {
-        const res = await fetch(`${BASE_URL}/api/users?role=konselor,peer`, {
+        // Menggunakan endpoint yang valid
+        const res = await fetch(`${BASE_URL}/api/admin/admins`, {
           credentials: "include",
         });
-        if (res.ok) {
-          const data = await res.json();
-          const list: CounselorOption[] = data.data || data;
-          setCounselors(list);
 
-          // Jika belum ada yang terpilih, otomatis pilih yang pertama
-          if (!selectedCounselorEmail && list.length > 0) {
-            setSelectedCounselorEmail(list[0].email);
+        if (res.ok) {
+          const result = await res.json();
+          const rawList = Array.isArray(result) ? result : result.data || [];
+
+          // Filter dinamis: mencari properti 'role' atau 'Role'
+          const counselorList = rawList.filter((u: any) => {
+            const role = (u.role || u.Role || "").toLowerCase();
+            return role === "konselor" || role === "peer" || role === "admin";
+          });
+
+          setCounselors(counselorList);
+
+          // Tentukan pilihan default dropdown
+          if (counselorList.length > 0) {
+            const matchDefault = counselorList.find(
+              (c: any) => c.email === defaultCounselorEmail || c.Email === defaultCounselorEmail
+            );
+            
+            if (matchDefault) {
+              setSelectedCounselorEmail(matchDefault.email || matchDefault.Email);
+            } else if (!selectedCounselorEmail) {
+              setSelectedCounselorEmail(counselorList[0].email || counselorList[0].Email);
+            }
           }
         }
       } catch (err) {
@@ -104,7 +120,7 @@ export function TicketResolutionModal({
     };
 
     fetchCounselors();
-  }, [isResolutionForm, selectedCounselorEmail]);
+  }, [isResolutionForm, defaultCounselorEmail]);
 
   const title = isReopen
     ? "Buka Kembali Sesi Konseling?"
@@ -277,9 +293,9 @@ export function TicketResolutionModal({
               {counselors.length === 0 ? (
                 <option value="">{isLoadingCounselors ? "Memuat konselor..." : "Tidak ada konselor ditemukan"}</option>
               ) : (
-                counselors.map((c) => (
-                  <option key={c.id} value={c.email}>
-                    {c.full_name} ({c.role === "konselor" ? "Psikolog" : "Peer Counselor"}) — {c.email}
+                counselors.map((c: any) => (
+                  <option key={c.id || c.ID} value={c.email || c.Email}>
+                    {c.full_name || c.FullName} ({(c.role || c.Role) === "konselor" ? "Psikolog" : "Peer Counselor"})
                   </option>
                 ))
               )}

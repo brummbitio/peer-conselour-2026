@@ -25,7 +25,7 @@ export type AuthUser = {
   isActive?: boolean;
 };
 
-export type AuthRole = "student" | "admin" | "superadmin";
+export type AuthRole = "student" | "admin" | "superadmin" | "konselor" | "peer";
 
 type RegisterPayload = {
   nim: string;
@@ -89,8 +89,8 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-export function isAdminRole(role?: AuthRole | null): role is "admin" | "superadmin" {
-  return role === "admin" || role === "superadmin";
+export function isAdminRole(role?: string | null): role is "admin" | "superadmin" | "konselor" | "peer" {
+  return role === "admin" || role === "superadmin" || role === "konselor" || role === "peer";
 }
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -146,7 +146,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             });
 
             if (justLoggedIn) {
-              if (me.role === "admin" || me.role === "superadmin") {
+              if (["admin", "superadmin", "konselor", "peer"].includes(me.role)) {
                 router.replace("/admin/dashboard");
               } else {
                 router.replace("/my-counseling");

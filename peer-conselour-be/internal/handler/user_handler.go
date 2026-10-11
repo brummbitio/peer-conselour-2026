@@ -104,9 +104,16 @@ func (h *UserHandler) AdminCreateAdmin(c *gin.Context) {
 	passStr := string(hashedPassword)
 
 	role := model.RoleAdmin
+	// Di AdminCreateAdmin:
 	if req.Role != "" {
-		if req.Role != string(model.RoleAdmin) && req.Role != string(model.RoleSuperAdmin) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Role tidak valid. Harus admin atau superadmin"})
+		validRoles := map[string]bool{
+			string(model.RoleAdmin):      true,
+			string(model.RoleSuperAdmin): true,
+			"konselor":                   true,
+			"peer":                       true,
+		}
+		if !validRoles[req.Role] {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Role tidak valid. Harus superadmin, admin, konselor, atau peer"})
 			return
 		}
 		role = model.UserRole(req.Role)
@@ -165,8 +172,14 @@ func (h *UserHandler) AdminUpdateAdmin(c *gin.Context) {
 		admin.Email = req.Email
 	}
 	if req.Role != "" {
-		if req.Role != string(model.RoleAdmin) && req.Role != string(model.RoleSuperAdmin) {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "Role tidak valid. Harus admin atau superadmin"})
+		validRoles := map[string]bool{
+			string(model.RoleAdmin):      true,
+			string(model.RoleSuperAdmin): true,
+			"konselor":                   true,
+			"peer":                       true,
+		}
+		if !validRoles[req.Role] {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Role tidak valid. Harus superadmin, admin, konselor, atau peer"})
 			return
 		}
 		admin.Role = model.UserRole(req.Role)
