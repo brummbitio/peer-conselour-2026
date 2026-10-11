@@ -49,12 +49,13 @@ func AuthMiddleware() gin.HandlerFunc {
 	}
 }
 
-// AdminOnly membatasi endpoint hanya untuk role admin atau superadmin
 func AdminOnly() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		role, exists := c.Get("role")
-		if !exists || (role != "admin" && role != "superadmin") {
-			c.JSON(http.StatusForbidden, gin.H{"error": "Akses ditolak: Hanya untuk admin/staff"})
+
+		// Tambahkan pengecekan untuk konselor dan peer
+		if !exists || (role != "admin" && role != "superadmin" && role != "konselor" && role != "peer") {
+			c.JSON(http.StatusForbidden, gin.H{"error": "Akses ditolak: Hanya untuk admin/staff/konselor"})
 			c.Abort()
 			return
 		}
