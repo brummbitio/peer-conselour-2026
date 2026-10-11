@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { BASE_URL } from "@/utils/api";
-import { Search, Plus, Trash2, Edit2, Calendar, Clock, User, FileText, X } from "lucide-react";
+import { Search, Plus, Trash2, Edit2, Calendar, Clock, User, FileText, Eye, X } from "lucide-react";
+import { createPortal } from "react-dom";
 
 interface RekamanKonseling {
   id: number;
@@ -23,6 +24,14 @@ export default function AdminRekamanKonselingTab() {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // State untuk popup view baca detail
+  const [viewingRecord, setViewingRecord] = useState<RekamanKonseling | null>(null);
 
   const initialFormState = {
     client_nim: "",
@@ -36,7 +45,6 @@ export default function AdminRekamanKonselingTab() {
 
   const [formData, setFormData] = useState(initialFormState);
 
-  // Mengambil rekaman konseling: jika nim kosong, ambil semua data
   const fetchRecords = useCallback(async (nim?: string) => {
     setLoading(true);
     try {
@@ -47,22 +55,17 @@ export default function AdminRekamanKonselingTab() {
 
       if (res.ok) {
         const data = await res.json();
-        console.log("Data rekaman diterima:", data);
-        // Pastikan selalu array meski backend mengembalikan null
         setRecords(Array.isArray(data) ? data : []);
       } else {
-        console.error("Gagal mengambil data, status:", res.status);
         setRecords([]);
       }
-    } catch (err) {
-      console.error("Error jaringan saat fetch records:", err);
+    } catch {
       setRecords([]);
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Panggil saat komponen aktif
   useEffect(() => {
     fetchRecords();
   }, [fetchRecords]);
@@ -135,6 +138,7 @@ export default function AdminRekamanKonselingTab() {
       });
       if (res.ok) {
         setRecords((prev) => prev.filter((r) => r.id !== id));
+        if (viewingRecord?.id === id) setViewingRecord(null);
       } else {
         alert("Gagal menghapus rekaman konseling");
       }
@@ -214,7 +218,7 @@ export default function AdminRekamanKonselingTab() {
             </div>
           </div>
 
-          {/* Daftar Riwayat Sesi */}
+          {/* Daftar Riwayat Sesi (Tampilan Rapi & Ringkas) */}
           <div className="admin-scroll-list admin-scroll-list-active">
             {records.map((item) => (
               <div key={item.id} className="admin-topic-card">
@@ -240,6 +244,15 @@ export default function AdminRekamanKonselingTab() {
                   </div>
 
                   <div className="rekaman-card-actions">
+                    <button
+                      type="button"
+                      onClick={() => setViewingRecord(item)}
+                      className="rekaman-btn-view"
+                      title="Buka catatan lengkap"
+                    >
+                      <Eye size={14} />
+                      <span>Lihat Catatan</span>
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleOpenEdit(item)}
@@ -273,144 +286,229 @@ export default function AdminRekamanKonselingTab() {
                   </p>
                 </div>
 
-                <div className="admin-student-detail-grid">
-                  <div className="admin-student-detail-row admin-student-detail-row-wide">
-                    <span>Catatan Observasi & Diagnosis</span>
-                    <strong>{item.observation_notes}</strong>
-                  </div>
-
-                  {item.intervention_plan && (
-                    <div className="admin-student-detail-row admin-student-detail-row-wide">
-                      <span>Rencana Intervensi / Follow-Up</span>
-                      <strong>{item.intervention_plan}</strong>
-                    </div>
-                  )}
-                </div>
+                {/* Cuplikan teks (terpotong rapi) */}
+                <p className="rekaman-card-preview">
+                  <strong>Observasi:</strong> {item.observation_notes}
+                </p>
               </div>
             ))}
           </div>
         </div>
       )}
 
-      {/* Modal Dialog Form (Create / Edit) - Self Contained */}
-      {showModal && (
-        <div className="rekaman-modal-overlay">
-          <button
-            type="button"
-            className="rekaman-modal-backdrop"
-            onClick={() => setShowModal(false)}
-            aria-label="Tutup modal"
-          />
-          <div className="rekaman-modal-dialog">
-            <div className="rekaman-modal-header">
-              <h2>{editingId ? "Perbarui Rekaman Konseling" : "Catat Sesi Rekaman Konseling"}</h2>
-              <button
-                type="button"
-                onClick={() => setShowModal(false)}
-                className="admin-admin-edit-trigger"
-                aria-label="Tutup"
-              >
-                <X size={18} />
-              </button>
+      {/* POPUP VIEW: Modal Baca Lengkap via React Portal */}
+      {mounted &&
+        viewingRecord &&
+        createPortal(
+          <div className="rekaman-modal-overlay">
+            <button
+              type="button"
+              className="rekaman-modal-backdrop"
+              onClick={() => setViewingRecord(null)}
+              aria-label="Tutup detail"
+            />
+            <div className="rekaman-modal-dialog">
+              <div className="rekaman-modal-header">
+                <div>
+                  <h2>Detail Rekaman Sesi #{viewingRecord.session_number}</h2>
+                  <span className="admin-filter-current">
+                    {viewingRecord.client_name} ({viewingRecord.client_nim})
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setViewingRecord(null)}
+                  className="admin-admin-edit-trigger"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              <div className="admin-admin-inline-meta" style={{ marginTop: "4px" }}>
+                <p>
+                  <Calendar size={14} /> {viewingRecord.session_date ? viewingRecord.session_date.split("T")[0] : "-"}
+                </p>
+                <span className="admin-admin-inline-separator">•</span>
+                <p>
+                  <Clock size={14} /> {viewingRecord.duration_minutes} Menit
+                </p>
+                <span className="admin-admin-inline-separator">•</span>
+                <p>
+                  <User size={14} /> {viewingRecord.counselor_email}
+                </p>
+                <span className="admin-admin-inline-separator">•</span>
+                <span
+                  className={`rekaman-status-badge ${
+                    viewingRecord.status === "Selesai"
+                      ? "rekaman-status-selesai"
+                      : "rekaman-status-berjalan"
+                  }`}
+                >
+                  {viewingRecord.status}
+                </span>
+              </div>
+
+              <div className="rekaman-detail-body">
+                <div className="rekaman-detail-section">
+                  <span className="rekaman-detail-label">
+                    <FileText size={14} color="var(--blue-dark)" /> Catatan Observasi & Diagnosis Klinis
+                  </span>
+                  <p className="rekaman-detail-text">
+                    {viewingRecord.observation_notes || "Tidak ada catatan observasi."}
+                  </p>
+                </div>
+
+                <div className="rekaman-detail-section">
+                  <span className="rekaman-detail-label">
+                    Rencana Intervensi / Tindak Lanjut (Follow-Up)
+                  </span>
+                  <p className="rekaman-detail-text">
+                    {viewingRecord.intervention_plan || "Tidak ada rencana intervensi tercatat."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="admin-add-form-actions" style={{ marginTop: "18px" }}>
+                {/* <button
+                  type="button"
+                  onClick={() => {
+                    const toEdit = viewingRecord;
+                    setViewingRecord(null);
+                    handleOpenEdit(toEdit);
+                  }}
+                  className="button button-primary"
+                >
+                  <Edit2 size={15} />
+                  <span>Edit Catatan Sesi Ini</span>
+                </button> */}
+              </div>
             </div>
+          </div>,
+          document.body
+        )}
 
-            <form onSubmit={handleSave} className="admin-add-form">
-              <div className="student-profile-form-row">
-                <div className="admin-add-field">
-                  <span>NIM Mahasiswa</span>
-                  <input
-                    type="text"
-                    required
-                    disabled={editingId !== null}
-                    className="admin-search-input"
-                    value={formData.client_nim}
-                    onChange={(e) => setFormData({ ...formData, client_nim: e.target.value })}
-                  />
-                </div>
-                <div className="admin-add-field">
-                  <span>Nama Mahasiswa</span>
-                  <input
-                    type="text"
-                    required
-                    disabled={editingId !== null}
-                    className="admin-search-input"
-                    value={formData.client_name}
-                    onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="student-profile-form-row">
-                <div className="admin-add-field">
-                  <span>Tanggal Sesi</span>
-                  <input
-                    type="date"
-                    required
-                    disabled={editingId !== null}
-                    className="admin-search-input"
-                    value={formData.session_date}
-                    onChange={(e) => setFormData({ ...formData, session_date: e.target.value })}
-                  />
-                </div>
-                <div className="admin-add-field">
-                  <span>Durasi (Menit)</span>
-                  <input
-                    type="number"
-                    className="admin-search-input"
-                    value={formData.duration_minutes}
-                    onChange={(e) => setFormData({ ...formData, duration_minutes: parseInt(e.target.value) || 0 })}
-                  />
-                </div>
-              </div>
-
-              <div className="admin-add-field">
-                <span>Status Konseling</span>
-                <input
-                  type="text"
-                  className="admin-search-input"
-                  placeholder="Misal: Konseling Berjalan, Selesai, Dirujuk"
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                />
-              </div>
-
-              <div className="admin-add-field">
-                <span>Catatan Observasi</span>
-                <textarea
-                  required
-                  rows={3}
-                  className="admin-search-input rekaman-textarea"
-                  value={formData.observation_notes}
-                  onChange={(e) => setFormData({ ...formData, observation_notes: e.target.value })}
-                />
-              </div>
-
-              <div className="admin-add-field">
-                <span>Rencana Intervensi</span>
-                <textarea
-                  rows={2}
-                  className="admin-search-input rekaman-textarea-sm"
-                  value={formData.intervention_plan}
-                  onChange={(e) => setFormData({ ...formData, intervention_plan: e.target.value })}
-                />
-              </div>
-
-              <div className="admin-add-form-actions admin-add-form-actions-inline rekaman-modal-actions">
+      {/* MODAL FORM: Catat Baru / Edit via React Portal */}
+      {mounted &&
+        showModal &&
+        createPortal(
+          <div className="rekaman-modal-overlay">
+            <button
+              type="button"
+              className="rekaman-modal-backdrop"
+              onClick={() => setShowModal(false)}
+              aria-label="Tutup modal"
+            />
+            <div className="rekaman-modal-dialog">
+              <div className="rekaman-modal-header">
+                <h2>{editingId ? "Perbarui Rekaman Konseling" : "Catat Sesi Rekaman Konseling"}</h2>
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="button"
+                  className="admin-admin-edit-trigger"
+                  aria-label="Tutup"
                 >
-                  Batal
-                </button>
-                <button type="submit" className="button button-primary">
-                  {editingId ? "Simpan Perubahan" : "Simpan Sesi"}
+                  <X size={18} />
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
-      )}
+
+              <form onSubmit={handleSave} className="admin-add-form">
+                <div className="student-profile-form-row">
+                  <div className="admin-add-field">
+                    <span>NIM Mahasiswa</span>
+                    <input
+                      type="text"
+                      required
+                      disabled={editingId !== null}
+                      className="admin-search-input"
+                      value={formData.client_nim}
+                      onChange={(e) => setFormData({ ...formData, client_nim: e.target.value })}
+                    />
+                  </div>
+                  <div className="admin-add-field">
+                    <span>Nama Mahasiswa</span>
+                    <input
+                      type="text"
+                      required
+                      disabled={editingId !== null}
+                      className="admin-search-input"
+                      value={formData.client_name}
+                      onChange={(e) => setFormData({ ...formData, client_name: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="student-profile-form-row">
+                  <div className="admin-add-field">
+                    <span>Tanggal Sesi</span>
+                    <input
+                      type="date"
+                      required
+                      disabled={editingId !== null}
+                      className="admin-search-input"
+                      value={formData.session_date}
+                      onChange={(e) => setFormData({ ...formData, session_date: e.target.value })}
+                    />
+                  </div>
+                  <div className="admin-add-field">
+                    <span>Durasi (Menit)</span>
+                    <input
+                      type="number"
+                      className="admin-search-input"
+                      value={formData.duration_minutes}
+                      onChange={(e) => setFormData({ ...formData, duration_minutes: parseInt(e.target.value) || 0 })}
+                    />
+                  </div>
+                </div>
+
+                <div className="admin-add-field">
+                  <span>Status Konseling</span>
+                  <input
+                    type="text"
+                    className="admin-search-input"
+                    placeholder="Misal: Konseling Berjalan, Selesai, Dirujuk"
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                  />
+                </div>
+
+                <div className="admin-add-field">
+                  <span>Catatan Observasi</span>
+                  <textarea
+                    required
+                    rows={3}
+                    className="admin-search-input rekaman-textarea"
+                    value={formData.observation_notes}
+                    onChange={(e) => setFormData({ ...formData, observation_notes: e.target.value })}
+                  />
+                </div>
+
+                <div className="admin-add-field">
+                  <span>Rencana Intervensi</span>
+                  <textarea
+                    rows={2}
+                    className="admin-search-input rekaman-textarea-sm"
+                    value={formData.intervention_plan}
+                    onChange={(e) => setFormData({ ...formData, intervention_plan: e.target.value })}
+                  />
+                </div>
+
+                <div className="admin-add-form-actions admin-add-form-actions-inline rekaman-modal-actions">
+                  <button
+                    type="button"
+                    onClick={() => setShowModal(false)}
+                    className="button"
+                  >
+                    Batal
+                  </button>
+                  <button type="submit" className="button button-primary">
+                    {editingId ? "Simpan Perubahan" : "Simpan Sesi"}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
