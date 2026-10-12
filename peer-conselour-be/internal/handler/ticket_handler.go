@@ -361,26 +361,35 @@ func (h *TicketHandler) ReplyTicket(c *gin.Context) {
 	c.JSON(http.StatusCreated, message)
 }
 
-// AdminGetAllTickets mengambil semua tiket konseling (khusus untuk admin/staff dashboard)
+// AdminGetAllTickets mengambil daftar tiket untuk halaman Dasbor/Daftar Tiket Admin
 func (h *TicketHandler) AdminGetAllTickets(c *gin.Context) {
 	status := c.Query("status")
 	search := c.Query("search")
 
+	// 1. Ambil data user dari session middleware
+	userIDContext, _ := c.Get("userID")
+	roleContext, _ := c.Get("role")
+
+	role := roleContext.(string)
+	userID := userIDContext.(uint)
+
 	var counselorID *uint
-	if c.Query("counselor_id") != "" {
-		cId, _ := strconv.ParseUint(c.Query("counselor_id"), 10, 32)
-		uCId := uint(cId)
-		counselorID = &uCId
+
+	// 2. Filter Role (RBAC)
+	if role == "admin" || role == "superadmin" {
+		// Admin & Superadmin bisa melihat semua tiket.
+		if c.Query("counselor_id") != "" {
+			cId, _ := strconv.ParseUint(c.Query("counselor_id"), 10, 32)
+			uCId := uint(cId)
+			counselorID = &uCId
+		}
+	} else if role == "konselor" || role == "peer" {
+		// Konselor & Peer DIPAKSA hanya melihat tiket miliknya berdasarkan ID akunnya
+		counselorID = &userID
 	}
 
-	var studentID *uint
-	if c.Query("student_id") != "" {
-		sId, _ := strconv.ParseUint(c.Query("student_id"), 10, 32)
-		uSId := uint(sId)
-		studentID = &uSId
-	}
-
-	tickets, err := h.ticketRepo.FindAll(studentID, counselorID, status, search)
+	// 3. Panggil fungsi pencarian di Repository
+	tickets, err := h.ticketRepo.FindAll(nil, counselorID, status, search)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Gagal mengambil daftar tiket"})
 		return

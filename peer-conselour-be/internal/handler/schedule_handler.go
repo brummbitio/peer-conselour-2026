@@ -20,12 +20,12 @@ func NewScheduleHandler(scheduleRepo *repository.ScheduleRepository) *ScheduleHa
 }
 
 type CreateScheduleRequest struct {
-	TicketID    *uint   `json:"ticket_id"`
-	ClientName  string  `json:"client_name" binding:"required"`
-	DateValue   string  `json:"date_value" binding:"required"`   // format: "YYYY-MM-DD"
-	TimeValue   string  `json:"time_value" binding:"required"`   // contoh: "09:00"
-	HandlerID   uint    `json:"handler_id" binding:"required"`   // Peer counselor yang ditugaskan
-	ServiceType string  `json:"service_type" binding:"required"` // "tatap_muka" atau "online"
+	TicketID    *uint  `json:"ticket_id"`
+	ClientName  string `json:"client_name" binding:"required"`
+	DateValue   string `json:"date_value" binding:"required"`   // format: "YYYY-MM-DD"
+	TimeValue   string `json:"time_value" binding:"required"`   // contoh: "09:00"
+	HandlerID   uint   `json:"handler_id" binding:"required"`   // Peer counselor yang ditugaskan
+	ServiceType string `json:"service_type" binding:"required"` // "tatap_muka" atau "online"
 }
 
 // CreateSchedule membuat jadwal konseling baru
@@ -68,11 +68,24 @@ func (h *ScheduleHandler) CreateSchedule(c *gin.Context) {
 func (h *ScheduleHandler) GetAllSchedules(c *gin.Context) {
 	status := c.Query("status")
 
+	// Ambil data user dari session
+	userIDContext, _ := c.Get("userID")
+	roleContext, _ := c.Get("role")
+
+	role := roleContext.(string)
+	userID := userIDContext.(uint)
+
 	var handlerID *uint
-	if c.Query("handler_id") != "" {
-		hId, _ := strconv.ParseUint(c.Query("handler_id"), 10, 32)
-		uHId := uint(hId)
-		handlerID = &uHId
+
+	if role == "admin" || role == "superadmin" {
+		if c.Query("handler_id") != "" {
+			hId, _ := strconv.ParseUint(c.Query("handler_id"), 10, 32)
+			uHId := uint(hId)
+			handlerID = &uHId
+		}
+	} else if role == "konselor" || role == "peer" {
+		// Hanya melihat jadwal yang di-assign ke handler_id milik peer/konselor ini
+		handlerID = &userID
 	}
 
 	schedules, err := h.scheduleRepo.FindAll(handlerID, status)
