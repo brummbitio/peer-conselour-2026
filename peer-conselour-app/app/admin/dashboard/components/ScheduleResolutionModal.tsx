@@ -3,6 +3,9 @@
 import { useEffect, useState } from "react";
 import { PortalModal } from "../../../_portal/PortalModal";
 import { BASE_URL, api } from "@/utils/api";
+// Impor useAuth untuk mengambil data user yang sedang login
+import { useAuth } from "../../../auth/auth-provider";
+import "../../../styles/account-ticket.css";
 
 const UNHANDLED_REASON_OPTIONS = [
   { value: "Klien tidak balas/respon", label: "Klien tidak balas/respon" },
@@ -29,6 +32,12 @@ export function ScheduleResolutionModal({
   onClose,
   onSuccess,
 }: ScheduleResolutionModalProps) {
+  // Ambil data user yang sedang login
+  const { user } = useAuth();
+  
+  // Cek apakah user adalah peer atau konselor (yang dibatasi hak aksesnya)
+  const isRestrictedRole = user?.role === "peer" || user?.role === "konselor";
+
   const [resolutionType, setResolutionType] = useState<"tertangani" | "tidak_tertangani">("tertangani");
   const [subStatusTertangani, setSubStatusTertangani] = useState("Tertangani - Selesai");
   const [unhandledReason, setUnhandledReason] = useState("Klien tidak balas/respon");
@@ -67,15 +76,21 @@ export function ScheduleResolutionModal({
 
           setCounselors(counselorList);
 
-          // Pasang email default sesuai nama konselor yang menangani jadwal ini
           if (counselorList.length > 0) {
-            const matchHandler = counselorList.find(
-              (c: any) => (c.full_name || c.FullName) === schedule.handlerName
-            );
-            if (matchHandler) {
-              setSelectedCounselorEmail(matchHandler.email || matchHandler.Email);
+            // LOGIKA PENGUNCIAN:
+            // Jika role-nya peer atau konselor, paksa gunakan email user yang sedang login
+            if (isRestrictedRole && user?.email) {
+              setSelectedCounselorEmail(user.email);
             } else {
-              setSelectedCounselorEmail(counselorList[0].email || counselorList[0].Email);
+              // Jika admin/superadmin, pasang email sesuai nama penanggung jawab di jadwal
+              const matchHandler = counselorList.find(
+                (c: any) => (c.full_name || c.FullName) === schedule.handlerName
+              );
+              if (matchHandler) {
+                setSelectedCounselorEmail(matchHandler.email || matchHandler.Email);
+              } else {
+                setSelectedCounselorEmail(counselorList[0].email || counselorList[0].Email);
+              }
             }
           }
         }
@@ -87,7 +102,7 @@ export function ScheduleResolutionModal({
     };
 
     fetchCounselors();
-  }, [schedule.handlerName]);
+  }, [schedule.handlerName, isRestrictedRole, user?.email]);
 
   const confirm = async () => {
     if (isSubmitting) return;
@@ -135,7 +150,6 @@ export function ScheduleResolutionModal({
       description={`Lengkapi hasil evaluasi untuk sesi klien: ${schedule.clientName}`}
       size="md"
     >
-      {/* KUNCI PERBAIKAN CSS: Menambahkan class 'account-page account-ticket' sebagai scope induk */}
       <div className="account-page account-ticket" style={{ display: "grid", gap: "16px" }}>
         <fieldset className="ticket-resolution-fieldset">
           <legend className="ticket-resolution-legend">Hasil penanganan</legend>
@@ -215,7 +229,8 @@ export function ScheduleResolutionModal({
           <select
             id="ticket-counselor"
             value={selectedCounselorEmail}
-            disabled={isLoadingCounselors}
+            // TAMBAHKAN isRestrictedRole KE ATRIBUT DISABLED
+            disabled={isLoadingCounselors || isRestrictedRole}
             onChange={(e) => setSelectedCounselorEmail(e.target.value)}
           >
             {counselors.length === 0 ? (
