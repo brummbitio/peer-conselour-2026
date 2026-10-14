@@ -20,6 +20,7 @@ import { api } from "@/utils/api";
 import { DateTimePanel } from "@/components/application/date-picker/date-time-panel";
 import { ScheduleCalendar } from "../ScheduleCalendar";
 import { AddScheduleModal } from "./AddScheduleModal";
+import { ScheduleResolutionModal } from "./ScheduleResolutionModal";
 import {
   formatScheduleDateLabel,
   formatScheduleTimeDisplay,
@@ -42,6 +43,7 @@ import {
   type PendingStatusMap,
 } from "../scheduleBoard";
 import "../../../styles/admin-schedule.css";
+import "../../../styles/account-ticket.css";
 
 /**
  * Tipe MIME khusus supaya papan bisa mengenali drag miliknya sendiri tanpa
@@ -75,6 +77,7 @@ export function AdminSchedulesTab({
   const [scheduleToDelete, setScheduleToDelete] = useState<CounselingScheduleItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deletedScheduleIds, setDeletedScheduleIds] = useState<Set<string>>(new Set());
+  const [scheduleForRecord, setScheduleForRecord] = useState<CounselingScheduleItem | null>(null);
 
   // Perubahan optimistis yang belum dikonfirmasi server. Selama sebuah id ada
   // di sini, nilainya menang atas data server — inilah yang membuat kartu tidak
@@ -706,7 +709,22 @@ export function AdminSchedulesTab({
                             >
                               <Trash2 size={13} />
                             </button>
-                          </div>
+                        </div> {/* <-- INI PENUTUP admin-schedule-pill-row */}
+
+                        {/* 👇 TAMBAHKAN KODE TOMBOL INI DI SINI 👇 */}
+                        {(column.id === "scheduled" || column.id === "completed") && (
+                          <button
+                            type="button"
+                            className="button button-primary"
+                            style={{ width: "100%", marginTop: "12px", padding: "8px", fontSize: "12px" }}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              setScheduleForRecord(item); // Buka modal rekaman
+                            }}
+                          >
+                            Buat Rekaman Konseling
+                          </button>
+                        )}
                         </article>
                       );
                     })}
@@ -813,6 +831,16 @@ export function AdminSchedulesTab({
           </div>
         </div>,
         document.body
+      )}
+      {scheduleForRecord && (
+        <ScheduleResolutionModal 
+          schedule={scheduleForRecord} 
+          onClose={() => setScheduleForRecord(null)} 
+          onSuccess={() => {
+            setScheduleForRecord(null);
+            refetchSchedules(); // Memuat ulang data papan jadwal agar status terbaru muncul
+          }}
+        />
       )}
     </>
   );

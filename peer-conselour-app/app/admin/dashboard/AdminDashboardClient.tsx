@@ -10,6 +10,7 @@ import type { AdminTab } from "./types";
 import AdminRekamanKonselingTab from "./components/AdminRekamanKonselingTab";
 import "../../styles/admin-dashboard.css";
 import "../../styles/account-ticket.css";
+import "../../styles/ticket-chat.css";
 
 // Tab loader component
 const TabLoader = () => <PortalLoader variant="inline" label="Memuat Konten..." />;
@@ -63,8 +64,21 @@ export default function AdminDashboardClient() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  // 1. Definisikan role lebih awal
+  const isPeer = user?.role === "peer";
+  const isSuperadmin = user?.role === "superadmin";
+
+  // 2. Tentukan tab default berdasarkan role
+  const defaultTab: AdminTab = isPeer ? "schedules" : "dashboard";
   const tabParam = searchParams.get("tab");
-  const urlTab: AdminTab = isAdminTab(tabParam) ? tabParam : "dashboard";
+  
+  let urlTab: AdminTab = isAdminTab(tabParam) ? tabParam : defaultTab;
+
+  // 3. Proteksi URL: Cegah peer jika mencoba memaksa masuk via URL parameter ke tab yang disembunyikan
+  if (isPeer && (urlTab === "dashboard" || urlTab === "tickets" || urlTab === "students" || urlTab === "admins")) {
+    urlTab = "schedules";
+  }
+
   // Tab yang baru diklik ditampilkan seketika, tanpa menunggu URL tersinkron.
   const [pendingTab, setPendingTab] = useState<AdminTab | null>(null);
   const tab = pendingTab ?? urlTab;
@@ -103,8 +117,6 @@ export default function AdminDashboardClient() {
     isRefreshing,
     refetch,
   } = useAdminDashboardData(user);
-
-  const isSuperadmin = user?.role === "superadmin";
 
   useEffect(() => {
     if (!isMounted || isLoading) return;
@@ -157,10 +169,10 @@ export default function AdminDashboardClient() {
   }
 
   const sidebarTabs: { id: AdminTab; label: string; visible: boolean }[] = [
-    { id: "dashboard", label: "Dashboard", visible: true },
+    { id: "dashboard", label: "Dashboard", visible: !isPeer },
     { id: "schedules", label: "Jadwal Konseling", visible: true },
-    { id: "tickets", label: "Daftar Tiket", visible: true },
-    { id: "students", label: "Daftar Mahasiswa", visible: true },
+    { id: "tickets", label: "Daftar Tiket", visible: !isPeer },
+    { id: "students", label: "Daftar Mahasiswa", visible: !isPeer },
     { id: "admins", label: "Daftar Admin", visible: isSuperadmin },
     { id: "profile", label: "Profil Saya", visible: true },
     { id: "rekaman_konseling", label: "Rekaman Konseling", visible: true },
