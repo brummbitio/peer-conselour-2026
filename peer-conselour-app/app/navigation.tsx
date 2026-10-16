@@ -13,7 +13,6 @@ import dynamic from "next/dynamic";
 // ssr:false aman karena komponen ini di-portal ke document.body saat mounted.
 const StartCounselingModal = dynamic(() => import("./StartCounselingModal"), { ssr: false });
 
-
 export default function Navigation() {
   const pathname = usePathname();
   const { user, logout, actualRole, switchRole } = useAuth();
@@ -111,12 +110,11 @@ export default function Navigation() {
 
   return (
     <>
-
-
       <nav className={`nav-desktop ${!hasMounted ? "nav-no-transition" : ""}`}>
         <div
-          className={`nav-desktop-side ${isScrolled ? "nav-desktop-side-hidden nav-desktop-side-left" : ""
-            }`}
+          className={`nav-desktop-side ${
+            isScrolled ? "nav-desktop-side-hidden nav-desktop-side-left" : ""
+          }`}
         >
           <Link className="brand-mark" href="/">
             <Image
@@ -158,8 +156,9 @@ export default function Navigation() {
         </div>
 
         <div
-          className={`nav-desktop-side nav-desktop-action ${isScrolled ? "nav-desktop-side-hidden nav-desktop-side-right" : ""
-            }`}
+          className={`nav-desktop-side nav-desktop-action ${
+            isScrolled ? "nav-desktop-side-hidden nav-desktop-side-right" : ""
+          }`}
         >
           {user ? (
             <div className="nav-account-wrap" ref={accountMenuRef}>
@@ -193,28 +192,36 @@ export default function Navigation() {
                     Konseling Saya
                   </Link>
                 )}
-                {actualRole && (actualRole === "admin" || actualRole === "superadmin") && (
-                  <button
-                    type="button"
-                    className="nav-account-link"
-                    onClick={() => {
-                      window.dispatchEvent(new Event("trigger-page-loader"));
-                      setIsAccountMenuOpen(false);
-                      setTimeout(() => {
-                        if (isAdmin) {
-                          switchRole("student");
-                          window.location.href = "/my-counseling";
-                        } else {
-                          switchRole(actualRole);
-                          window.location.href = "/admin/dashboard";
-                        }
-                      }, 250);
-                    }}
-                  >
-                    <ArrowLeftRight size={16} />
-                    {isAdmin ? "Beralih ke Mhs" : "Beralih ke Admin"}
-                  </button>
-                )}
+                {/* 
+                  Perubahan di Sini:
+                  Menambahkan pengecekan actualRole untuk peer dan konselor agar mereka
+                  juga melihat tombol "Beralih ke Mhs"
+                */}
+                {actualRole &&
+                  (actualRole === "admin" ||
+                    actualRole === "superadmin" ||
+                    actualRole === "peer") && (
+                    <button
+                      type="button"
+                      className="nav-account-link"
+                      onClick={() => {
+                        window.dispatchEvent(new Event("trigger-page-loader"));
+                        setIsAccountMenuOpen(false);
+                        setTimeout(() => {
+                          if (isAdmin) {
+                            switchRole("student");
+                            window.location.href = "/my-counseling";
+                          } else {
+                            switchRole(actualRole);
+                            window.location.href = "/admin/dashboard";
+                          }
+                        }, 250);
+                      }}
+                    >
+                      <ArrowLeftRight size={16} />
+                      {isAdmin ? "Beralih ke Mhs" : "Beralih ke Admin"}
+                    </button>
+                  )}
                 <button
                   type="button"
                   className="nav-account-logout"
@@ -230,7 +237,7 @@ export default function Navigation() {
               type="button"
               className="nav-desktop-cta"
               onClick={() => setIsLoginModalOpen(true)}
-              style={{ cursor: 'pointer', border: 'none' }}
+              style={{ cursor: "pointer", border: "none" }}
             >
               Login
             </button>
@@ -311,40 +318,48 @@ export default function Navigation() {
                   Konseling Saya
                 </Link>
               )}
-              {actualRole && (actualRole === "admin" || actualRole === "superadmin") && (
-                <button
-                  type="button"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    width: "100%",
-                    padding: "8px 0",
-                    background: "none",
-                    border: "none",
-                    color: "inherit",
-                    font: "inherit",
-                    cursor: "pointer",
-                    textAlign: "left"
-                  }}
-                  onClick={() => {
-                    window.dispatchEvent(new Event("trigger-page-loader"));
-                    setIsMobileMenuOpen(false);
-                    setTimeout(() => {
-                      if (isAdmin) {
-                        switchRole("student");
-                        window.location.href = "/my-counseling";
-                      } else {
-                        switchRole(actualRole);
-                        window.location.href = "/admin/dashboard";
-                      }
-                    }, 250);
-                  }}
-                >
-                  <ArrowLeftRight size={16} />
-                  {isAdmin ? "Beralih ke Mhs" : "Beralih ke Admin"}
-                </button>
-              )}
+              {/* 
+                Perubahan di Sini:
+                Terapkan logika yang sama untuk tampilan mobile
+              */}
+              {actualRole &&
+                (actualRole === "admin" ||
+                  actualRole === "superadmin" ||
+                  actualRole === "peer" ||
+                  actualRole === "konselor") && (
+                  <button
+                    type="button"
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      width: "100%",
+                      padding: "8px 0",
+                      background: "none",
+                      border: "none",
+                      color: "inherit",
+                      font: "inherit",
+                      cursor: "pointer",
+                      textAlign: "left",
+                    }}
+                    onClick={() => {
+                      window.dispatchEvent(new Event("trigger-page-loader"));
+                      setIsMobileMenuOpen(false);
+                      setTimeout(() => {
+                        if (isAdmin) {
+                          switchRole("student");
+                          window.location.href = "/my-counseling";
+                        } else {
+                          switchRole(actualRole);
+                          window.location.href = "/admin/dashboard";
+                        }
+                      }, 250);
+                    }}
+                  >
+                    <ArrowLeftRight size={16} />
+                    {isAdmin ? "Beralih ke Mhs" : "Beralih ke Admin"}
+                  </button>
+                )}
             </div>
             <button
               type="button"
@@ -358,7 +373,7 @@ export default function Navigation() {
           <button
             type="button"
             className="button button-primary mobile-menu-cta"
-            style={{ textAlign: 'center', cursor: 'pointer' }}
+            style={{ textAlign: "center", cursor: "pointer" }}
             onClick={() => {
               setIsMobileMenuOpen(false);
               setIsLoginModalOpen(true);

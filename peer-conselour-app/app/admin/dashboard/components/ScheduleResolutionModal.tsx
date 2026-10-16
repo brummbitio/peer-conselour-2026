@@ -124,6 +124,13 @@ export function ScheduleResolutionModal({
     try {
       await api.post("/api/rekaman-konseling", {
         schedule_id: schedule.id,
+        
+        client_nim: schedule.nim || schedule.studentNim || "-", 
+        client_name: schedule.clientName,
+        session_date: schedule.dateValue || new Date().toISOString().split('T')[0],
+        observation_notes: keterangan.trim() || "-",
+        // --------------------------------------------
+
         counselor_email: selectedCounselorEmail,
         deskripsi_keluhan: deskripsiKeluhan.trim(),
         kode_diagnosa: !isUnhandled ? kodeDiagnosa.trim() : "-",
